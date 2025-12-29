@@ -10,12 +10,14 @@ from typing import Optional, List
 from framework.base.base_page import BasePage
 from framework.context.element_context import ElementContext, ElementInfo
 from framework.components.button_identifier import ButtonIdentifier
+from framework.utils.pattern_discovery import PatternDiscovery
 
 
 class ButtonLocator(BasePage):
     """
     Handles locating/finding Ant Design buttons on the page
     Single Responsibility: Find buttons by various identification methods
+    Automatically discovers data-attr-id patterns from the page
     """
     
     # Ant Design button class patterns
@@ -37,15 +39,16 @@ class ButtonLocator(BasePage):
         """
         super().__init__(driver)
         self.identifier = ButtonIdentifier()
+        self.pattern_discovery = PatternDiscovery(driver)
     
     def find_button_by_data_attr(self, data_attr_id: str, timeout: int = 10, 
                                    context: Optional[ElementContext] = None) -> Optional[WebElement]:
         """
-        Find button by custom data-atr-id attribute
+        Find button by custom data-atr-id or data-attr-id attribute
         Automatically stores element in context if context is provided
         
         Args:
-            data_attr_id: Value of data-atr-id attribute
+            data_attr_id: Value of data-atr-id or data-attr-id attribute
             timeout: Maximum wait time in seconds
             context: Optional ElementContext to store the found element
             
@@ -53,7 +56,17 @@ class ButtonLocator(BasePage):
             WebElement if found, None otherwise
         """
         try:
+            # Try data-atr-id first (original attribute name)
             element = self.find_element(By.CSS_SELECTOR, f'[data-atr-id="{data_attr_id}"]', timeout)
+            if element and context:
+                self._store_element_in_context(element, data_attr_id, context)
+                return element
+        except TimeoutException:
+            pass
+        
+        # Try data-attr-id as fallback (alternative attribute name)
+        try:
+            element = self.find_element(By.CSS_SELECTOR, f'[data-attr-id="{data_attr_id}"]', timeout)
             if element and context:
                 self._store_element_in_context(element, data_attr_id, context)
             return element
@@ -64,6 +77,7 @@ class ButtonLocator(BasePage):
                              context: Optional[ElementContext] = None) -> Optional[WebElement]:
         """
         Find button by its text content
+        Automatically discovers data-attr-id patterns if text search fails
         Automatically stores element in context if context is provided
         
         Args:
@@ -75,6 +89,9 @@ class ButtonLocator(BasePage):
         Returns:
             WebElement if found, None otherwise
         """
+        element = None
+        
+        # Strategy 1: Try text-based search first
         try:
             if exact_match:
                 xpath = f"//button[normalize-space(text())='{text}'] | //a[normalize-space(text())='{text}']"
@@ -86,9 +103,38 @@ class ButtonLocator(BasePage):
                 # Use text as key, or generate key from data-attr-id if available
                 key = self._generate_context_key(element, text)
                 self._store_element_in_context(element, key, context)
-            return element
+            if element:
+                return element
         except TimeoutException:
-            return None
+            pass
+        
+        # Strategy 2: If text search failed, try pattern discovery
+        try:
+            # Normalize text for pattern matching (e.g., "Login" -> "login")
+            normalized_text = text.lower().replace(' ', '-').replace('_', '-')
+            
+            # Try to find matching data-attr-id using pattern discovery
+            matching_attr_id = self.pattern_discovery.find_matching_data_attr_id(normalized_text, 'button')
+            if matching_attr_id:
+                element = self.find_button_by_data_attr(matching_attr_id, timeout=3, context=context)
+                if element:
+                    print(f"   >> Found button using pattern discovery: {matching_attr_id}")
+                    return element
+            
+            # Strategy 3: Generate candidates based on discovered pattern structure
+            candidates = self.pattern_discovery.generate_candidates(normalized_text, 'button')
+            for candidate in candidates:
+                try:
+                    element = self.find_button_by_data_attr(candidate, timeout=2, context=context)
+                    if element:
+                        print(f"   >> Found button using pattern candidate: {candidate}")
+                        return element
+                except:
+                    continue
+        except:
+            pass
+        
+        return None
     
     def find_button_by_type(self, button_type: str, timeout: int = 10,
                              context: Optional[ElementContext] = None) -> List[WebElement]:
@@ -186,7 +232,11 @@ class ButtonLocator(BasePage):
             Generated key string
         """
         try:
-            data_attr_id = element.get_attribute('data-atr-id')
+            # Try data-atr-id first
+            data_attr_id = element.get_attribute('data-attr-id')
+            if not data_attr_id:
+                # Try data-attr-id as fallback
+                data_attr_id = element.get_attribute('data-attr-id')
             if data_attr_id:
                 return data_attr_id
             # Use fallback with element text or index

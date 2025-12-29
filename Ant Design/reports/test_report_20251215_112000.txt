@@ -1,0 +1,193 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-15 11:16:19
+End Time: 2025-12-15 11:20:00
+Duration: 0:03:40.783391
+
+TOTAL TESTS: 19
+PASSED: 6
+FAILED: 13
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 39.24s
+
+2. test_login_page_displays_email_and_password_fields
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 39.26s
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 2.35s
+
+4. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 69.60s
+
+5. test_admin_can_access_firms_section_and_view_firms_list
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 14.67s
+
+6. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 14.26s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_navigate_to_create_new_firm_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 11.12s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: in call_fixture_func
+    fixture_result = fixturefunc(**kwargs)
+steps\maven_steps.py:1346: in step_see_screen
+    assert screen_lower in current_url or any(word in current_url for word in screen_lower.split()), \
+E   AssertionError: "Firm Details" section not displayed. Current URL: https://dev-admin.maventech.ai/firms/new
+
+2. test_admin_can_create_firm_with_all_mandatory_fields_validation
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.61s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "a test firm "Test Law Firm" exists". Line 87 in scenario "Admin can create firm with all mandatory fields validation" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+3. test_firm_status_changes_from_pending_to_active_when_owner_accepts_invite
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.43s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "a firm "Test Firm" exists with status "Pending"". Line 136 in scenario "Firm status changes from Pending to Active when owner accepts invite" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+4. test_admin_can_change_active_firm_status_to_suspended_individual_action
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.42s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "a firm "Smith & Associates Law" exists with status "Active"". Line 145 in scenario "Admin can change Active firm status to Suspended (individual action)" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+5. test_admin_can_change_suspended_firm_status_to_active_individual_action
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.58s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "a firm "Johnson Legal Group" exists with status "Suspended"". Line 154 in scenario "Admin can change Suspended firm status to Active (individual action)" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+6. test_admin_cannot_change_pending_firm_status_individual_action
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.57s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "a firm "Davis & Partners" exists with status "Pending"". Line 164 in scenario "Admin cannot change Pending firm status (individual action)" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+7. test_suspended_firm_users_see_access_denied_message
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.46s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "a firm "Test Firm" exists with status "Suspended"". Line 172 in scenario "Suspended firm users see access denied message" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+8. test_admin_must_assign_at_least_one_owner_to_the_firm
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 5.32s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I have filled in all mandatory firm fields". Line 187 in scenario "Admin must assign at least one Owner to the firm" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+9. test_admin_can_assign_multiple_owners_to_a_firm
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 3.92s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I have filled in all mandatory firm fields". Line 196 in scenario "Admin can assign multiple owners to a firm" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+10. test_admin_can_remove_an_assigned_owner_from_the_create_form
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 3.31s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I have filled in all mandatory firm fields". Line 212 in scenario "Admin can remove an assigned owner from the create form" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+11. test_admin_cannot_remove_the_last_owner_from_the_create_form
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 4.02s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I have filled in all mandatory firm fields". Line 222 in scenario "Admin cannot remove the last owner from the create form" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+12. test_admin_can_successfully_create_a_new_firm_with_all_required_fields
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 3.76s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "I fill in all mandatory fields:
+    | Field | Value |
+    | Firm Name | New Legal Firm LLC |
+    | Email | contact@newlegalfirm.com |
+    | Phone | (555) 123-4567 |
+    | Street Address | 123 Main Street |
+    | City | New York |
+    | State | NY |
+    | Postal Code | 10001 |
+    | Country | United States |". Line 233 in scenario "Admin can successfully create a new firm with all required fields" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+13. test_firms_list_displays_all_required_columns
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 3.33s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: in call_fixture_func
+    fixture_result = fixturefunc(**kwargs)
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:356: in get
+    self.execute(Command.GET, {"url": url})
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:347: in execute
+    self.error_handler.check_response(response)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:229: in check_response
+    raise exception_class(message, screen, stacktrace)
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id
+E   Stacktrace:
+E   Symbols not available. Dumping unresolved backtrace:
+E   	0x7ff746c1a235
+E   	0x7ff746972630
+E   	0x7ff7467014e5
+E   	0x7ff74674a151
+E   	0x7ff746782a12
+E   	0x7ff74677d27c
+E   	0x7ff74677c46a
+E   	0x7ff7466cacb5
+E   	0x7ff746c45d60
+E   	0x7ff746c3fe8a
+E   	0x7ff746c61005
+E   	0x7ff74698d71e
+E   	0x7ff746994e1f
+E   	0x7ff7466c977b
+E   	0x7ff746d945f8
+E   	0x7ffa72747374
+E   	0x7ffa735dcc91
+

@@ -1,0 +1,72 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-15 14:36:06
+End Time: 2025-12-15 14:36:06
+Duration: 0:00:00.160318
+
+TOTAL TESTS: 7
+PASSED: 0
+FAILED: 7
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_detect_and_read_ant_design_table
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on the table page". Line 7 in scenario "Detect and read Ant Design table" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+2. test_read_table_cell_value_by_column_name
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on the table page". Line 7 in scenario "Read table cell value by column name" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+3. test_find_row_by_column_value
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on the table page". Line 7 in scenario "Find row by column value" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+4. test_sort_table_by_column
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on the table page". Line 7 in scenario "Sort table by column" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+5. test_test_table_pagination
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.03s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on the table page". Line 7 in scenario "Test table pagination" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+6. test_test_table_row_selection
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on the table page". Line 7 in scenario "Test table row selection" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+7. test_test_expandable_rows
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on the table page". Line 7 in scenario "Test expandable rows" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

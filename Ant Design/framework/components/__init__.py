@@ -13,11 +13,15 @@ from framework.components.dropdown_identifier import DropdownIdentifier
 from framework.components.pagination_handler import PaginationHandler
 from framework.components.pagination_locator import PaginationLocator
 from framework.components.pagination_identifier import PaginationIdentifier
+from framework.components.menu_handler import MenuHandler
+from framework.components.menu_locator import MenuLocator
+from framework.components.menu_identifier import MenuIdentifier
 
 __all__ = [
     'ButtonHandler', 'ButtonLocator', 'ButtonIdentifier',
     'InputHandler', 'InputLocator', 'InputIdentifier',
     'DropdownHandler', 'DropdownLocator', 'DropdownIdentifier',
-    'PaginationHandler', 'PaginationLocator', 'PaginationIdentifier'
+    'PaginationHandler', 'PaginationLocator', 'PaginationIdentifier',
+    'MenuHandler', 'MenuLocator', 'MenuIdentifier'
 ]
 

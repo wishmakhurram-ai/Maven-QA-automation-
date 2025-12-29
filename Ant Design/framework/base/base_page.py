@@ -20,9 +20,9 @@ class BasePage:
             driver: Selenium WebDriver instance
         """
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
+        self.wait = WebDriverWait(driver, 2)  # Optimized for speed
     
-    def find_element(self, by: By, value: str, timeout: int = 10):
+    def find_element(self, by: By, value: str, timeout: int = 2):
         """
         Find a single element with explicit wait
         
@@ -40,7 +40,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.presence_of_element_located((by, value)))
     
-    def find_elements(self, by: By, value: str, timeout: int = 10) -> List:
+    def find_elements(self, by: By, value: str, timeout: int = 2) -> List:
         """
         Find multiple elements with explicit wait
         
@@ -56,7 +56,27 @@ class BasePage:
         wait.until(EC.presence_of_element_located((by, value)))
         return self.driver.find_elements(by, value)
     
-    def is_element_present(self, by: By, value: str, timeout: int = 5) -> bool:
+    def wait_for_element(self, by: By, value: str, timeout: int = 2, root=None):
+        """
+        Wait for element to be present
+        
+        Args:
+            by: Selenium By locator strategy
+            value: Locator value
+            timeout: Maximum wait time in seconds
+            root: Optional root element to search within
+            
+        Returns:
+            WebElement when found
+        """
+        if root:
+            wait = WebDriverWait(root, timeout)
+            return wait.until(EC.presence_of_element_located((by, value)))
+        else:
+            wait = WebDriverWait(self.driver, timeout)
+            return wait.until(EC.presence_of_element_located((by, value)))
+    
+    def is_element_present(self, by: By, value: str, timeout: int = 2) -> bool:
         """
         Check if element is present on the page
         
@@ -74,7 +94,7 @@ class BasePage:
         except TimeoutException:
             return False
     
-    def is_element_visible(self, by: By, value: str, timeout: int = 5) -> bool:
+    def is_element_visible(self, by: By, value: str, timeout: int = 2) -> bool:
         """
         Check if element is visible on the page
         
@@ -93,7 +113,7 @@ class BasePage:
         except TimeoutException:
             return False
     
-    def is_element_clickable(self, by: By, value: str, timeout: int = 5) -> bool:
+    def is_element_clickable(self, by: By, value: str, timeout: int = 2) -> bool:
         """
         Check if element is clickable
         
@@ -112,7 +132,7 @@ class BasePage:
         except TimeoutException:
             return False
     
-    def wait_for_element_clickable(self, by: By, value: str, timeout: int = 10):
+    def wait_for_element_clickable(self, by: By, value: str, timeout: int = 2):
         """
         Wait for element to be clickable
         
@@ -139,6 +159,12 @@ class BasePage:
             Result of JavaScript execution
         """
         return self.driver.execute_script(script, *args)
+
+
+
+
+
+
 
 
 

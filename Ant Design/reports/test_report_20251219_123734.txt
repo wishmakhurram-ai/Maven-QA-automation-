@@ -1,0 +1,1858 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-19 12:37:17
+End Time: 2025-12-19 12:37:34
+Duration: 0:00:16.874129
+
+TOTAL TESTS: 11
+PASSED: 0
+FAILED: 11
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 12.75s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x000001608D619FA0>
+
+    @then(parsers.parse('I should see a password input field'))
+    def step_see_password_input(context):
+        """
+        Verify password input field is visible
+        Uses automatic pattern discovery to find the field
+        """
+        print(f"   >> Verifying password input field is visible")
+        element = None
+        last_error = None
+    
+        # Try pattern discovery first
+        try:
+            from framework.utils.pattern_discovery import PatternDiscovery
+            pattern_discovery = PatternDiscovery(context.driver)
+            matching_attr_id = pattern_discovery.find_matching_data_attr_id('password', 'input')
+            if matching_attr_id:
+                print(f"   >> Found pattern: {matching_attr_id}")
+                element = context.input_handler.locator.find_input_by_data_attr(matching_attr_id, timeout=5)
+                if element:
+                    print(f"   >> Found password field using pattern discovery")
+        except Exception as e:
+            last_error = str(e)
+            pass
+    
+        # Try semantic label with pattern discovery
+        if not element:
+            try:
+                element = context.input_handler.locator.find_input_by_semantic_label('password', timeout=5)
+                if element:
+                    print(f"   >> Found password field using semantic label")
+            except Exception as e:
+                last_error = str(e)
+                pass
+    
+        # Try type-based search
+        if not element:
+            try:
+                elements = context.input_handler.locator.find_input_by_type('password', timeout=5)
+                if elements:
+                    element = elements[0]
+                    print(f"   >> Found password field using type search")
+            except Exception as e:
+                last_error = str(e)
+                pass
+    
+        # Try label-based search
+        if not element:
+            try:
+                element = context.input_handler.locator.find_input_by_label('password', timeout=5)
+                if element:
+                    print(f"   >> Found password field using label search")
+            except Exception as e:
+                last_error = str(e)
+                pass
+    
+        # Try finding by ID
+        if not element:
+            try:
+                from selenium.webdriver.common.by import By
+                element = context.driver.find_element(By.ID, 'password')
+                if element:
+                    print(f"   >> Found password field using ID")
+            except:
+                pass
+    
+        # Try finding by name
+        if not element:
+            try:
+                from selenium.webdriver.common.by import By
+                element = context.driver.find_element(By.NAME, 'password')
+                if element:
+                    print(f"   >> Found password field using name")
+            except:
+                pass
+    
+        if element is None:
+            # Check if browser is still connected
+            try:
+>               context.driver.current_url
+
+steps\maven_steps.py:742: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:542: in current_url
+    return self.execute(Command.GET_CURRENT_URL)["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_see_password_input at 0x000001608D3A3600>
+request = <FixtureRequest for <Function test_admin_users_can_navigate_to_dedicated_admin_portal_login_page>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D619FA0>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000001608D619FA0>
+
+    @then(parsers.parse('I should see a password input field'))
+    def step_see_password_input(context):
+        """
+        Verify password input field is visible
+        Uses automatic pattern discovery to find the field
+        """
+        print(f"   >> Verifying password input field is visible")
+        element = None
+        last_error = None
+    
+        # Try pattern discovery first
+        try:
+            from framework.utils.pattern_discovery import PatternDiscovery
+            pattern_discovery = PatternDiscovery(context.driver)
+            matching_attr_id = pattern_discovery.find_matching_data_attr_id('password', 'input')
+            if matching_attr_id:
+                print(f"   >> Found pattern: {matching_attr_id}")
+                element = context.input_handler.locator.find_input_by_data_attr(matching_attr_id, timeout=5)
+                if element:
+                    print(f"   >> Found password field using pattern discovery")
+        except Exception as e:
+            last_error = str(e)
+            pass
+    
+        # Try semantic label with pattern discovery
+        if not element:
+            try:
+                element = context.input_handler.locator.find_input_by_semantic_label('password', timeout=5)
+                if element:
+                    print(f"   >> Found password field using semantic label")
+            except Exception as e:
+                last_error = str(e)
+                pass
+    
+        # Try type-based search
+        if not element:
+            try:
+                elements = context.input_handler.locator.find_input_by_type('password', timeout=5)
+                if elements:
+                    element = elements[0]
+                    print(f"   >> Found password field using type search")
+            except Exception as e:
+                last_error = str(e)
+                pass
+    
+        # Try label-based search
+        if not element:
+            try:
+                element = context.input_handler.locator.find_input_by_label('password', timeout=5)
+                if element:
+                    print(f"   >> Found password field using label search")
+            except Exception as e:
+                last_error = str(e)
+                pass
+    
+        # Try finding by ID
+        if not element:
+            try:
+                from selenium.webdriver.common.by import By
+                element = context.driver.find_element(By.ID, 'password')
+                if element:
+                    print(f"   >> Found password field using ID")
+            except:
+                pass
+    
+        # Try finding by name
+        if not element:
+            try:
+                from selenium.webdriver.common.by import By
+                element = context.driver.find_element(By.NAME, 'password')
+                if element:
+                    print(f"   >> Found password field using name")
+            except:
+                pass
+    
+        if element is None:
+            # Check if browser is still connected
+            try:
+                context.driver.current_url
+            except Exception as browser_error:
+>               assert False, f"Browser session lost: {str(browser_error)}"
+                       ^^^^^
+E               AssertionError: Browser session lost: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E               Stacktrace:
+E               Symbols not available. Dumping unresolved backtrace:
+E               	0x7ff7fbd0a235
+E               	0x7ff7fba62630
+E               	0x7ff7fb7f14e5
+E               	0x7ff7fb83a151
+E               	0x7ff7fb872a12
+E               	0x7ff7fb86d27c
+E               	0x7ff7fb86c46a
+E               	0x7ff7fb7bacb5
+E               	0x7ff7fbd35d60
+E               	0x7ff7fbd2fe8a
+E               	0x7ff7fbd51005
+E               	0x7ff7fba7d71e
+E               	0x7ff7fba84e1f
+E               	0x7ff7fb7b977b
+E               	0x7ff7fbe845f8
+E               	0x7ffdc8107374
+E               	0x7ffdc8efcc91
+
+steps\maven_steps.py:744: AssertionError
+
+2. test_login_page_displays_email_and_password_fields
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_login_page_displays_email_and_password_fields>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D735310>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_forgot_password_link_redirects_to_password_reset_flow>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D618530>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+4. test_empty_email_field_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_empty_email_field_shows_validation_error>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D737AD0>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+5. test_invalid_email_format_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_invalid_email_format_shows_validation_error>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D65A090>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+6. test_admin_can_successfully_log_in
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>, request = <FixtureRequest for <Function test_admin_can_successfully_log_in>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D752540>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+7. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_admin_lands_on_admin_panel_dashboard__firms_view_by_default>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D76CE60>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+8. test_admin_can_access_firms_section_and_view_firms_list
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_admin_can_access_firms_section_and_view_firms_list>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D76F230>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+9. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_admin_can_access_users_section_and_view_users_list_readonly>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D751A00>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+10. test_firms_list_displays_all_required_columns
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_firms_list_displays_all_required_columns>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D619F70>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+
+11. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+fixturefunc = <function step_navigate_to_admin_portal_login at 0x000001608D3A04A0>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001608D75B110>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:452: in get
+    self.execute(Command.GET, {"url": url})
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:432: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x000001608CEE5BB0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id","stacktrace":"Symbols ...ff7fba7d71e\\n\\t0x7ff7fba84e1f\\n\\t0x7ff7fb7b977b\\n\\t0x7ff7fbe845f8\\n\\t0x7ffdc8107374\\n\\t0x7ffdc8efcc91\\n"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """Check that a JSON response from the WebDriver does not have an error.
+    
+        Args:
+            response: The JSON response from the WebDriver server as a dictionary
+                object.
+    
+        Raises:
+            WebDriverException: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                try:
+                    value = json.loads(value_json)
+                    if isinstance(value, dict):
+                        if len(value) == 1:
+                            value = value["value"]
+                        status = value.get("error", None)
+                        if not status:
+                            status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                            message = value.get("value") or value.get("message")
+                            if not isinstance(message, str):
+                                value = message
+                                message = message.get("message") if isinstance(message, dict) else None
+                        else:
+                            message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+E       Stacktrace:
+E       Symbols not available. Dumping unresolved backtrace:
+E       	0x7ff7fbd0a235
+E       	0x7ff7fba62630
+E       	0x7ff7fb7f14e5
+E       	0x7ff7fb83a151
+E       	0x7ff7fb872a12
+E       	0x7ff7fb86d27c
+E       	0x7ff7fb86c46a
+E       	0x7ff7fb7bacb5
+E       	0x7ff7fbd35d60
+E       	0x7ff7fbd2fe8a
+E       	0x7ff7fbd51005
+E       	0x7ff7fba7d71e
+E       	0x7ff7fba84e1f
+E       	0x7ff7fb7b977b
+E       	0x7ff7fbe845f8
+E       	0x7ffdc8107374
+E       	0x7ffdc8efcc91
+
+.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+

@@ -1,0 +1,73 @@
+
+================================================================================
+TEST CASE: Login page displays Email and Password fields
+FEATURE FILE: maven_automation.feature (Line 7)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/login
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Login page displays Email and Password fields
+FEATURE FILE: maven_automation.feature (Line 22)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/login
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Login page displays Email and Password fields
+FEATURE FILE: maven_automation.feature (Line 23)
+STEP: I should see an email input field with label "Email" or "Email Address"
+================================================================================
+   >> Verifying email field with label 'Email' or 'Email Address'
+   >> Email field with correct label is visible
+   ✓ Step completed: I should see an email input field with label "Email" or "Email Address"
+
+================================================================================
+TEST CASE: Login page displays Email and Password fields
+FEATURE FILE: maven_automation.feature (Line 24)
+STEP: I should see a password input field with label "Password"
+================================================================================
+   >> Verifying password field with label 'Password'
+   >> Password field with correct label is visible
+   ✓ Step completed: I should see a password input field with label "Password"
+
+================================================================================
+TEST CASE: Login page displays Email and Password fields
+FEATURE FILE: maven_automation.feature (Line 25)
+STEP: the password field is visible
+================================================================================
+   >> Verifying password field is visible
+   >> Password field is visible
+   ✓ Step completed: the password field is visible
+
+================================================================================
+TEST CASE: Login page displays Email and Password fields
+FEATURE FILE: maven_automation.feature (Line 26)
+STEP: I should see a "Log In" or "Sign In" button
+================================================================================
+   >> Verifying button 'Log In' or 'Sign In' is visible
+   >> Found button using pattern discovery: login-page--button--login
+   >> Found button 'Log In' using text search
+   >> Found button using pattern discovery: login-page--button--login
+   >> Found button 'Sign In' using text search
+   >> Button 'Log In' is visible
+   ✓ Step completed: I should see a "Log In" or "Sign In" button
+
+================================================================================
+TEST CASE: Login page displays Email and Password fields
+FEATURE FILE: maven_automation.feature (Line 27)
+STEP: the button should be enabled
+================================================================================
+   >> Verifying button is enabled
+   >> Button is enabled
+   ✓ Step completed: the button should be enabled

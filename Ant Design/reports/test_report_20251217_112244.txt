@@ -1,0 +1,710 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-17 11:09:04
+End Time: 2025-12-17 11:22:44
+Duration: 0:13:40.088072
+
+TOTAL TESTS: 10
+PASSED: 5
+FAILED: 5
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 41.41s
+
+2. test_login_page_displays_email_and_password_fields
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 41.56s
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 3.81s
+
+4. test_empty_email_field_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 46.65s
+
+5. test_invalid_email_format_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 46.60s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 76.45s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x000001A25B88EB10>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Automatically gets URL from browser and waits for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        # Get initial URL to detect navigation
+        initial_url = context.driver.current_url.lower()
+        print(f"   >> Initial URL: {initial_url}")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            import time
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 30)  # Wait up to 30 seconds for navigation
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                if 'login' in current_url:
+                    return False  # Still on login page, keep waiting
+                # Check if we're on dashboard, admin, or firms page
+                if 'dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or 'users' in current_url:
+                    return True
+                # If URL changed from login page, consider it navigation (might be different URL structure)
+                if current_url != initial_url and 'login' not in current_url:
+                    return True
+                return False
+    
+>           wait.until(url_contains_dashboard_or_admin)
+
+steps\maven_steps.py:1434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selenium.webdriver.support.wait.WebDriverWait (session="b2c5af131d070bc7fbac10cfa2bee280")>
+method = <function step_redirected_to_dashboard.<locals>.url_contains_dashboard_or_admin at 0x000001A25BC107C0>, message = ''
+
+    def until(self, method: Callable[[D], Literal[False] | T], message: str = "") -> T:
+        """Wait until the method returns a value that is not False.
+    
+        Calls the method provided with the driver as an argument until the
+        return value does not evaluate to ``False``.
+    
+        Args:
+            method: A callable object that takes a WebDriver instance as an
+                argument.
+            message: Optional message for TimeoutException.
+    
+        Returns:
+            The result of the last call to `method`.
+    
+        Raises:
+            TimeoutException: If 'method' does not return a truthy value within
+                the WebDriverWait object's timeout.
+    
+        Example:
+            >>> from selenium.webdriver.common.by import By
+            >>> from selenium.webdriver.support.ui import WebDriverWait
+            >>> from selenium.webdriver.support import expected_conditions as EC
+            >>>
+            >>> # Wait until an element is visible on the page
+            >>> wait = WebDriverWait(driver, 10)
+            >>> element = wait.until(EC.visibility_of_element_located((By.ID, "exampleId")))
+            >>> print(element.text)
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            if time.monotonic() > end_time:
+                break
+            time.sleep(self._poll)
+>       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message:
+
+.venv\Lib\site-packages\selenium\webdriver\support\wait.py:122: TimeoutException
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_redirected_to_dashboard at 0x000001A25A63CF40>, request = <FixtureRequest for <Function test_admin_can_successfully_log_in>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A25B88EB10>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A25B88EB10>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Automatically gets URL from browser and waits for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        # Get initial URL to detect navigation
+        initial_url = context.driver.current_url.lower()
+        print(f"   >> Initial URL: {initial_url}")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            import time
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 30)  # Wait up to 30 seconds for navigation
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                if 'login' in current_url:
+                    return False  # Still on login page, keep waiting
+                # Check if we're on dashboard, admin, or firms page
+                if 'dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or 'users' in current_url:
+                    return True
+                # If URL changed from login page, consider it navigation (might be different URL structure)
+                if current_url != initial_url and 'login' not in current_url:
+                    return True
+                return False
+    
+            wait.until(url_contains_dashboard_or_admin)
+            current_url = context.driver.current_url
+            print(f"   >> Navigation detected: {current_url}")
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+            print(f"   >> Page ready state complete")
+    
+            # Additional wait for dynamic content
+            import time
+            time.sleep(2)  # Wait for dynamic content to load
+            print(f"   >> Dynamic content loaded")
+    
+            current_url_lower = current_url.lower()
+            # Verify we're not on login page
+            assert 'login' not in current_url_lower, \
+                f"Still on login page. Current URL: {current_url}"
+    
+            # Set global login state for session reuse (happy case login)
+            try:
+                from conftest import _login_state
+                _login_state['logged_in'] = True
+                _login_state['login_url'] = current_url
+                context.logged_in = True
+                print(f"   >> Login state set for session reuse")
+            except:
+                context.logged_in = True
+    
+            print(f"   >> Redirected to Admin Dashboard Home (URL: {current_url})")
+        except Exception as e:
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Error waiting for redirect: {str(e)}")
+            print(f"   >> Current URL: {context.driver.current_url}")
+    
+            # Check if we're actually on a valid page (not login)
+            if 'login' not in current_url:
+                # We're not on login page, so navigation likely succeeded
+                print(f"   >> Not on login page - navigation likely succeeded")
+                # Still verify we're on a valid admin page
+                assert ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or 'users' in current_url), \
+                    f"Not on expected Admin Dashboard page. Current URL: {context.driver.current_url}"
+    
+                # Set global login state for session reuse (happy case login)
+                try:
+                    from conftest import _login_state
+                    _login_state['logged_in'] = True
+                    _login_state['login_url'] = context.driver.current_url
+                    context.logged_in = True
+                    print(f"   >> Login state set for session reuse")
+                except:
+                    context.logged_in = True
+    
+                print(f"   >> Redirected to Admin Dashboard Home (URL: {context.driver.current_url})")
+            else:
+                # Still on login page - navigation failed
+>               assert False, f"Not redirected to Admin Dashboard. Still on login page. Current URL: {context.driver.current_url}"
+                       ^^^^^
+E               AssertionError: Not redirected to Admin Dashboard. Still on login page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:1489: AssertionError
+
+2. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 79.82s
+   Error:
+fixturefunc = <function step_should_be_on_firms_page_default at 0x000001A25A656CA0>
+request = <FixtureRequest for <Function test_admin_lands_on_admin_panel_dashboard__firms_view_by_default>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A25BC46480>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A25BC46480>
+
+    @then('I should be on the Firms list page by default')
+    def step_should_be_on_firms_page_default(context):
+        """
+        Verify we are on the Firms list page by default
+        """
+        print(f"   >> Verifying on Firms list page by default")
+        current_url = context.driver.current_url.lower()
+>       assert 'firms' in current_url, f"Not on Firms list page. Current URL: {current_url}"
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Not on Firms list page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:2534: AssertionError
+
+3. test_admin_can_access_firms_section_and_view_firms_list
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 186.38s
+   Error:
+fixturefunc = <function step_click_navigation_section at 0x000001A25A762D40>, request = <FixtureRequest for <Function test_admin_can_access_firms_section_and_view_firms_list>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A25BCCC8C0>, 'section_name': 'Firms'}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A25BCCC8C0>, section_name = 'Firms'
+
+    @when(parsers.parse('I click on the "{section_name}" section in the navigation'))
+    def step_click_navigation_section(context, section_name):
+        """
+        Click on a navigation section (e.g., Firms, Users)
+        Common step used in admin_dashboard.feature and maven_automation.feature
+        PRIORITY: Uses menu handler with data-attr-id pattern discovery FIRST
+        """
+        print(f"   >> Clicking on navigation section: '{section_name}' (using menu handler with pattern discovery)")
+        clicked = False
+    
+        # Strategy 1: Use menu handler with pattern discovery (HIGHEST PRIORITY for navigation)
+        try:
+            clicked = context.menu_handler.click_menu_item(section_name, timeout=10)
+            if clicked:
+                print(f"   >> ✓ Navigation section clicked using menu handler (pattern discovery)")
+        except Exception as e:
+            print(f"   >> Menu handler failed: {str(e)}")
+    
+        # Strategy 2: Use button handler with pattern discovery (fallback)
+        if not clicked:
+            try:
+                clicked = context.button_handler.click_button(
+                    section_name,
+                    identifier_type='auto'
+                )
+                if clicked:
+                    print(f"   >> ✓ Navigation section clicked using button handler (pattern discovery)")
+            except Exception as e:
+                print(f"   >> Button handler failed: {str(e)}")
+    
+        # Strategy 3: Try text search with button handler
+        if not clicked:
+            try:
+                clicked = context.button_handler.click_button(
+                    section_name,
+                    identifier_type='text'
+                )
+                if clicked:
+                    print(f"   >> Navigation section clicked using text search")
+            except:
+                pass
+    
+        # Strategy 4: Try to find in navigation menu using Selenium with pattern discovery
+        if not clicked:
+            try:
+                from framework.utils.pattern_discovery import PatternDiscovery
+                pattern_discovery = PatternDiscovery(context.driver)
+                normalized_text = section_name.lower().replace(' ', '-').replace('_', '-')
+    
+                # Try to find matching data-attr-id for navigation item
+                matching_attr_id = pattern_discovery.find_matching_data_attr_id(normalized_text, 'button')
+                if matching_attr_id:
+                    wait = WebDriverWait(context.driver, 5)
+                    try:
+                        nav_item = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'[data-attr-id="{matching_attr_id}"]')))
+                        nav_item.click()
+                        clicked = True
+                        print(f"   >> ✓ Navigation section clicked using pattern discovery (data-attr-id: '{matching_attr_id}')")
+                    except:
+                        try:
+                            nav_item = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'[data-atr-id="{matching_attr_id}"]')))
+                            nav_item.click()
+                            clicked = True
+                            print(f"   >> ✓ Navigation section clicked using pattern discovery (data-atr-id: '{matching_attr_id}')")
+                        except:
+                            pass
+            except Exception as e:
+                print(f"   >> Pattern discovery for navigation failed: {str(e)}")
+    
+        # Strategy 5: Try direct XPath search for navigation items
+        if not clicked:
+            try:
+                wait = WebDriverWait(context.driver, 5)
+                # Look for navigation items in menu/nav structures
+                nav_xpath = f"//*[contains(@class, 'nav') or contains(@class, 'menu') or contains(@class, 'ant-menu')]//*[contains(text(), '{section_name}')] | //a[contains(text(), '{section_name}')] | //button[contains(text(), '{section_name}')]"
+                nav_item = wait.until(EC.element_to_be_clickable((By.XPATH, nav_xpath)))
+                nav_item.click()
+                clicked = True
+                print(f"   >> Navigation section clicked using XPath search")
+            except Exception as e:
+                print(f"   >> Error clicking navigation section with XPath: {str(e)}")
+    
+        context.button_clicked = clicked
+>       assert clicked, f"Failed to click navigation section '{section_name}' - tried all strategies (menu handler, button handler, pattern discovery, XPath)"
+               ^^^^^^^
+E       AssertionError: Failed to click navigation section 'Firms' - tried all strategies (menu handler, button handler, pattern discovery, XPath)
+
+steps\menu_steps.py:98: AssertionError
+
+4. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 192.13s
+   Error:
+fixturefunc = <function step_click_navigation_section at 0x000001A25A762D40>
+request = <FixtureRequest for <Function test_admin_can_access_users_section_and_view_users_list_readonly>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A25BC44A10>, 'section_name': 'Users'}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A25BC44A10>, section_name = 'Users'
+
+    @when(parsers.parse('I click on the "{section_name}" section in the navigation'))
+    def step_click_navigation_section(context, section_name):
+        """
+        Click on a navigation section (e.g., Firms, Users)
+        Common step used in admin_dashboard.feature and maven_automation.feature
+        PRIORITY: Uses menu handler with data-attr-id pattern discovery FIRST
+        """
+        print(f"   >> Clicking on navigation section: '{section_name}' (using menu handler with pattern discovery)")
+        clicked = False
+    
+        # Strategy 1: Use menu handler with pattern discovery (HIGHEST PRIORITY for navigation)
+        try:
+            clicked = context.menu_handler.click_menu_item(section_name, timeout=10)
+            if clicked:
+                print(f"   >> ✓ Navigation section clicked using menu handler (pattern discovery)")
+        except Exception as e:
+            print(f"   >> Menu handler failed: {str(e)}")
+    
+        # Strategy 2: Use button handler with pattern discovery (fallback)
+        if not clicked:
+            try:
+                clicked = context.button_handler.click_button(
+                    section_name,
+                    identifier_type='auto'
+                )
+                if clicked:
+                    print(f"   >> ✓ Navigation section clicked using button handler (pattern discovery)")
+            except Exception as e:
+                print(f"   >> Button handler failed: {str(e)}")
+    
+        # Strategy 3: Try text search with button handler
+        if not clicked:
+            try:
+                clicked = context.button_handler.click_button(
+                    section_name,
+                    identifier_type='text'
+                )
+                if clicked:
+                    print(f"   >> Navigation section clicked using text search")
+            except:
+                pass
+    
+        # Strategy 4: Try to find in navigation menu using Selenium with pattern discovery
+        if not clicked:
+            try:
+                from framework.utils.pattern_discovery import PatternDiscovery
+                pattern_discovery = PatternDiscovery(context.driver)
+                normalized_text = section_name.lower().replace(' ', '-').replace('_', '-')
+    
+                # Try to find matching data-attr-id for navigation item
+                matching_attr_id = pattern_discovery.find_matching_data_attr_id(normalized_text, 'button')
+                if matching_attr_id:
+                    wait = WebDriverWait(context.driver, 5)
+                    try:
+                        nav_item = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'[data-attr-id="{matching_attr_id}"]')))
+                        nav_item.click()
+                        clicked = True
+                        print(f"   >> ✓ Navigation section clicked using pattern discovery (data-attr-id: '{matching_attr_id}')")
+                    except:
+                        try:
+                            nav_item = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'[data-atr-id="{matching_attr_id}"]')))
+                            nav_item.click()
+                            clicked = True
+                            print(f"   >> ✓ Navigation section clicked using pattern discovery (data-atr-id: '{matching_attr_id}')")
+                        except:
+                            pass
+            except Exception as e:
+                print(f"   >> Pattern discovery for navigation failed: {str(e)}")
+    
+        # Strategy 5: Try direct XPath search for navigation items
+        if not clicked:
+            try:
+                wait = WebDriverWait(context.driver, 5)
+                # Look for navigation items in menu/nav structures
+                nav_xpath = f"//*[contains(@class, 'nav') or contains(@class, 'menu') or contains(@class, 'ant-menu')]//*[contains(text(), '{section_name}')] | //a[contains(text(), '{section_name}')] | //button[contains(text(), '{section_name}')]"
+                nav_item = wait.until(EC.element_to_be_clickable((By.XPATH, nav_xpath)))
+                nav_item.click()
+                clicked = True
+                print(f"   >> Navigation section clicked using XPath search")
+            except Exception as e:
+                print(f"   >> Error clicking navigation section with XPath: {str(e)}")
+    
+        context.button_clicked = clicked
+>       assert clicked, f"Failed to click navigation section '{section_name}' - tried all strategies (menu handler, button handler, pattern discovery, XPath)"
+               ^^^^^^^
+E       AssertionError: Failed to click navigation section 'Users' - tried all strategies (menu handler, button handler, pattern discovery, XPath)
+
+steps\menu_steps.py:98: AssertionError
+
+5. test_firms_list_displays_all_required_columns
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 101.55s
+   Error:
+fixturefunc = <function step_see_table_with_columns at 0x000001A25A7BC720>, request = <FixtureRequest for <Function test_firms_list_displays_all_required_columns>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A25B80AE70>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A25B80AE70>
+
+    @then('I should see a table with the following columns:')
+    def step_see_table_with_columns(context):
+        """
+        Verify table has specified columns from Gherkin table parameter
+        Generic step that works with any table - uses table framework to identify columns
+    
+        Args:
+            context: Context fixture from conftest.py
+            scenario: pytest-bdd scenario fixture that contains the table data
+        """
+        print(f"   >> Verifying table columns...")
+    
+        # Get expected column names from Gherkin table
+        expected_columns = []
+    
+        # Try to access pytest-bdd's internal 'table' object via frame locals
+        # This is how we can read the scenario table without needing a 'table' fixture.
+        import inspect
+        try:
+            frame = inspect.currentframe()
+            caller = frame.f_back if frame else None
+            if caller and 'table' in caller.f_locals:
+                gherkin_table = caller.f_locals['table']
+                if gherkin_table:
+                    for row in gherkin_table:
+                        if isinstance(row, dict):
+                            if 'Column Name' in row:
+                                value = row['Column Name']
+                            elif row:
+                                value = list(row.values())[0]
+                            else:
+                                value = None
+                        else:
+                            value = str(row)
+    
+                        if value:
+                            expected_columns.append(str(value).strip())
+        finally:
+            # Avoid reference cycles
+            try:
+                del frame
+                del caller
+            except Exception:
+                pass
+    
+        if not expected_columns:
+            # Fallback for frameworks where we can't introspect the Gherkin table easily.
+            # Use the generic firm columns defined in maven_automation.feature.
+            fallback_columns = ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+            print("   >> WARNING: No table data found via introspection, using fallback expected columns")
+            expected_columns = fallback_columns
+    
+        print(f"   >> Expected columns from feature file (or fallback): {expected_columns}")
+    
+        if not expected_columns:
+            raise AssertionError("No expected columns found in feature file table")
+    
+        # Ensure a table is identified first
+        # If no table is in context, identify the first table
+        try:
+            summary = context.table_handler.get_table_summary()
+            if not summary:
+                print("   >> No table in context, identifying first table...")
+                # Try to find table by data-attr-id pattern discovery first (more reliable)
+                try:
+                    from framework.utils.pattern_discovery import PatternDiscovery
+                    pattern_discovery = PatternDiscovery(context.driver)
+                    patterns = pattern_discovery.discover_all_data_attr_ids(timeout=5)
+                    table_patterns = patterns.get('table', [])
+                    if table_patterns:
+                        print(f"   >> Found table data-attr-id patterns: {table_patterns}")
+                        # Try the first table pattern
+                        found = context.table_handler.identify_and_store(table_patterns[0], identifier_type='data_attr_id')
+                        if found:
+                            summary = context.table_handler.get_table_summary()
+                except Exception as e:
+                    print(f"   >> Pattern discovery failed: {str(e)}")
+    
+                # Fallback to index-based search
+                if not summary:
+                    print("   >> Trying to find table by index...")
+                    # Wait a bit for page to load
+                    import time
+                    time.sleep(2)
+                    found = context.table_handler.identify_and_store("0", identifier_type='index')
+                    if found:
+                        summary = context.table_handler.get_table_summary()
+                    else:
+                        # Debug: Check how many tables were found
+                        all_tables = context.table_handler.locator.find_all_tables(timeout=5)
+                        print(f"   >> DEBUG: Found {len(all_tables)} tables on the page")
+                        if len(all_tables) == 0:
+                            # Try to find any Ant Design table elements
+                            try:
+                                from selenium.webdriver.common.by import By
+                                ant_tables = context.driver.find_elements(By.CSS_SELECTOR, ".ant-table, .ant-table-wrapper, .ant-table-container")
+                                print(f"   >> DEBUG: Found {len(ant_tables)} elements with Ant Design table classes")
+                                if len(ant_tables) > 0:
+                                    print("   >> DEBUG: Table elements exist but may not be fully loaded. Waiting...")
+                                    time.sleep(3)
+                                    found = context.table_handler.identify_and_store("0", identifier_type='index')
+                                    if found:
+                                        summary = context.table_handler.get_table_summary()
+                            except Exception as e:
+                                print(f"   >> DEBUG error: {str(e)}")
+        except Exception as e:
+            print(f"   >> Error identifying table: {str(e)}")
+            print("   >> No table in context, identifying first table...")
+            try:
+                context.table_handler.identify_and_store("0", identifier_type='index')
+                summary = context.table_handler.get_table_summary()
+            except Exception as e2:
+                print(f"   >> Error in fallback: {str(e2)}")
+                summary = None
+    
+        if not summary:
+            # Provide helpful error message
+            current_url = context.driver.current_url
+            print(f"   >> Current URL: {current_url}")
+            try:
+                from selenium.webdriver.common.by import By
+                ant_elements = context.driver.find_elements(By.CSS_SELECTOR, ".ant-table, .ant-table-wrapper")
+                print(f"   >> Found {len(ant_elements)} Ant Design table elements on page")
+            except:
+                pass
+>           raise AssertionError("No table found on the page. Make sure you are on a page with a table and that the table has loaded completely.")
+E           AssertionError: No table found on the page. Make sure you are on a page with a table and that the table has loaded completely.
+
+steps\table_steps.py:314: AssertionError
+

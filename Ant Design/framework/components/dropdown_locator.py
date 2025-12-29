@@ -32,11 +32,33 @@ class DropdownLocator(BasePage):
     def find_dropdown_by_data_attr(self, data_attr_id: str, timeout: int = 10,
                                     context: Optional[ElementContext] = None) -> Optional[WebElement]:
         """
-        Find dropdown by custom data-atr-id attribute
+        Find dropdown by custom data-atr-id or data-attr-id attribute
         PRIORITY: This is the primary method for finding dropdowns
         
         Args:
-            data_attr_id: Value of data-atr-id attribute
+            data_attr_id: Value of data-atr-id or data-attr-id attribute
+            timeout: Maximum wait time in seconds
+            context: Optional ElementContext to store the found element
+            
+        Returns:
+            WebElement if found, None otherwise
+        """
+        # Try data-atr-id first (original attribute name)
+        element = self._find_dropdown_by_attr_name(data_attr_id, 'data-atr-id', timeout, context)
+        if element:
+            return element
+        
+        # Try data-attr-id as fallback (alternative attribute name)
+        return self._find_dropdown_by_attr_name(data_attr_id, 'data-attr-id', timeout, context)
+    
+    def _find_dropdown_by_attr_name(self, data_attr_id: str, attr_name: str, timeout: int = 10,
+                                     context: Optional[ElementContext] = None) -> Optional[WebElement]:
+        """
+        Internal helper to find dropdown by a specific attribute name
+        
+        Args:
+            data_attr_id: Value of the attribute
+            attr_name: Name of the attribute ('data-atr-id' or 'data-attr-id')
             timeout: Maximum wait time in seconds
             context: Optional ElementContext to store the found element
             
@@ -44,18 +66,18 @@ class DropdownLocator(BasePage):
             WebElement if found, None otherwise
         """
         try:
-            # Try to find by data-atr-id directly on select/dropdown element or parent container
-            element = self.find_element(By.CSS_SELECTOR, f'[data-atr-id="{data_attr_id}"].ant-select', timeout)
+            # Try to find by attribute directly on select/dropdown element or parent container
+            element = self.find_element(By.CSS_SELECTOR, f'[{attr_name}="{data_attr_id}"].ant-select', timeout)
             if not element:
-                element = self.find_element(By.CSS_SELECTOR, f'[data-atr-id="{data_attr_id}"].ant-dropdown-trigger', timeout)
+                element = self.find_element(By.CSS_SELECTOR, f'[{attr_name}="{data_attr_id}"].ant-dropdown-trigger', timeout)
             if not element:
-                # Try finding parent container with data-atr-id
-                element = self.find_element(By.CSS_SELECTOR, f'[data-atr-id="{data_attr_id}"] .ant-select', timeout)
+                # Try finding parent container with attribute
+                element = self.find_element(By.CSS_SELECTOR, f'[{attr_name}="{data_attr_id}"] .ant-select', timeout)
             if not element:
-                element = self.find_element(By.CSS_SELECTOR, f'[data-atr-id="{data_attr_id}"] .ant-dropdown-trigger', timeout)
+                element = self.find_element(By.CSS_SELECTOR, f'[{attr_name}="{data_attr_id}"] .ant-dropdown-trigger', timeout)
             if not element:
-                # Try finding any element with data-atr-id and check if it contains ant-select or ant-dropdown
-                candidates = self.find_elements(By.CSS_SELECTOR, f'[data-atr-id="{data_attr_id}"]', timeout)
+                # Try finding any element with attribute and check if it contains ant-select or ant-dropdown
+                candidates = self.find_elements(By.CSS_SELECTOR, f'[{attr_name}="{data_attr_id}"]', timeout)
                 for candidate in candidates:
                     class_attr = candidate.get_attribute('class') or ''
                     if 'ant-select' in class_attr or 'ant-dropdown' in class_attr:
@@ -68,6 +90,12 @@ class DropdownLocator(BasePage):
                         break
                     except:
                         pass
+            
+            if element and context:
+                self._store_element_in_context(element, data_attr_id, context)
+            return element
+        except TimeoutException:
+            return None
             
             if element and context:
                 self._store_element_in_context(element, data_attr_id, context)
@@ -360,16 +388,36 @@ class DropdownLocator(BasePage):
                 
                 // 4. Find elements with dropdown-related aria attributes
                 document.querySelectorAll('[aria-haspopup="menu"], [aria-haspopup="listbox"]').forEach(function(el) {
-                    if (el.className && (el.className.includes('ant-') || el.className.includes('dropdown'))) {
+                    var classAttr = '';
+                    if (el.className) {
+                        if (typeof el.className === 'string') {
+                            classAttr = el.className;
+                        } else if (el.className.baseVal !== undefined) {
+                            classAttr = el.className.baseVal || '';
+                        } else {
+                            classAttr = String(el.className) || '';
+                        }
+                    }
+                    if (classAttr && (classAttr.includes('ant-') || classAttr.includes('dropdown'))) {
                         addElement(el);
                     }
                 });
                 
                 // 5. Find elements by data attributes that might indicate dropdowns
                 document.querySelectorAll('[data-atr-id], [data-attr-id]').forEach(function(el) {
-                    var classAttr = el.className || '';
-                    if (classAttr.includes('ant-select') || classAttr.includes('ant-dropdown') || 
-                        classAttr.includes('dropdown') || el.tagName === 'SELECT') {
+                    var classAttr = '';
+                    if (el.className) {
+                        // Handle both string and DOMTokenList (className can be either)
+                        if (typeof el.className === 'string') {
+                            classAttr = el.className;
+                        } else if (el.className.baseVal !== undefined) {
+                            classAttr = el.className.baseVal || '';
+                        } else {
+                            classAttr = String(el.className) || '';
+                        }
+                    }
+                    if ((classAttr && (classAttr.includes('ant-select') || classAttr.includes('ant-dropdown') || 
+                        classAttr.includes('dropdown'))) || el.tagName === 'SELECT') {
                         addElement(el);
                     }
                 });

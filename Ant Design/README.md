@@ -65,7 +65,7 @@ driver.get("https://your-ant-design-page.com")
 button_handler = ButtonHandler(driver)
 
 # Click button by data-atr-id (recommended)
-button_handler.click_button("submit-button", identifier_type='data_attr')
+button_handler.click_button("submit-button", identifier_type='data_attr_id')
 
 # Click button by text
 button_handler.click_button("Submit", identifier_type='text')
@@ -111,7 +111,7 @@ behave features/button_automation.feature
 
 ### 1. By Custom Data Attribute (Recommended)
 ```python
-button_handler.click_button("my-button-id", identifier_type='data_attr')
+button_handler.click_button("my-button-id", identifier_type='data_attr_id')
 ```
 Requires your HTML to have: `<button data-atr-id="my-button-id">Click Me</button>`
 
@@ -138,7 +138,7 @@ Tries all methods in sequence: data-attr-id → text → type.
 Get detailed information about a button without clicking:
 
 ```python
-button_info = button_handler.get_button_info("submit-button", identifier_type='data_attr')
+button_info = button_handler.get_button_info("submit-button", identifier_type='data_attr_id')
 
 print(f"Type: {button_info['type']}")        # primary, default, dashed, etc.
 print(f"Size: {button_info['size']}")        # large, middle, small
@@ -172,7 +172,7 @@ for button in buttons:
 ```python
 button_info = button_handler.get_button_info("submit-button")
 if not button_info['disabled'] and not button_info['loading']:
-    button_handler.click_button("submit-button", identifier_type='data_attr')
+    button_handler.click_button("submit-button", identifier_type='data_attr_id')
 ```
 
 ## Custom Data Attribute

@@ -15,3 +15,13 @@ from pytest_bdd import scenarios
 # pytest-bdd will automatically match feature file steps to step definitions in steps/
 scenarios('../features/combined_automation.feature')
 
+
+
+
+
+
+
+
+
+
+

@@ -39,14 +39,14 @@ class InputHandler(BasePage):
         self.context = context
         self.button_handler = ButtonHandler(driver, context=context)  # For clicking associated buttons
     
-    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr',
+    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr_id',
                           timeout: int = 10, context_key: Optional[str] = None) -> bool:
         """
         Identify an input and store it in context
         
         Args:
             identifier: Value to identify the input (data-attr-id, label, or type)
-            identifier_type: Type of identifier ('data_attr', 'label', 'type', 'position')
+            identifier_type: Type of identifier ('data_attr_id', 'label', 'type', 'position')
             timeout: Maximum wait time in seconds
             context_key: Optional key to use in context
             
@@ -60,7 +60,7 @@ class InputHandler(BasePage):
         element = None
         
         try:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_input_by_data_attr(identifier, timeout, self.context)
             elif identifier_type == 'label':
                 element = self.locator.find_input_by_label(identifier, exact_match=False, timeout=timeout, context=self.context)
@@ -164,7 +164,7 @@ class InputHandler(BasePage):
             print(f"Error filling input from context: {str(e)}")
             return False
     
-    def fill_input(self, identifier: str, value: str, identifier_type: str = 'data_attr',
+    def fill_input(self, identifier: str, value: str, identifier_type: str = 'data_attr_id',
                    timeout: int = 10, clear_first: bool = True, use_context: bool = False) -> bool:
         """
         Fill an input field using various identification methods
@@ -173,7 +173,7 @@ class InputHandler(BasePage):
         Args:
             identifier: Value to identify the input (data-attr-id, label, type, or position)
             value: Value to fill
-            identifier_type: Type of identifier ('data_attr', 'label', 'type', 'position', 'auto')
+            identifier_type: Type of identifier ('data_attr_id', 'label', 'type', 'position', 'auto')
             timeout: Maximum wait time in seconds
             clear_first: If True, clears the input before filling
             use_context: If True, tries to use context first
@@ -192,7 +192,7 @@ class InputHandler(BasePage):
         context_to_use = self.context if self.context else None
         
         try:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_input_by_data_attr(identifier, timeout, context_to_use)
             elif identifier_type == 'label':
                 # For label type, try data-attr-id first (normalized), then semantic label
@@ -205,22 +205,59 @@ class InputHandler(BasePage):
                 position = int(identifier) if identifier.isdigit() else 1
                 element = self.locator.find_input_by_position(position, timeout=timeout, context=context_to_use)
             elif identifier_type == 'auto':
-                # PRIORITY ORDER: data-attr-id first, then label, then type
-                # Try data-attr-id (normalize identifier)
-                data_attr_candidates = [
-                    identifier.lower().replace(' ', '-'),
-                    identifier.lower().replace(' ', '_'),
-                    identifier.lower().replace(' ', ''),
-                ]
-                for candidate in data_attr_candidates:
-                    element = self.locator.find_input_by_data_attr(candidate, timeout=3, context=context_to_use)
-                    if element:
-                        break
+                # PRIORITY ORDER: pattern discovery -> data-attr-id -> label -> type
+                # Use pattern discovery to automatically find matching data-attr-id
+                try:
+                    # Try to use shared PatternDiscovery from context if available
+                    pattern_discovery = None
+                    if self.context and hasattr(self.context, 'pattern_discovery'):
+                        pattern_discovery = self.context.pattern_discovery
+                    else:
+                        from framework.utils.pattern_discovery import PatternDiscovery
+                        pattern_discovery = PatternDiscovery(self.driver)
+                    
+                    # Normalize identifier for pattern matching
+                    normalized_id = identifier.lower().replace(' ', '-').replace('_', '-')
+                    
+                    # Try to find matching data-attr-id using pattern discovery (fast - uses cache)
+                    matching_attr_id = pattern_discovery.find_matching_data_attr_id(normalized_id, 'input')
+                    if matching_attr_id:
+                        element = self.locator.find_input_by_data_attr(matching_attr_id, timeout=1, context=context_to_use)
+                        if element:
+                            try:
+                                from conftest import _current_step_name
+                                step_name = _current_step_name or "Unknown Step"
+                                print(f"   >> STEP: {step_name[:45]:<45} | data-attr-id: '{matching_attr_id}'")
+                            except:
+                                print(f"   >> STEP: {'Unknown':<45} | data-attr-id: '{matching_attr_id}'")
+                    
+                    # If not found, generate candidates based on discovered pattern (limit to 2 for speed)
+                    if not element:
+                        candidates = pattern_discovery.generate_candidates(normalized_id, 'input')
+                        for candidate in candidates[:2]:  # Limit to first 2 candidates for speed
+                            element = self.locator.find_input_by_data_attr(candidate, timeout=1, context=context_to_use)
+                            if element:
+                                try:
+                                    from conftest import _current_step_name
+                                    step_name = _current_step_name or "Unknown Step"
+                                    print(f"   >> STEP: {step_name[:45]:<45} | data-attr-id: '{candidate}'")
+                                except:
+                                    print(f"   >> STEP: {'Unknown':<45} | data-attr-id: '{candidate}'")
+                                break
+                except Exception as e:
+                    print(f"   >> Pattern discovery failed: {str(e)}")
                 
+                # Fallback to direct data-attr-id search (faster timeout)
                 if not element:
-                    element = self.locator.find_input_by_label(identifier, exact_match=False, timeout=5, context=context_to_use)
+                    element = self.locator.find_input_by_data_attr(identifier, timeout=1, context=context_to_use)
+                
+                # Fallback to label search (which also uses pattern discovery) - faster timeout
                 if not element:
-                    elements = self.locator.find_input_by_type(identifier, timeout=5, context=context_to_use)
+                    element = self.locator.find_input_by_semantic_label(identifier, timeout=1, context=context_to_use)
+                
+                # Fallback to type search (faster timeout)
+                if not element:
+                    elements = self.locator.find_input_by_type(identifier, timeout=1, context=context_to_use)
                     if elements:
                         element = elements[0]
             
@@ -232,7 +269,7 @@ class InputHandler(BasePage):
             if context_to_use:
                 # Check if element is already in context
                 context_key = None
-                if identifier_type == 'data_attr':
+                if identifier_type == 'data_attr_id':
                     context_key = identifier
                 elif identifier_type == 'type':
                     context_key = identifier  # Use type as key (e.g., "search", "text")
@@ -390,20 +427,20 @@ class InputHandler(BasePage):
         except Exception as e:
             print(f"Error clearing input: {str(e)}")
     
-    def get_input_info(self, identifier: str, identifier_type: str = 'data_attr') -> Optional[Dict]:
+    def get_input_info(self, identifier: str, identifier_type: str = 'data_attr_id') -> Optional[Dict]:
         """
         Get information about an input without filling it
         
         Args:
             identifier: Value to identify the input
-            identifier_type: Type of identifier ('data_attr', 'label', 'type')
+            identifier_type: Type of identifier ('data_attr_id', 'label', 'type')
             
         Returns:
             Dictionary with input information or None if not found
         """
         element = None
         
-        if identifier_type == 'data_attr':
+        if identifier_type == 'data_attr_id':
             element = self.locator.find_input_by_data_attr(identifier)
         elif identifier_type == 'label':
             element = self.locator.find_input_by_label(identifier)

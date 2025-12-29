@@ -1,0 +1,54 @@
+
+================================================================================
+TEST CASE: "Forgot password" link redirects to password reset flow
+FEATURE FILE: maven_automation.feature (Line 7)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/login
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: "Forgot password" link redirects to password reset flow
+FEATURE FILE: maven_automation.feature (Line 31)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/login
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: "Forgot password" link redirects to password reset flow
+FEATURE FILE: maven_automation.feature (Line 32)
+STEP: I click on the "Forgot password" link
+================================================================================
+   >> Clicking on link: 'Forgot password' (using data-attr-id pattern discovery)
+   >> Searching for link using pattern discovery (normalized: 'forgot-password')...
+   >> ✓ Link clicked using pattern discovery (data-attr-id: 'login-page--link--forgot-password')
+   >> Current URL after click: https://dev-admin.maventech.ai/forgot-password
+   >> Link clicked successfully
+   ✓ Step completed: I click on the "Forgot password" link
+
+================================================================================
+TEST CASE: "Forgot password" link redirects to password reset flow
+FEATURE FILE: maven_automation.feature (Line 33)
+STEP: I should be redirected to the password reset flow
+================================================================================
+   >> Verifying redirect to password reset flow
+   >> Redirected to password reset flow (URL: https://dev-admin.maventech.ai/forgot-password)
+   ✓ Step completed: I should be redirected to the password reset flow
+
+================================================================================
+TEST CASE: "Forgot password" link redirects to password reset flow
+FEATURE FILE: maven_automation.feature (Line 34)
+STEP: I should see the Password Reset Request screen
+================================================================================
+   >> Verifying Password Reset Request screen is displayed
+   >> Password Reset Request screen is displayed
+   ✓ Step completed: I should see the Password Reset Request screen

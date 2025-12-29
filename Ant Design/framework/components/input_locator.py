@@ -10,6 +10,7 @@ from typing import Optional, List
 from framework.base.base_page import BasePage
 from framework.context.element_context import ElementContext, ElementInfo
 from framework.components.input_identifier import InputIdentifier
+from framework.utils.pattern_discovery import PatternDiscovery
 
 
 class InputLocator(BasePage):
@@ -17,6 +18,7 @@ class InputLocator(BasePage):
     Handles locating/finding Ant Design input fields on the page
     Single Responsibility: Find inputs by various identification methods
     Uses Ant Design class patterns, data-attr-id, aria attributes, and semantic labels
+    Automatically discovers data-attr-id patterns from the page
     """
     
     def __init__(self, driver: webdriver):
@@ -28,15 +30,16 @@ class InputLocator(BasePage):
         """
         super().__init__(driver)
         self.identifier = InputIdentifier()
+        self.pattern_discovery = PatternDiscovery(driver)
     
     def find_input_by_data_attr(self, data_attr_id: str, timeout: int = 10,
                                   context: Optional[ElementContext] = None) -> Optional[WebElement]:
         """
-        Find input by custom data-atr-id attribute
+        Find input by custom data-atr-id or data-attr-id attribute
         PRIORITY: This is the primary method for finding inputs
         
         Args:
-            data_attr_id: Value of data-atr-id attribute
+            data_attr_id: Value of data-atr-id or data-attr-id attribute
             timeout: Maximum wait time in seconds
             context: Optional ElementContext to store the found element
             
@@ -44,7 +47,17 @@ class InputLocator(BasePage):
             WebElement if found, None otherwise
         """
         try:
+            # Try data-atr-id first (original attribute name)
             element = self.find_element(By.CSS_SELECTOR, f'[data-atr-id="{data_attr_id}"]', timeout)
+            if element and context:
+                self._store_element_in_context(element, data_attr_id, context)
+                return element
+        except TimeoutException:
+            pass
+        
+        # Try data-attr-id as fallback (alternative attribute name)
+        try:
+            element = self.find_element(By.CSS_SELECTOR, f'[data-attr-id="{data_attr_id}"]', timeout)
             if element and context:
                 self._store_element_in_context(element, data_attr_id, context)
             return element
@@ -55,7 +68,8 @@ class InputLocator(BasePage):
                                      context: Optional[ElementContext] = None) -> Optional[WebElement]:
         """
         Find input by semantic label (no quotes needed in feature files)
-        Tries multiple strategies: data-attr-id first, then placeholder, aria-label, associated label
+        Automatically discovers data-attr-id patterns from the page
+        Tries multiple strategies: discovered patterns first, then placeholder, aria-label, associated label
         
         Args:
             label_text: Label text to search for (e.g., "Firm Name", "Email")
@@ -65,25 +79,47 @@ class InputLocator(BasePage):
         Returns:
             WebElement if found, None otherwise
         """
-        # Strategy 1: Try data-attr-id first (normalize label to data-attr-id format)
-        # Convert "Firm Name" to "firm-name" or "firm_name"
-        data_attr_candidates = [
-            label_text.lower().replace(' ', '-'),
+        # Strategy 1: Try automatic pattern discovery first
+        try:
+            # Find matching data-attr-id using pattern discovery
+            matching_attr_id = self.pattern_discovery.find_matching_data_attr_id(label_text, 'input')
+            if matching_attr_id:
+                element = self.find_input_by_data_attr(matching_attr_id, timeout=3, context=context)
+                if element:
+                    return element
+        except:
+            pass
+        
+        # Strategy 2: Generate candidates based on discovered pattern structure
+        try:
+            candidates = self.pattern_discovery.generate_candidates(label_text, 'input')
+            for candidate in candidates:
+                try:
+                    element = self.find_input_by_data_attr(candidate, timeout=2, context=context)
+                    if element:
+                        return element
+                except:
+                    continue
+        except:
+            pass
+        
+        # Strategy 3: Try simple normalized patterns
+        normalized_label = label_text.lower().replace(' ', '-').replace('_', '-')
+        simple_candidates = [
+            normalized_label,
             label_text.lower().replace(' ', '_'),
             label_text.lower().replace(' ', ''),
         ]
         
-        for candidate in data_attr_candidates:
+        for candidate in simple_candidates:
             try:
-                element = self.find_element(By.CSS_SELECTOR, f'[data-atr-id="{candidate}"]', timeout=2)
+                element = self.find_input_by_data_attr(candidate, timeout=2, context=context)
                 if element:
-                    if context:
-                        self._store_element_in_context(element, candidate, context)
                     return element
             except:
                 pass
         
-        # Strategy 2: Use existing label matching
+        # Strategy 4: Use existing label matching (placeholder, aria-label, etc.)
         return self.find_input_by_label(label_text, exact_match=False, timeout=timeout, context=context)
     
     def find_input_by_label(self, label_text: str, exact_match: bool = False, 
@@ -217,6 +253,9 @@ class InputLocator(BasePage):
                 # Use input_type as key if no data-attr-id, otherwise use data-attr-id
                 element = ant_elements[0]
                 data_attr_id = element.get_attribute('data-atr-id')
+                if not data_attr_id:
+                    # Try data-attr-id as fallback
+                    data_attr_id = element.get_attribute('data-attr-id')
                 if data_attr_id:
                     key = data_attr_id
                 else:
@@ -388,7 +427,13 @@ class InputLocator(BasePage):
             Generated key string
         """
         try:
+            # Try data-atr-id first
             data_attr_id = element.get_attribute('data-atr-id')
+            if data_attr_id:
+                return data_attr_id
+            
+            # Try data-attr-id as fallback
+            data_attr_id = element.get_attribute('data-attr-id')
             if data_attr_id:
                 return data_attr_id
             

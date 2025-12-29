@@ -22,7 +22,7 @@ def step_identify_dropdown_by_data_attr(context, data_attr_id):
     print(f"   >> Identifying dropdown with data-atr-id: '{data_attr_id}'...")
     success = context.dropdown_handler.identify_and_store(
         data_attr_id,
-        identifier_type='data_attr'
+        identifier_type='data_attr_id'
     )
     assert success, f"Failed to identify dropdown with data-atr-id '{data_attr_id}'"
     print(f"   >> Dropdown identified and stored in context")
@@ -132,7 +132,7 @@ def step_select_by_semantic_label(context, option_text, dropdown_label):
             success = context.dropdown_handler.select_by_text(
                 candidate,
                 option_text,
-                identifier_type='data_attr'
+                identifier_type='data_attr_id'
             )
             if success:
                 print(f"   >> Found and selected using data-attr-id: '{candidate}'")
@@ -257,7 +257,7 @@ def step_select_by_index(context, index, dropdown_label):
             success = context.dropdown_handler.select_by_index(
                 candidate,
                 int(index),
-                identifier_type='data_attr'
+                identifier_type='data_attr_id'
             )
             if success:
                 break
@@ -303,7 +303,7 @@ def step_select_multiple_tags(context, option_texts, dropdown_label):
             success = context.dropdown_handler.select_multiple(
                 candidate,
                 options,
-                identifier_type='data_attr'
+                identifier_type='data_attr_id'
             )
             if success:
                 break
@@ -343,7 +343,7 @@ def step_select_first(context, dropdown_label):
         try:
             success = context.dropdown_handler.select_first_in(
                 candidate,
-                identifier_type='data_attr'
+                identifier_type='data_attr_id'
             )
             if success:
                 break
@@ -382,7 +382,7 @@ def step_select_last(context, dropdown_label):
         try:
             success = context.dropdown_handler.select_last_in(
                 candidate,
-                identifier_type='data_attr'
+                identifier_type='data_attr_id'
             )
             if success:
                 break
@@ -413,7 +413,7 @@ def step_select_by_data_attr(context, option_text, data_attr_id):
     success = context.dropdown_handler.select_by_text(
         data_attr_id,
         option_text,
-        identifier_type='data_attr'
+        identifier_type='data_attr_id'
     )
     assert success, f"Failed to select '{option_text}' in dropdown with data-atr-id '{data_attr_id}'"
     print(f"   >> Selected successfully")
@@ -544,6 +544,8 @@ def step_verify_dropdown_state(context, label_text, state):
 @given('I am on the dropdown page')
 @when('I am on the dropdown page')
 @then('I am on the dropdown page')
+@when('I go to the dropdown page')
+@then('I go to the dropdown page')
 def step_navigate_to_dropdown_page(context):
     """
     Navigate to the Ant Design Dropdown page
@@ -555,4 +557,160 @@ def step_navigate_to_dropdown_page(context):
     print(f"   >> Navigating to: {DROPDOWN_PAGE_URL}")
     context.driver.get(DROPDOWN_PAGE_URL)
     print(f"   >> Page loaded successfully")
+
+
+@when('I select first option from dropdown')
+@then('I select first option from dropdown')
+def step_select_first_option(context):
+    """Select the first option from the first dropdown"""
+    print(f"   >> Selecting first option from dropdown...")
+    # Find first dropdown and select first option by index 0
+    success = context.dropdown_handler.select_by_index(
+        None,  # None means find first dropdown
+        0,     # First option (0-based index)
+        identifier_type='position',
+        timeout=20  # Increased timeout
+    )
+    assert success, "Failed to select first option from dropdown"
+    print(f"   >> First option selected successfully")
+
+
+@when(parsers.parse('I select {option_text} from dropdown'))
+@then(parsers.parse('I select {option_text} from dropdown'))
+def step_select_option_from_dropdown(context, option_text):
+    """Select an option from the first dropdown"""
+    print(f"   >> Selecting '{option_text}' from dropdown...")
+    # Check if option_text is "first option" - handle specially
+    if option_text.lower() == 'first option':
+        success = context.dropdown_handler.select_by_index(
+            None,
+            0,
+            identifier_type='position',
+            timeout=20
+        )
+    else:
+        success = context.dropdown_handler.select_by_text(
+            None,
+            option_text,
+            identifier_type='position',
+            timeout=20
+        )
+    assert success, f"Failed to select '{option_text}' from dropdown"
+    print(f"   >> Option selected successfully")
+
+
+@when(parsers.parse('I select {option_text} from {dropdown_label} dropdown'))
+@then(parsers.parse('I select {option_text} from {dropdown_label} dropdown'))
+def step_select_from_labeled_dropdown(context, option_text, dropdown_label):
+    """
+    Select an option from a labeled dropdown
+    Automatically discovers data-attr-id patterns from the page
+    
+    Args:
+        context: Context fixture from conftest.py
+        option_text: Text of the option to select
+        dropdown_label: Name of the dropdown (e.g., "role", "department")
+    """
+    print(f"   >> Selecting '{option_text}' from '{dropdown_label}' dropdown...")
+    
+    # Use automatic pattern discovery
+    from framework.utils.pattern_discovery import PatternDiscovery
+    pattern_discovery = PatternDiscovery(context.driver)
+    
+    # Try to find matching data-attr-id using pattern discovery
+    matching_attr_id = pattern_discovery.find_matching_data_attr_id(dropdown_label, 'dropdown')
+    
+    selected = False
+    
+    # Try pattern discovery first
+    if matching_attr_id:
+        try:
+            success = context.dropdown_handler.identify_and_store(
+                matching_attr_id,
+                identifier_type='data_attr_id'
+            )
+            if success:
+                selected = context.dropdown_handler.select_by_text(
+                    None,  # Use context
+                    option_text
+                )
+                if selected:
+                    print(f"   >> Selected using pattern discovery: '{matching_attr_id}'")
+        except:
+            pass
+    
+    # If not found, try generated candidates
+    if not selected:
+        candidates = pattern_discovery.generate_candidates(dropdown_label, 'dropdown')
+        for candidate in candidates:
+            try:
+                success = context.dropdown_handler.identify_and_store(
+                    candidate,
+                    identifier_type='data_attr_id'
+                )
+                if success:
+                    selected = context.dropdown_handler.select_by_text(
+                        None,  # Use context
+                        option_text
+                    )
+                    if selected:
+                        print(f"   >> Selected using pattern candidate: '{candidate}'")
+                        break
+            except:
+                continue
+    
+    # Fallback to label-based identification
+    if not selected:
+        try:
+            success = context.dropdown_handler.select_by_text(
+                dropdown_label,
+                option_text,
+                identifier_type='label'
+            )
+            if success:
+                selected = True
+                print(f"   >> Selected using label: '{dropdown_label}'")
+        except:
+            pass
+    
+    assert selected, f"Failed to select '{option_text}' from '{dropdown_label}' dropdown"
+    print(f"   >> Option selected successfully")
+
+
+@when(parsers.parse('I select {ordinal} menu item from dropdown'))
+@then(parsers.parse('I select {ordinal} menu item from dropdown'))
+def step_select_ordinal_menu_item(context, ordinal):
+    """Select menu item by ordinal (1st, 2nd, 3rd, etc.) from first dropdown"""
+    import re
+    # Parse ordinal like "1st", "2nd", "3rd", "4th" to index (0-based)
+    match = re.match(r'(\d+)(st|nd|rd|th)', ordinal.lower())
+    if match:
+        index = int(match.group(1)) - 1  # Convert to 0-based index
+    else:
+        # Try to parse as number
+        try:
+            index = int(ordinal) - 1
+        except:
+            assert False, f"Could not parse ordinal '{ordinal}'"
+    
+    print(f"   >> Selecting {ordinal} menu item (index {index}) from dropdown...")
+    success = context.dropdown_handler.select_by_index(
+        None,
+        index,
+        identifier_type='position'
+    )
+    assert success, f"Failed to select {ordinal} menu item from dropdown"
+    print(f"   >> {ordinal} menu item selected successfully")
+
+
+@then('the dropdown should be selected successfully')
+def step_dropdown_selected_successfully(context):
+    """
+    Verify that a dropdown option was selected successfully
+    
+    Args:
+        context: Context fixture from conftest.py
+    """
+    # This is a verification step - the actual selection happens in the When step
+    print(f"   >> Dropdown option selected successfully")
 

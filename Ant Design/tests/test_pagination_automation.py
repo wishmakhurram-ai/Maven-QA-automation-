@@ -13,3 +13,13 @@ from pytest_bdd import scenarios
 # pytest-bdd will automatically match feature file steps to step definitions in steps/pagination_steps.py
 scenarios('../features/pagination_automation.feature')
 
+
+
+
+
+
+
+
+
+
+

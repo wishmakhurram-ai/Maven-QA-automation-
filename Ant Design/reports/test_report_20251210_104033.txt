@@ -1,0 +1,71 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-10 10:39:32
+End Time: 2025-12-10 10:40:33
+Duration: 0:01:00.580887
+
+TOTAL TESTS: 8
+PASSED: 4
+FAILED: 4
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_click_on_navigation_one
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 16.79s
+
+2. test_click_option_7
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 10.99s
+
+3. test_click_option_8
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 12.04s
+
+4. test_click_the_first_menu_item
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 10.85s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_open_navigation_one_and_click_option_1
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 2.28s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "I open Navigation One". Line 14 in scenario "Open Navigation One and click Option 1" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\menu_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+2. test_open_navigation_two_and_click_option_5
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 2.55s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "I open Navigation Two". Line 19 in scenario "Open Navigation Two and click Option 5" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\menu_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+3. test_open_navigation_two_and_click_option_1_inside_it
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 2.28s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "I open Navigation Two". Line 32 in scenario "Open Navigation Two and click Option 1 inside it" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\menu_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+4. test_click_option_1_from_navigation_one
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.37s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "I open Navigation One". Line 43 in scenario "Click Option 1 from Navigation One" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\menu_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

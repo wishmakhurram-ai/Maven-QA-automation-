@@ -40,14 +40,14 @@ class PaginationHandler(BasePage):
         self.identifier = PaginationIdentifier()
         self.context = context
     
-    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr',
+    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr_id',
                           timeout: int = 10, context_key: Optional[str] = None) -> bool:
         """
         Identify a pagination and store it in context
         
         Args:
             identifier: Value to identify the pagination (data-attr-id, position, or 'with_features')
-            identifier_type: Type of identifier ('data_attr', 'position', 'features')
+            identifier_type: Type of identifier ('data_attr_id', 'position', 'features')
             timeout: Maximum wait time in seconds
             context_key: Optional key to use in context
             
@@ -61,7 +61,7 @@ class PaginationHandler(BasePage):
         element = None
         
         try:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_pagination_by_data_attr(identifier, timeout, self.context)
             elif identifier_type == 'position':
                 position = int(identifier) if identifier.isdigit() else 1
@@ -94,7 +94,7 @@ class PaginationHandler(BasePage):
             return False
     
     def go_to_page(self, page_number: int, identifier: Optional[str] = None,
-                   identifier_type: str = 'data_attr', timeout: int = 10,
+                   identifier_type: str = 'data_attr_id', timeout: int = 10,
                    use_context: bool = False) -> bool:
         """
         Navigate to a specific page number
@@ -102,7 +102,7 @@ class PaginationHandler(BasePage):
         Args:
             page_number: Page number to navigate to
             identifier: Optional identifier for pagination (if None, uses first pagination)
-            identifier_type: Type of identifier ('data_attr', 'position')
+            identifier_type: Type of identifier ('data_attr_id', 'position')
             timeout: Maximum wait time in seconds
             use_context: If True, tries to use context first
             
@@ -239,7 +239,7 @@ class PaginationHandler(BasePage):
             print(f"Error navigating to page {page_number}: {str(e)}")
             return False
     
-    def next_page(self, identifier: Optional[str] = None, identifier_type: str = 'data_attr',
+    def next_page(self, identifier: Optional[str] = None, identifier_type: str = 'data_attr_id',
                   timeout: int = 10, use_context: bool = False) -> bool:
         """
         Navigate to the next page
@@ -305,7 +305,7 @@ class PaginationHandler(BasePage):
             print(f"Error navigating to next page: {str(e)}")
             return False
     
-    def previous_page(self, identifier: Optional[str] = None, identifier_type: str = 'data_attr',
+    def previous_page(self, identifier: Optional[str] = None, identifier_type: str = 'data_attr_id',
                       timeout: int = 10, use_context: bool = False) -> bool:
         """
         Navigate to the previous page
@@ -372,7 +372,7 @@ class PaginationHandler(BasePage):
             return False
     
     def select_page_size(self, page_size: int, identifier: Optional[str] = None,
-                        identifier_type: str = 'data_attr', timeout: int = 10,
+                        identifier_type: str = 'data_attr_id', timeout: int = 10,
                         use_context: bool = False) -> bool:
         """
         Change the page size (items per page)
@@ -476,15 +476,18 @@ class PaginationHandler(BasePage):
                             option_size = int(match.group(1))
                             if option_size == page_size:
                                 # Try multiple click methods
+                                clicked = False
                                 try:
                                     # Method 1: Direct click
                                     option.click()
                                     print(f"  Clicked option via direct click")
+                                    clicked = True
                                 except:
                                     try:
                                         # Method 2: JavaScript click
                                         self.execute_js("arguments[0].click();", option)
                                         print(f"  Clicked option via JavaScript")
+                                        clicked = True
                                     except:
                                         # Method 3: Mouse event
                                         self.execute_js("""
@@ -496,20 +499,40 @@ class PaginationHandler(BasePage):
                                             arguments[0].dispatchEvent(event);
                                         """, option)
                                         print(f"  Clicked option via MouseEvent")
+                                        clicked = True
                                 
-                                time.sleep(1.5)  # Wait for selection to take effect
-                                
-                                # Verify selection was successful
-                                try:
-                                    # Check if dropdown closed (indicates selection)
-                                    dropdown = self.driver.find_elements(By.CSS_SELECTOR, '.ant-select-dropdown:not([style*="display: none"])')
-                                    if not dropdown:
-                                        print(f"Successfully changed page size to {page_size}")
+                                if clicked:
+                                    time.sleep(2.0)  # Wait for selection to take effect and dropdown to close
+                                    
+                                    # Verify selection was successful by checking current page size
+                                    try:
+                                        # Re-find pagination to get updated state
+                                        pagination_element = self._get_pagination_element(identifier, identifier_type, timeout, use_context)
+                                        if pagination_element:
+                                            updated_info = self.identifier.identify_pagination(pagination_element)
+                                            current_size = updated_info.get('page_size')
+                                            if current_size == page_size:
+                                                print(f"Successfully changed page size to {page_size}")
+                                                return True
+                                            else:
+                                                # Sometimes the page size might not update immediately, wait a bit more
+                                                time.sleep(1.0)
+                                                updated_info = self.identifier.identify_pagination(pagination_element)
+                                                current_size = updated_info.get('page_size')
+                                                if current_size == page_size:
+                                                    print(f"Successfully changed page size to {page_size} (after retry)")
+                                                    return True
+                                                else:
+                                                    print(f"Page size changed but verification failed: expected {page_size}, got {current_size}")
+                                        else:
+                                            # If we can't verify, assume success after click
+                                            print(f"Successfully changed page size to {page_size} (verification skipped)")
+                                            return True
+                                    except Exception as e:
+                                        # If we can't verify, assume success after successful click
+                                        print(f"Successfully changed page size to {page_size} (verification error: {str(e)})")
                                         return True
-                                except:
-                                    # If we can't verify, assume success
-                                    print(f"Successfully changed page size to {page_size}")
-                                    return True
+                                break  # Exit loop after clicking
                     except Exception as e:
                         print(f"  Error checking option: {str(e)}")
                         continue
@@ -529,7 +552,7 @@ class PaginationHandler(BasePage):
             return False
     
     def jump_to_page(self, page_number: int, identifier: Optional[str] = None,
-                    identifier_type: str = 'data_attr', timeout: int = 10,
+                    identifier_type: str = 'data_attr_id', timeout: int = 10,
                     use_context: bool = False) -> bool:
         """
         Jump to a specific page using the jump-to input field
@@ -620,7 +643,7 @@ class PaginationHandler(BasePage):
             return False
     
     def get_current_page(self, identifier: Optional[str] = None,
-                        identifier_type: str = 'data_attr', timeout: int = 10,
+                        identifier_type: str = 'data_attr_id', timeout: int = 10,
                         use_context: bool = False) -> Optional[int]:
         """
         Get the current active page number
@@ -645,7 +668,7 @@ class PaginationHandler(BasePage):
             return None
     
     def get_total_pages(self, identifier: Optional[str] = None,
-                       identifier_type: str = 'data_attr', timeout: int = 10,
+                       identifier_type: str = 'data_attr_id', timeout: int = 10,
                        use_context: bool = False) -> Optional[int]:
         """
         Get the total number of pages
@@ -670,7 +693,7 @@ class PaginationHandler(BasePage):
             return None
     
     def get_current_page_size(self, identifier: Optional[str] = None,
-                             identifier_type: str = 'data_attr', timeout: int = 10,
+                             identifier_type: str = 'data_attr_id', timeout: int = 10,
                              use_context: bool = False) -> Optional[int]:
         """
         Get the current page size (items per page)
@@ -695,7 +718,7 @@ class PaginationHandler(BasePage):
             return None
     
     def get_available_page_sizes(self, identifier: Optional[str] = None,
-                                identifier_type: str = 'data_attr', timeout: int = 10,
+                                identifier_type: str = 'data_attr_id', timeout: int = 10,
                                 use_context: bool = False) -> List[int]:
         """
         Get list of available page sizes
@@ -720,7 +743,7 @@ class PaginationHandler(BasePage):
             return []
     
     def print_pagination_summary(self, identifier: Optional[str] = None,
-                                 identifier_type: str = 'data_attr', timeout: int = 10,
+                                 identifier_type: str = 'data_attr_id', timeout: int = 10,
                                  use_context: bool = False) -> None:
         """
         Print a readable summary of pagination state
@@ -794,7 +817,7 @@ class PaginationHandler(BasePage):
                     if identifier_type == 'position':
                         position = int(identifier) if identifier and identifier.isdigit() else 1
                         fresh_element = self.locator.find_pagination_by_position(position, timeout)
-                    elif identifier_type == 'data_attr' and identifier:
+                    elif identifier_type == 'data_attr_id' and identifier:
                         fresh_element = self.locator.find_pagination_by_data_attr(identifier, timeout)
                     else:
                         # Try to get from metadata
@@ -816,7 +839,7 @@ class PaginationHandler(BasePage):
         
         # Try to find by identifier
         if identifier:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 return self.locator.find_pagination_by_data_attr(identifier, timeout)
             elif identifier_type == 'position':
                 position = int(identifier) if identifier.isdigit() else 1

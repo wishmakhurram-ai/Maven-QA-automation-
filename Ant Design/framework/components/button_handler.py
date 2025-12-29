@@ -35,14 +35,14 @@ class ButtonHandler(BasePage):
         self.identifier = ButtonIdentifier()
         self.context = context
     
-    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr', 
+    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr_id', 
                           timeout: int = 10, context_key: Optional[str] = None) -> bool:
         """
         Identify a button and store it in context
         
         Args:
             identifier: Value to identify the button (data-attr-id, text, or type)
-            identifier_type: Type of identifier ('data_attr', 'text', 'type', 'auto')
+            identifier_type: Type of identifier ('data_attr_id', 'text', 'type', 'auto')
             timeout: Maximum wait time in seconds
             context_key: Optional key to use in context (defaults to identifier or data-attr-id)
             
@@ -56,7 +56,7 @@ class ButtonHandler(BasePage):
         element = None
         
         try:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_button_by_data_attr(identifier, timeout, self.context)
             elif identifier_type == 'text':
                 element = self.locator.find_button_by_text(identifier, exact_match=False, timeout=timeout, context=self.context)
@@ -65,10 +65,52 @@ class ButtonHandler(BasePage):
                 if buttons:
                     element = buttons[0]
             elif identifier_type == 'auto':
-                # Try multiple methods in order
-                element = self.locator.find_button_by_data_attr(identifier, timeout=5, context=self.context)
+                # PRIORITY ORDER: pattern discovery -> data-attr-id -> text -> type
+                # Use pattern discovery to automatically find matching data-attr-id
+                try:
+                    from framework.utils.pattern_discovery import PatternDiscovery
+                    pattern_discovery = PatternDiscovery(self.driver)
+                    
+                    # Normalize identifier for pattern matching
+                    normalized_id = identifier.lower().replace(' ', '-').replace('_', '-')
+                    
+                    # Try to find matching data-attr-id using pattern discovery
+                    matching_attr_id = pattern_discovery.find_matching_data_attr_id(normalized_id, 'button')
+                    if matching_attr_id:
+                        element = self.locator.find_button_by_data_attr(matching_attr_id, timeout=1, context=self.context)
+                        if element:
+                            try:
+                                from conftest import _current_step_name
+                                step_name = _current_step_name or "Unknown Step"
+                                print(f"   >> STEP: {step_name[:45]:<45} | data-attr-id: '{matching_attr_id}'")
+                            except:
+                                print(f"   >> STEP: {'Unknown':<45} | data-attr-id: '{matching_attr_id}'")
+                    
+                    # If not found, generate candidates based on discovered pattern
+                    if not element:
+                        candidates = pattern_discovery.generate_candidates(normalized_id, 'button')
+                        for candidate in candidates[:2]:  # Limit to 2 candidates for speed
+                            element = self.locator.find_button_by_data_attr(candidate, timeout=1, context=self.context)
+                            if element:
+                                try:
+                                    from conftest import _current_step_name
+                                    step_name = _current_step_name or "Unknown Step"
+                                    print(f"   >> STEP: {step_name[:45]:<45} | data-attr-id: '{candidate}'")
+                                except:
+                                    print(f"   >> STEP: {'Unknown':<45} | data-attr-id: '{candidate}'")
+                                break
+                except Exception as e:
+                    print(f"   >> Pattern discovery failed: {str(e)}")
+                
+                # Fallback to direct data-attr-id search
+                if not element:
+                    element = self.locator.find_button_by_data_attr(identifier, timeout=3, context=self.context)
+                
+                # Fallback to text search (which also uses pattern discovery)
                 if not element:
                     element = self.locator.find_button_by_text(identifier, exact_match=False, timeout=5, context=self.context)
+                
+                # Fallback to type search
                 if not element:
                     buttons = self.locator.find_button_by_type(identifier, timeout=5, context=self.context)
                     if buttons:
@@ -227,7 +269,7 @@ class ButtonHandler(BasePage):
             
             return False
     
-    def click_button(self, identifier: str, identifier_type: str = 'data_attr', timeout: int = 10, 
+    def click_button(self, identifier: str, identifier_type: str = 'data_attr_id', timeout: int = 10, 
                      use_context: bool = False) -> bool:
         """
         Generic method to click a button using various identification methods
@@ -235,7 +277,7 @@ class ButtonHandler(BasePage):
         
         Args:
             identifier: Value to identify the button (data-attr-id, text, or type)
-            identifier_type: Type of identifier ('data_attr', 'text', 'type', 'auto')
+            identifier_type: Type of identifier ('data_attr_id', 'text', 'type', 'auto')
             timeout: Maximum wait time in seconds
             use_context: If True, tries to use context first, then falls back to locating
             
@@ -254,7 +296,7 @@ class ButtonHandler(BasePage):
             # Pass context to locator methods so they can store elements
             context_to_use = self.context if use_context else None
             
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_button_by_data_attr(identifier, timeout, context_to_use)
             elif identifier_type == 'text':
                 element = self.locator.find_button_by_text(identifier, exact_match=False, timeout=timeout, context=context_to_use)
@@ -263,12 +305,73 @@ class ButtonHandler(BasePage):
                 if buttons:
                     element = buttons[0]  # Click first button of this type
             elif identifier_type == 'auto':
-                # Try multiple methods in order
-                element = self.locator.find_button_by_data_attr(identifier, timeout=5, context=context_to_use)
+                # PRIORITY ORDER: pattern discovery -> text search (with button text matching) -> data-attr-id -> type
+                # Use pattern discovery to automatically find matching data-attr-id
+                try:
+                    # Try to use shared PatternDiscovery from context if available
+                    pattern_discovery = None
+                    if self.context and hasattr(self.context, 'pattern_discovery'):
+                        pattern_discovery = self.context.pattern_discovery
+                    else:
+                        from framework.utils.pattern_discovery import PatternDiscovery
+                        pattern_discovery = PatternDiscovery(self.driver)
+                    
+                    # Normalize identifier for pattern matching
+                    normalized_id = identifier.lower().replace(' ', '-').replace('_', '-')
+                    
+                    # Try to find matching data-attr-id using pattern discovery
+                    matching_attr_id = pattern_discovery.find_matching_data_attr_id(normalized_id, 'button')
+                    if matching_attr_id:
+                        element = self.locator.find_button_by_data_attr(matching_attr_id, timeout=2, context=context_to_use)
+                        if element:
+                            print(f"   >> Found button using pattern discovery: {matching_attr_id}")
+                    
+                    # If not found, generate candidates based on discovered pattern
+                    if not element:
+                        candidates = pattern_discovery.generate_candidates(normalized_id, 'button')
+                        for candidate in candidates[:3]:  # Limit to first 3 candidates for speed
+                            element = self.locator.find_button_by_data_attr(candidate, timeout=1, context=context_to_use)
+                            if element:
+                                print(f"   >> Found button using pattern candidate: {candidate}")
+                                break
+                    
+                    # If pattern discovery didn't find it, try to match by button text
+                    # This is important for buttons where data-attr-id might not match the button text
+                    if not element:
+                        # Discover all buttons and check their text content
+                        all_patterns = pattern_discovery.discover_all_data_attr_ids()
+                        button_patterns = all_patterns.get('button', [])
+                        normalized_text = identifier.lower().strip()
+                        
+                        for button_attr_id in button_patterns[:5]:  # Limit to first 5 buttons for speed
+                            try:
+                                # Find button by data-attr-id
+                                candidate_button = self.locator.find_button_by_data_attr(button_attr_id, timeout=1, context=None)
+                                if candidate_button:
+                                    # Check if button text matches
+                                    button_text = candidate_button.text.strip().lower()
+                                    if normalized_text in button_text or button_text in normalized_text:
+                                        element = candidate_button
+                                        if context_to_use:
+                                            self.locator.find_button_by_data_attr(button_attr_id, timeout=1, context=context_to_use)
+                                        print(f"   >> Found button by text match: {button_attr_id} (text: '{candidate_button.text}')")
+                                        break
+                            except:
+                                continue
+                except Exception as e:
+                    print(f"   >> Pattern discovery failed: {str(e)}")
+                
+                # Fallback to text search (which also uses pattern discovery)
                 if not element:
-                    element = self.locator.find_button_by_text(identifier, exact_match=False, timeout=5, context=context_to_use)
+                    element = self.locator.find_button_by_text(identifier, exact_match=False, timeout=2, context=context_to_use)
+                
+                # Fallback to direct data-attr-id search
                 if not element:
-                    buttons = self.locator.find_button_by_type(identifier, timeout=5, context=context_to_use)
+                    element = self.locator.find_button_by_data_attr(identifier, timeout=2, context=context_to_use)
+                
+                # Fallback to type search
+                if not element:
+                    buttons = self.locator.find_button_by_type(identifier, timeout=2, context=context_to_use)
                     if buttons:
                         element = buttons[0]
             
@@ -330,20 +433,20 @@ class ButtonHandler(BasePage):
         except TimeoutException:
             print("Button loading state did not complete within timeout")
     
-    def get_button_info(self, identifier: str, identifier_type: str = 'data_attr') -> Optional[Dict]:
+    def get_button_info(self, identifier: str, identifier_type: str = 'data_attr_id') -> Optional[Dict]:
         """
         Get information about a button without clicking it
         
         Args:
             identifier: Value to identify the button
-            identifier_type: Type of identifier ('data_attr', 'text', 'type')
+            identifier_type: Type of identifier ('data_attr_id', 'text', 'type', 'auto')
             
         Returns:
             Dictionary with button information or None if not found
         """
         element = None
         
-        if identifier_type == 'data_attr':
+        if identifier_type == 'data_attr_id':
             element = self.locator.find_button_by_data_attr(identifier)
         elif identifier_type == 'text':
             element = self.locator.find_button_by_text(identifier)
@@ -351,6 +454,27 @@ class ButtonHandler(BasePage):
             buttons = self.locator.find_button_by_type(identifier)
             if buttons:
                 element = buttons[0]
+        elif identifier_type == 'auto':
+            # Try pattern discovery first
+            try:
+                from framework.utils.pattern_discovery import PatternDiscovery
+                pattern_discovery = PatternDiscovery(self.driver)
+                normalized_id = identifier.lower().replace(' ', '-').replace('_', '-')
+                matching_attr_id = pattern_discovery.find_matching_data_attr_id(normalized_id, 'button')
+                if matching_attr_id:
+                    element = self.locator.find_button_by_data_attr(matching_attr_id)
+                if not element:
+                    candidates = pattern_discovery.generate_candidates(normalized_id, 'button')
+                    for candidate in candidates:
+                        element = self.locator.find_button_by_data_attr(candidate)
+                        if element:
+                            break
+            except:
+                pass
+            
+            # Fallback to text search (which also uses pattern discovery)
+            if not element:
+                element = self.locator.find_button_by_text(identifier)
         
         if element:
             return self.identifier.identify_button_type(element)

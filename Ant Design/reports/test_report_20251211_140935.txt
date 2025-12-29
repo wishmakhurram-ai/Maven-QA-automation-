@@ -1,0 +1,121 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-11 14:06:38
+End Time: 2025-12-11 14:09:35
+Duration: 0:02:56.703768
+
+TOTAL TESTS: 5
+PASSED: 2
+FAILED: 3
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 40.08s
+
+2. test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 49.23s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_login_page_displays_email_and_password_fields
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 17.04s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "the password field is visible". Line 25 in scenario "Login page displays Email and Password fields" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+2. test_forgot_password_link_redirects_to_password_reset_flow
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 4.96s
+   Error:
+fixturefunc = <function step_click_menu at 0x000001A8CECD6340>
+request = <FixtureRequest for <Function test_forgot_password_link_redirects_to_password_reset_flow>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A8CEDF7680>, 'menu_text': 'on the "Forgot Password?" link'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A8CEDF7680>
+menu_text = 'on the "Forgot Password?" link'
+
+    @when(parsers.parse('I click {menu_text}'))
+    @then(parsers.parse('I click {menu_text}'))
+    def step_click_menu(context, menu_text):
+        """
+        Click a menu item by text
+        This step should NOT match button steps - button steps are more specific
+        """
+        # Check if this looks like a button step (contains "button")
+        # Button steps use: "I click the "{button_text}" button"
+        # Menu steps use: "I click {menu_text}" where menu_text is just the menu name
+        menu_text_clean = menu_text.strip().lower()
+    
+        # If it contains "button", it's definitely a button step - use button handler instead
+        if 'button' in menu_text_clean:
+            # Extract the actual button text
+            # Handle cases like: 'the "Log In" button' -> 'Log In'
+            actual_text = menu_text.replace('button', '').replace('the ', '').strip()
+            # Remove quotes from both ends
+            actual_text = actual_text.strip('"').strip("'").strip()
+            print(f"   >> Step 'I click {menu_text}' matched menu step but contains 'button'.")
+            print(f"   >> Using button handler instead for: '{actual_text}'")
+    
+            # Use button handler instead
+            context.button_clicked = context.button_handler.click_button(
+                actual_text,
+                identifier_type='auto'
+            )
+            if not context.button_clicked:
+                context.button_clicked = context.button_handler.click_button(
+                    actual_text,
+                    identifier_type='text'
+                )
+            assert context.button_clicked, f"Failed to click button '{actual_text}'"
+            print(f"   >> Button clicked successfully via button handler")
+            return
+    
+        print(f"   >> Clicking menu item: '{menu_text}'")
+        success = context.menu_handler.click_menu_item(menu_text, timeout=15)
+>       assert success, f"Failed to click menu item '{menu_text}'"
+E       AssertionError: Failed to click menu item 'on the "Forgot Password?" link'
+
+steps\menu_steps.py:80: AssertionError
+
+3. test_system_verifies_admin_credentials_against_mavenai_user_database
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 62.76s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "It should not log in". Line 43 in scenario "System verifies admin credentials against MavenAI user database" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

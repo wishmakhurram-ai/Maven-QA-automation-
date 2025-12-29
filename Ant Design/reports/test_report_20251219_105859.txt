@@ -1,0 +1,96 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-19 10:58:59
+End Time: 2025-12-19 10:58:59
+Duration: 0:00:00.131003
+
+TOTAL TESTS: 10
+PASSED: 0
+FAILED: 10
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_detect_and_summarize_all_switches_on_the_page
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.01s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Detect and summarize all switches on the page" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+2. test_toggle_switch_by_semantic_label
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Toggle switch by semantic label" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+3. test_toggle_switch_by_dataattrid
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Toggle switch by data-attr-id" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+4. test_toggle_switch_by_position
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Toggle switch by position" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+5. test_toggle_first_switch
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Toggle first switch" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+6. test_verify_switch_state_assertions
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Verify switch state assertions" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+7. test_verify_disabled_switch_cannot_be_toggled
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Verify disabled switch cannot be toggled" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+8. test_verify_switch_size
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Verify switch size" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+9. test_verify_switch_loading_state
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Verify switch loading state" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+10. test_multiple_switches_on_page
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.00s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I am on a page with Ant Design Switch components". Line 7 in scenario "Multiple switches on page" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\switch_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

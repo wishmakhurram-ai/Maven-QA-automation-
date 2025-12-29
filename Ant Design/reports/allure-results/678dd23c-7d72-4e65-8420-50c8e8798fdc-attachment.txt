@@ -1,0 +1,65 @@
+
+================================================================================
+TEST CASE: Admin can access Firms section and view firms list
+FEATURE FILE: maven_automation.feature (Line 7)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> ADMIN scenario detected: test_admin_can_access_firms_section_and_view_firms_list
+   >> Checking login status and logging in if needed...
+   >> Already logged in, reusing session
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/firms
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Admin can access Firms section and view firms list
+FEATURE FILE: maven_automation.feature (Line 46)
+STEP: I am on the Admin Panel dashboard
+================================================================================
+   >> Already on dashboard, verifying login state...
+   >> Already logged in and on dashboard
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   ✓ Step completed: I am on the Admin Panel dashboard
+
+================================================================================
+TEST CASE: Admin can access Firms section and view firms list
+FEATURE FILE: maven_automation.feature (Line 47)
+STEP: I click on the "Firms" section in the navigation
+================================================================================
+   >> Clicking on navigation section: 'Firms' (using menu handler with pattern discovery)
+   >> Stored element in context with key: 'Firms'
+      Element type: menu_item, Application type: menu-item, Data-attr-id: None
+Clicked menu item 'Firms'
+   >> ✓ Navigation section clicked using menu handler (pattern discovery)
+   >> Navigation section clicked successfully
+   ✓ Step completed: I click on the "Firms" section in the navigation
+
+================================================================================
+TEST CASE: Admin can access Firms section and view firms list
+FEATURE FILE: maven_automation.feature (Line 48)
+STEP: I should be redirected to the Firms list page
+================================================================================
+   >> Verifying redirect to Firms list page
+   >> Redirected to Firms list page (URL: https://dev-admin.maventech.ai/firms)
+   ✓ Step completed: I should be redirected to the Firms list page
+
+================================================================================
+TEST CASE: Admin can access Firms section and view firms list
+FEATURE FILE: maven_automation.feature (Line 49)
+STEP: if firms exist, I should see a list of all existing firms
+================================================================================
+   >> Checking if firms list is displayed
+   >> Firms list is displayed (18 items found)
+   ✓ Step completed: if firms exist, I should see a list of all existing firms
+
+================================================================================
+TEST CASE: Admin can access Firms section and view firms list
+FEATURE FILE: maven_automation.feature (Line 50)
+STEP: if no firms exist, I should see an empty state message
+================================================================================
+   >> Checking for empty state message
+   >> Empty state message is displayed
+   ✓ Step completed: if no firms exist, I should see an empty state message

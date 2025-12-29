@@ -1,0 +1,181 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-15 15:47:58
+End Time: 2025-12-15 15:49:17
+Duration: 0:01:19.139908
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_firms_list_displays_all_required_columns
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 76.37s
+   Error:
+fixturefunc = <function step_see_table_with_columns at 0x000001440AF84180>
+request = <FixtureRequest for <Function test_firms_list_displays_all_required_columns>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001440B0518E0>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000001440B0518E0>
+
+    @then('I should see a table with the following columns:')
+    def step_see_table_with_columns(context):
+        """
+        Verify table has specified columns from Gherkin table parameter
+        Generic step that works with any table - uses table framework to identify columns
+    
+        Args:
+            context: Context fixture from conftest.py
+            scenario: pytest-bdd scenario fixture that contains the table data
+        """
+        print(f"   >> Verifying table columns...")
+    
+        # Get expected column names from Gherkin table
+        expected_columns = []
+    
+        # Try to access pytest-bdd's internal 'table' object via frame locals
+        # This is how we can read the scenario table without needing a 'table' fixture.
+        import inspect
+        try:
+            frame = inspect.currentframe()
+            caller = frame.f_back if frame else None
+            if caller and 'table' in caller.f_locals:
+                gherkin_table = caller.f_locals['table']
+                if gherkin_table:
+                    for row in gherkin_table:
+                        if isinstance(row, dict):
+                            if 'Column Name' in row:
+                                value = row['Column Name']
+                            elif row:
+                                value = list(row.values())[0]
+                            else:
+                                value = None
+                        else:
+                            value = str(row)
+    
+                        if value:
+                            expected_columns.append(str(value).strip())
+        finally:
+            # Avoid reference cycles
+            try:
+                del frame
+                del caller
+            except Exception:
+                pass
+    
+        if not expected_columns:
+            # Fallback for frameworks where we can't introspect the Gherkin table easily.
+            # Use the generic firm columns defined in maven_automation.feature.
+            fallback_columns = ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+            print("   >> WARNING: No table data found via introspection, using fallback expected columns")
+            expected_columns = fallback_columns
+    
+        print(f"   >> Expected columns from feature file (or fallback): {expected_columns}")
+    
+        if not expected_columns:
+            raise AssertionError("No expected columns found in feature file table")
+    
+        # Ensure a table is identified first
+        # If no table is in context, identify the first table
+        try:
+            summary = context.table_handler.get_table_summary()
+            if not summary:
+                print("   >> No table in context, identifying first table...")
+                context.table_handler.identify_and_store("0", identifier_type='index')
+                summary = context.table_handler.get_table_summary()
+        except:
+            print("   >> No table in context, identifying first table...")
+            context.table_handler.identify_and_store("0", identifier_type='index')
+            summary = context.table_handler.get_table_summary()
+    
+        if not summary:
+            raise AssertionError("No table found on the page. Make sure you are on a page with a table.")
+    
+        actual_headers = summary.get('headers', [])
+        # Clean headers (remove empty strings and whitespace)
+        actual_headers = [h.strip() for h in actual_headers if h and h.strip()]
+    
+        # Fallback: if table framework couldn't detect headers, inspect DOM directly
+        if not actual_headers:
+            print("   >> WARNING: Table framework did not find headers, falling back to direct DOM header detection")
+            try:
+                header_elements = context.driver.find_elements(
+                    By.XPATH,
+                    "//table//th | //table//thead//td | //*[@role='columnheader']"
+                )
+                dom_headers = [el.text.strip() for el in header_elements if el.text and el.text.strip()]
+                if dom_headers:
+                    actual_headers = dom_headers
+                    print(f"   >> Headers from DOM fallback: {actual_headers}")
+            except Exception as e:
+                print(f"   >> Error during DOM header fallback: {str(e)}")
+    
+        # Get table title if available
+        table_title = summary.get('title')
+        if table_title:
+            print(f"   >> Table: '{table_title}'")
+    
+        print(f"   >> Actual table columns: {actual_headers}")
+    
+        # Verify all expected columns are present
+        missing_columns = []
+        for expected_col in expected_columns:
+            # Try exact match first
+            found = False
+            for actual_col in actual_headers:
+                if expected_col.strip().lower() == actual_col.strip().lower():
+                    found = True
+                    print(f"   >> ✓ Found column: '{expected_col}'")
+                    break
+    
+            # Try partial match if exact match fails
+            if not found:
+                for actual_col in actual_headers:
+                    if expected_col.strip().lower() in actual_col.strip().lower() or actual_col.strip().lower() in expected_col.strip().lower():
+                        found = True
+                        print(f"   >> ✓ Found column (partial match): '{expected_col}' (matches '{actual_col}')")
+                        break
+    
+            if not found:
+                missing_columns.append(expected_col)
+                print(f"   >> ✗ Missing column: '{expected_col}'")
+    
+        if missing_columns:
+>           raise AssertionError(
+                f"Table is missing the following columns: {missing_columns}\n"
+                f"Expected: {expected_columns}\n"
+                f"Actual: {actual_headers}"
+            )
+E           AssertionError: Table is missing the following columns: ['Website', 'Date Created', 'Action']
+E           Expected: ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+E           Actual: ['Firm Name', 'Status', 'Email', 'Phone']
+
+steps\table_steps.py:312: AssertionError
+

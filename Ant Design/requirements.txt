@@ -1,4 +1,6 @@
 selenium>=4.15.0
 pytest>=7.4.0
 pytest-bdd>=7.1.0
+allure-pytest>=2.13.2
+allure-python-commons>=2.13.2
 

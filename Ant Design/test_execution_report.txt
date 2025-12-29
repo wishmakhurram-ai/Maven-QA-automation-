@@ -1,0 +1,158 @@
+================================================================================
+                          FINAL TEST EXECUTION REPORT                           
+================================================================================
+
+Session Start: 2025-12-09 15:15:20
+Session End: 2025-12-09 15:17:39
+Duration: 0:02:19.650898
+
+Total Tests: 1
+Passed: 0
+Failed: 1
+Skipped: 0
+
+
+================================================================================
+FAILED TESTS (1):
+================================================================================
+1. ✗ test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page
+   Duration: 137.06s
+   Node ID: tests/test_maven_automation.py::test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page
+   Error: context = <conftest.context.<locals>.Context object at 0x0000025B90C13800>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Uses WebDriverWait to properly wait for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 8)  # Reduced from 15 to 8 seconds
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                return ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url) and 'login' not in current_url
+    
+>           wait.until(url_contains_dashboard_or_admin)
+
+steps\maven_steps.py:1060: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selenium.webdriver.support.wait.WebDriverWait (session="4d13e49749f32c563d96364449affb4f")>
+method = <function step_redirected_to_dashboard.<locals>.url_contains_dashboard_or_admin at 0x0000025B90C2E980>, message = ''
+
+    def until(self, method: Callable[[WebDriver], Union[Literal[False], T]], message: str = "") -> T:
+        """Calls the method provided with the driver as an argument until the \
+        return value does not evaluate to ``False``.
+    
+        :param method: callable(WebDriver)
+        :param message: optional message for :exc:`TimeoutException`
+        :returns: the result of the last call to `method`
+        :raises: :exc:`selenium.common.exceptions.TimeoutException` if timeout occurs
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            time.sleep(self._poll)
+            if time.monotonic() > end_time:
+                break
+>       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message:
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\support\wait.py:101: TimeoutException
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_redirected_to_dashboard at 0x0000025B909CA700>
+request = <FixtureRequest for <Function test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x0000025B90C13800>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x0000025B90C13800>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Uses WebDriverWait to properly wait for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 8)  # Reduced from 15 to 8 seconds
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                return ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url) and 'login' not in current_url
+    
+            wait.until(url_contains_dashboard_or_admin)
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Current URL after redirect: {current_url}")
+    
+            # Verify we're not on login page
+            assert 'login' not in current_url or ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url), \
+                f"Still on login page or not redirected. Current URL: {current_url}"
+    
+            print(f"   >> Redirected to Admin Dashboard Home")
+        except Exception as e:
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Error waiting for redirect: {str(e)}")
+            print(f"   >> Current URL: {current_url}")
+            # Fallback to simple check
+>           assert ('dashboard' in current_url or 'admin' in current_url or ('firms' in current_url and 'login' not in current_url)), \
+                f"Not redirected to Admin Dashboard. Current URL: {current_url}"
+E           AssertionError: Not redirected to Admin Dashboard. Current URL: https://dev-app.maventech.ai/login
+
+steps\maven_steps.py:1078: AssertionError
+

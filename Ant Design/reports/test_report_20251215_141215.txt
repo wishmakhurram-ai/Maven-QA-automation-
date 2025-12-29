@@ -1,0 +1,96 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-15 14:11:29
+End Time: 2025-12-15 14:12:15
+Duration: 0:00:46.620832
+
+TOTAL TESTS: 10
+PASSED: 0
+FAILED: 10
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_detect_and_display_table_summary
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 8.13s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 11 in scenario "Detect and display table summary" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+2. test_read_table_columns
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 4.08s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 16 in scenario "Read table columns" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+3. test_read_specific_cell_value
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 3.83s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 28 in scenario "Read specific cell value" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+4. test_find_row_by_column_value
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 3.30s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 34 in scenario "Find row by column value" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+5. test_sort_table_by_column
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 6.15s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 40 in scenario "Sort table by column" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+6. test_navigate_table_pagination
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 3.74s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 46 in scenario "Navigate table pagination" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+7. test_select_table_rows
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 4.57s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 54 in scenario "Select table rows" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+8. test_expand_table_row
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 2.54s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 62 in scenario "Expand table row" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+9. test_click_button_in_table_cell
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 2.42s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I should see a table". Line 68 in scenario "Click button in table cell" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+10. test_test_firms_table_from_maven_admin_portal
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 5.46s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "I should see a table". Line 75 in scenario "Test firms table from Maven Admin Portal" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\table_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

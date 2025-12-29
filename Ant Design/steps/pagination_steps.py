@@ -41,7 +41,7 @@ def step_identify_pagination_by_data_attr(context, data_attr_id):
     print(f"   >> Identifying pagination with data-atr-id: '{data_attr_id}'...")
     success = context.pagination_handler.identify_and_store(
         data_attr_id,
-        identifier_type='data_attr'
+        identifier_type='data_attr_id'
     )
     assert success, f"Failed to identify pagination with data-atr-id '{data_attr_id}'"
     print(f"   >> Pagination identified and stored in context")

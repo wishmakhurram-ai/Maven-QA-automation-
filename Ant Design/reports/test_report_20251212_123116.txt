@@ -1,0 +1,550 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-12 12:23:51
+End Time: 2025-12-12 12:31:16
+Duration: 0:07:24.283328
+
+TOTAL TESTS: 7
+PASSED: 0
+FAILED: 7
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 289.37s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:198: in _new_conn
+    sock = connection.create_connection(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:85: in create_connection
+    raise err
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:73: in create_connection
+    sock.connect(sa)
+E   ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:787: in urlopen
+    response = self._make_request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:493: in _make_request
+    conn.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:494: in request
+    self.endheaders()
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1333: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1093: in _send_output
+    self.send(msg)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1037: in send
+    self.connect()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:325: in connect
+    self.sock = self._new_conn()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:213: in _new_conn
+    raise NewConnectionError(
+E   urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002069E83FCB0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+steps\maven_steps.py:643: in step_see_email_input
+    context.driver.current_url
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:437: in current_url
+    return self.execute(Command.GET_CURRENT_URL)["value"]
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:345: in execute
+    response = self.command_executor.execute(driver_command, params)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:300: in execute
+    return self._request(command_info[0], url, body=data)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:321: in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:135: in request
+    return self.request_encode_url(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:182: in request_encode_url
+    return self.urlopen(method, url, **extra_kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\poolmanager.py:459: in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:841: in urlopen
+    retries = retries.increment(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\retry.py:519: in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+E   urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069E83FCB0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+During handling of the above exception, another exception occurred:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: in call_fixture_func
+    fixture_result = fixturefunc(**kwargs)
+steps\maven_steps.py:645: in step_see_email_input
+    assert False, f"Browser session lost: {str(browser_error)}"
+E   AssertionError: Browser session lost: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069E83FCB0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+2. test_login_page_displays_email_and_password_fields
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 32.69s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:198: in _new_conn
+    sock = connection.create_connection(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:85: in create_connection
+    raise err
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:73: in create_connection
+    sock.connect(sa)
+E   ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:787: in urlopen
+    response = self._make_request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:493: in _make_request
+    conn.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:494: in request
+    self.endheaders()
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1333: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1093: in _send_output
+    self.send(msg)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1037: in send
+    self.connect()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:325: in connect
+    self.sock = self._new_conn()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:213: in _new_conn
+    raise NewConnectionError(
+E   urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002069EC2FF20>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: in call_fixture_func
+    fixture_result = fixturefunc(**kwargs)
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:356: in get
+    self.execute(Command.GET, {"url": url})
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:345: in execute
+    response = self.command_executor.execute(driver_command, params)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:300: in execute
+    return self._request(command_info[0], url, body=data)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:321: in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:143: in request
+    return self.request_encode_body(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:278: in request_encode_body
+    return self.urlopen(method, url, **extra_kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\poolmanager.py:459: in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:841: in urlopen
+    retries = retries.increment(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\retry.py:519: in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+E   urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069EC2FF20>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 32.63s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:198: in _new_conn
+    sock = connection.create_connection(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:85: in create_connection
+    raise err
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:73: in create_connection
+    sock.connect(sa)
+E   ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:787: in urlopen
+    response = self._make_request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:493: in _make_request
+    conn.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:494: in request
+    self.endheaders()
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1333: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1093: in _send_output
+    self.send(msg)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1037: in send
+    self.connect()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:325: in connect
+    self.sock = self._new_conn()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:213: in _new_conn
+    raise NewConnectionError(
+E   urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002069ED38380>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: in call_fixture_func
+    fixture_result = fixturefunc(**kwargs)
+steps\maven_steps.py:172: in step_navigate_to_admin_portal_login
+    context.driver.get(login_url)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:356: in get
+    self.execute(Command.GET, {"url": url})
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:345: in execute
+    response = self.command_executor.execute(driver_command, params)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:300: in execute
+    return self._request(command_info[0], url, body=data)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:321: in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:143: in request
+    return self.request_encode_body(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:278: in request_encode_body
+    return self.urlopen(method, url, **extra_kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\poolmanager.py:459: in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:841: in urlopen
+    retries = retries.increment(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\retry.py:519: in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+E   urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069ED38380>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+4. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 16.38s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:198: in _new_conn
+    sock = connection.create_connection(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:85: in create_connection
+    raise err
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:73: in create_connection
+    sock.connect(sa)
+E   ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:787: in urlopen
+    response = self._make_request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:493: in _make_request
+    conn.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:494: in request
+    self.endheaders()
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1333: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1093: in _send_output
+    self.send(msg)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1037: in send
+    self.connect()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:325: in connect
+    self.sock = self._new_conn()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:213: in _new_conn
+    raise NewConnectionError(
+E   urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002069ECFF110>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:585: in getfixturevalue
+    fixturedef = self._get_active_fixturedef(argname)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:607: in _get_active_fixturedef
+    self._compute_fixture_value(fixturedef)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:693: in _compute_fixture_value
+    fixturedef.execute(request=subrequest)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1069: in execute
+    result = ihook.pytest_fixture_setup(fixturedef=self, request=request)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1123: in pytest_fixture_setup
+    result = call_fixture_func(fixturefunc, request, kwargs)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:895: in call_fixture_func
+    fixture_result = next(generator)
+conftest.py:218: in context
+    current_url = driver.current_url.lower()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:437: in current_url
+    return self.execute(Command.GET_CURRENT_URL)["value"]
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:345: in execute
+    response = self.command_executor.execute(driver_command, params)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:300: in execute
+    return self._request(command_info[0], url, body=data)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:321: in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:135: in request
+    return self.request_encode_url(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:182: in request_encode_url
+    return self.urlopen(method, url, **extra_kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\poolmanager.py:459: in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:841: in urlopen
+    retries = retries.increment(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\retry.py:519: in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+E   urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069ECFF110>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+5. test_admin_can_access_firms_section_and_view_firms_list
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 16.40s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:198: in _new_conn
+    sock = connection.create_connection(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:85: in create_connection
+    raise err
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:73: in create_connection
+    sock.connect(sa)
+E   ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:787: in urlopen
+    response = self._make_request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:493: in _make_request
+    conn.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:494: in request
+    self.endheaders()
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1333: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1093: in _send_output
+    self.send(msg)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1037: in send
+    self.connect()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:325: in connect
+    self.sock = self._new_conn()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:213: in _new_conn
+    raise NewConnectionError(
+E   urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002069ECF81D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:585: in getfixturevalue
+    fixturedef = self._get_active_fixturedef(argname)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:607: in _get_active_fixturedef
+    self._compute_fixture_value(fixturedef)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:693: in _compute_fixture_value
+    fixturedef.execute(request=subrequest)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1069: in execute
+    result = ihook.pytest_fixture_setup(fixturedef=self, request=request)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1123: in pytest_fixture_setup
+    result = call_fixture_func(fixturefunc, request, kwargs)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:895: in call_fixture_func
+    fixture_result = next(generator)
+conftest.py:218: in context
+    current_url = driver.current_url.lower()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:437: in current_url
+    return self.execute(Command.GET_CURRENT_URL)["value"]
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:345: in execute
+    response = self.command_executor.execute(driver_command, params)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:300: in execute
+    return self._request(command_info[0], url, body=data)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:321: in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:135: in request
+    return self.request_encode_url(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:182: in request_encode_url
+    return self.urlopen(method, url, **extra_kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\poolmanager.py:459: in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:841: in urlopen
+    retries = retries.increment(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\retry.py:519: in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+E   urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069ECF81D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+6. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 16.36s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:198: in _new_conn
+    sock = connection.create_connection(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:85: in create_connection
+    raise err
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:73: in create_connection
+    sock.connect(sa)
+E   ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:787: in urlopen
+    response = self._make_request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:493: in _make_request
+    conn.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:494: in request
+    self.endheaders()
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1333: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1093: in _send_output
+    self.send(msg)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1037: in send
+    self.connect()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:325: in connect
+    self.sock = self._new_conn()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:213: in _new_conn
+    raise NewConnectionError(
+E   urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002069ECFA8D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:585: in getfixturevalue
+    fixturedef = self._get_active_fixturedef(argname)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:607: in _get_active_fixturedef
+    self._compute_fixture_value(fixturedef)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:693: in _compute_fixture_value
+    fixturedef.execute(request=subrequest)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1069: in execute
+    result = ihook.pytest_fixture_setup(fixturedef=self, request=request)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1123: in pytest_fixture_setup
+    result = call_fixture_func(fixturefunc, request, kwargs)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:895: in call_fixture_func
+    fixture_result = next(generator)
+conftest.py:218: in context
+    current_url = driver.current_url.lower()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:437: in current_url
+    return self.execute(Command.GET_CURRENT_URL)["value"]
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:345: in execute
+    response = self.command_executor.execute(driver_command, params)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:300: in execute
+    return self._request(command_info[0], url, body=data)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:321: in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:135: in request
+    return self.request_encode_url(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:182: in request_encode_url
+    return self.urlopen(method, url, **extra_kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\poolmanager.py:459: in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:841: in urlopen
+    retries = retries.increment(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\retry.py:519: in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+E   urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069ECFA8D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+7. test_firms_list_displays_all_required_columns
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 16.34s
+   Error:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:198: in _new_conn
+    sock = connection.create_connection(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:85: in create_connection
+    raise err
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\connection.py:73: in create_connection
+    sock.connect(sa)
+E   ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:787: in urlopen
+    response = self._make_request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:493: in _make_request
+    conn.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:494: in request
+    self.endheaders()
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1333: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1093: in _send_output
+    self.send(msg)
+..\..\AppData\Local\Programs\Python\Python312\Lib\http\client.py:1037: in send
+    self.connect()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:325: in connect
+    self.sock = self._new_conn()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connection.py:213: in _new_conn
+    raise NewConnectionError(
+E   urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002069ECDA4E0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:585: in getfixturevalue
+    fixturedef = self._get_active_fixturedef(argname)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:607: in _get_active_fixturedef
+    self._compute_fixture_value(fixturedef)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:693: in _compute_fixture_value
+    fixturedef.execute(request=subrequest)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1069: in execute
+    result = ihook.pytest_fixture_setup(fixturedef=self, request=request)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:53: in run_old_style_hookwrapper
+    return result.get_result()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pluggy\_callers.py:38: in run_old_style_hookwrapper
+    res = yield
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:1123: in pytest_fixture_setup
+    result = call_fixture_func(fixturefunc, request, kwargs)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:895: in call_fixture_func
+    fixture_result = next(generator)
+conftest.py:218: in context
+    current_url = driver.current_url.lower()
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:437: in current_url
+    return self.execute(Command.GET_CURRENT_URL)["value"]
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py:345: in execute
+    response = self.command_executor.execute(driver_command, params)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:300: in execute
+    return self._request(command_info[0], url, body=data)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\remote_connection.py:321: in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:135: in request
+    return self.request_encode_url(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\_request_methods.py:182: in request_encode_url
+    return self.urlopen(method, url, **extra_kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\poolmanager.py:459: in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:871: in urlopen
+    return self.urlopen(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\connectionpool.py:841: in urlopen
+    retries = retries.increment(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\urllib3\util\retry.py:519: in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+E   urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=63241): Max retries exceeded with url: /session/605247243e0c9e977788ec8d2848f672/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002069ECDA4E0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+

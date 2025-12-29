@@ -1,0 +1,86 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-19 14:23:34
+End Time: 2025-12-19 14:24:59
+Duration: 0:01:25.226764
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 82.66s
+   Error:
+fixturefunc = <function step_fill_all_mandatory_fields at 0x000001A8256BB740>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A825934590>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000001A825934590>
+
+    @when('I fill in all mandatory fields:')
+    def step_fill_all_mandatory_fields(context):
+        """
+        Fill in all mandatory fields from a Gherkin table
+        Table format: | Field | Value |
+        """
+        print(f"   >> Filling in all mandatory fields...")
+    
+        # Get table data from scenario
+        import inspect
+        table_data = None
+        try:
+            frame = inspect.currentframe()
+            caller = frame.f_back if frame else None
+            if caller and 'table' in caller.f_locals:
+                gherkin_table = caller.f_locals['table']
+                if gherkin_table:
+                    table_data = []
+                    for row in gherkin_table:
+                        if isinstance(row, dict):
+                            field = row.get('Field', '')
+                            value = row.get('Value', '')
+                            if field and value:
+                                table_data.append({'field': field, 'value': value})
+                        elif isinstance(row, list) and len(row) >= 2:
+                            table_data.append({'field': row[0], 'value': row[1]})
+        finally:
+            try:
+                del frame
+                del caller
+            except:
+                pass
+    
+        if not table_data:
+>           raise AssertionError("No table data found. Please provide fields in format: | Field | Value |")
+E           AssertionError: No table data found. Please provide fields in format: | Field | Value |
+
+steps\maven_steps.py:2796: AssertionError
+

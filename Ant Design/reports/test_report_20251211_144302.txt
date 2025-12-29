@@ -1,0 +1,189 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-11 14:39:15
+End Time: 2025-12-11 14:43:02
+Duration: 0:03:47.106582
+
+TOTAL TESTS: 8
+PASSED: 6
+FAILED: 2
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 37.12s
+
+2. test_login_page_displays_email_and_password_fields
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 38.65s
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 34.70s
+
+4. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 4.04s
+
+5. test_admin_can_access_firms_section_and_view_firms_list
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 31.88s
+
+6. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 11.17s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 66.38s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x0000028A2DFAF2F0>
+
+    @then('I should see the Admin Dashboard')
+    @when('I should see the Admin Dashboard')
+    def step_see_admin_dashboard(context):
+        """
+        Verify Admin Dashboard is displayed
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying Admin Dashboard is displayed")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            from selenium.webdriver.common.by import By
+    
+            wait = WebDriverWait(context.driver, 3)  # Optimized for speed
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    
+            # Wait a bit more for dynamic content
+            import time
+            # Removed sleep - use explicit waits
+    
+            # Check if we're on the dashboard/firms/admin page (not login)
+            current_url = context.driver.current_url.lower()
+>           assert 'login' not in current_url, f"Still on login page. Current URL: {current_url}"
+E           AssertionError: Still on login page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:1470: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_see_admin_dashboard at 0x0000028A2DC5B1A0>
+request = <FixtureRequest for <Function test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x0000028A2DFAF2F0>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x0000028A2DFAF2F0>
+
+    @then('I should see the Admin Dashboard')
+    @when('I should see the Admin Dashboard')
+    def step_see_admin_dashboard(context):
+        """
+        Verify Admin Dashboard is displayed
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying Admin Dashboard is displayed")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            from selenium.webdriver.common.by import By
+    
+            wait = WebDriverWait(context.driver, 3)  # Optimized for speed
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    
+            # Wait a bit more for dynamic content
+            import time
+            # Removed sleep - use explicit waits
+    
+            # Check if we're on the dashboard/firms/admin page (not login)
+            current_url = context.driver.current_url.lower()
+            assert 'login' not in current_url, f"Still on login page. Current URL: {current_url}"
+    
+            # Accept dashboard, admin, firms, or any non-login page as valid dashboard
+            is_dashboard = ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or
+                           ('/' in current_url and 'login' not in current_url))
+    
+            assert is_dashboard, f"Not on Admin Dashboard. Current URL: {current_url}"
+    
+            # Try to find dashboard elements (Firms heading, navigation, etc.)
+            try:
+                # Look for common dashboard elements
+                firms_heading = wait.until(EC.presence_of_element_located((By.XPATH, "//h1[contains(text(), 'Firms')] | //h2[contains(text(), 'Firms')] | //*[contains(text(), 'Firms')]")))
+                if firms_heading:
+                    print(f"   >> Found Firms heading on dashboard")
+            except:
+                # Try to find any heading or title
+                try:
+                    page_title = context.driver.title
+                    print(f"   >> Page title: {page_title}")
+                except:
+                    pass
+    
+            print(f"   >> Admin Dashboard is displayed (URL: {current_url})")
+        except Exception as e:
+            print(f"   >> Error verifying dashboard: {str(e)}")
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Current URL: {current_url}")
+            # Basic check - just verify we're not on login and we're on a valid page
+>           assert 'login' not in current_url, f"Still on login page. Current URL: {current_url}"
+E           AssertionError: Still on login page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:1498: AssertionError
+
+2. test_firms_list_displays_all_required_columns
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.59s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "I should see a table with the following columns:
+    | Column Name |
+    | Firm Name |
+    | Status |
+    | Email |
+    | Phone |
+    | Website |
+    | Date Created |
+    | Actions |". Line 77 in scenario "Firms list displays all required columns" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

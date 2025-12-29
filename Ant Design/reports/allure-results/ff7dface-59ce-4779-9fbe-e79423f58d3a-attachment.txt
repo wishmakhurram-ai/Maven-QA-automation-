@@ -1,0 +1,83 @@
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 7)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> ADMIN scenario detected: test_admin_can_access_users_section_and_view_users_list_readonly
+   >> Checking login status and logging in if needed...
+   >> Already logged in, reusing session
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/firms
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 54)
+STEP: I am on the Admin Panel dashboard
+================================================================================
+   >> Already on dashboard, verifying login state...
+   >> Already logged in and on dashboard
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   ✓ Step completed: I am on the Admin Panel dashboard
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 55)
+STEP: I click on the "Users" section in the navigation
+================================================================================
+   >> Clicking on navigation section: 'Users' (using menu handler with pattern discovery)
+   >> Stored element in context with key: 'Users'
+      Element type: menu_item, Application type: menu-item, Data-attr-id: None
+Clicked menu item 'Users'
+   >> ✓ Navigation section clicked using menu handler (pattern discovery)
+   >> Navigation section clicked successfully
+   ✓ Step completed: I click on the "Users" section in the navigation
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 56)
+STEP: I should be redirected to the Users list page
+================================================================================
+   >> Verifying redirect to Users list page
+   >> Redirected to Users list page (URL: https://dev-admin.maventech.ai/users)
+   ✓ Step completed: I should be redirected to the Users list page
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 57)
+STEP: if users exist, I should see a list of all existing users
+================================================================================
+   >> Checking if users list is displayed
+   >> Users list is displayed (4 items found)
+   ✓ Step completed: if users exist, I should see a list of all existing users
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 58)
+STEP: if no users exist, I should see an empty state message
+================================================================================
+   >> Checking for empty state message
+   >> Empty state message is displayed
+   ✓ Step completed: if no users exist, I should see an empty state message
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 59)
+STEP: I should NOT see any option to create, edit, or delete users
+================================================================================
+   >> Verifying no user action options are visible
+   >> No user action options found (read-only as expected)
+   ✓ Step completed: I should NOT see any option to create, edit, or delete users
+
+================================================================================
+TEST CASE: Admin can access Users section and view users list (read-only)
+FEATURE FILE: maven_automation.feature (Line 60)
+STEP: the page should be read-only
+================================================================================
+   >> Verifying page is read-only
+   >> Page read-only verification completed
+   ✓ Step completed: the page should be read-only

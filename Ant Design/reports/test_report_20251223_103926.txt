@@ -1,0 +1,91 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-23 10:34:38
+End Time: 2025-12-23 10:39:26
+Duration: 0:04:47.656706
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 285.42s
+   Error:
+fixturefunc = <function step_click_button_generic at 0x00000219CDA7B9C0>, request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'button_text': 'Create Firm', 'context': <conftest.context.<locals>.Context object at 0x00000219CDC641D0>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x00000219CDC641D0>, button_text = 'Create Firm'
+
+    @when(parsers.parse('I click the "{button_text}" button'))
+    @when(parsers.parse('I click "{button_text}" button'))
+    @when(parsers.parse('I click "{button_text}"'))
+    @then(parsers.parse('I click the "{button_text}" button'))
+    @then(parsers.parse('I click "{button_text}" button'))
+    @then(parsers.parse('I click "{button_text}"'))
+    def step_click_button_generic(context, button_text):
+        """
+        Generic button click step that handles all button actions
+        Handles patterns like:
+        - "I click the Send Verification Code button"
+        - "I click Send Verification Code"
+        - "I click Verify or Continue button"
+        Uses data-attr-id pattern discovery
+        """
+        print(f"   >> Clicking button: '{button_text}'")
+    
+        # Handle "or" patterns (e.g., "Verify or Continue")
+        if ' or ' in button_text.lower():
+            button_options = [opt.strip() for opt in button_text.split(' or ')]
+            for option in button_options:
+                context.button_clicked = context.button_handler.click_button(
+                    option,
+                    identifier_type='auto'
+                )
+                if context.button_clicked:
+                    print(f"   >> Clicked button: '{option}'")
+                    break
+        else:
+            context.button_clicked = context.button_handler.click_button(
+                button_text,
+                identifier_type='auto'
+            )
+            if not context.button_clicked:
+                context.button_clicked = context.button_handler.click_button(
+                    button_text,
+                    identifier_type='text'
+                )
+    
+>       assert context.button_clicked, f"Failed to click button '{button_text}'"
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Failed to click button 'Create Firm'
+
+steps\button_steps.py:916: AssertionError
+

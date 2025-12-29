@@ -39,14 +39,14 @@ class DropdownHandler(BasePage):
         self.identifier = DropdownIdentifier()
         self.context = context
     
-    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr',
+    def identify_and_store(self, identifier: str, identifier_type: str = 'data_attr_id',
                           timeout: int = 10, context_key: Optional[str] = None) -> bool:
         """
         Identify a dropdown and store it in context
         
         Args:
             identifier: Value to identify the dropdown (data-attr-id, label, or type)
-            identifier_type: Type of identifier ('data_attr', 'label', 'type', 'position')
+            identifier_type: Type of identifier ('data_attr_id', 'label', 'type', 'position')
             timeout: Maximum wait time in seconds
             context_key: Optional key to use in context
             
@@ -60,7 +60,7 @@ class DropdownHandler(BasePage):
         element = None
         
         try:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_dropdown_by_data_attr(identifier, timeout, self.context)
             elif identifier_type == 'label':
                 element = self.locator.find_dropdown_by_label(identifier, exact_match=False, timeout=timeout, context=self.context)
@@ -130,15 +130,15 @@ class DropdownHandler(BasePage):
             print(f"Error selecting from context: {str(e)}")
             return False
     
-    def select_by_text(self, identifier: str, option_text: str, identifier_type: str = 'data_attr',
-                       timeout: int = 10, clear_first: bool = False, use_context: bool = False) -> bool:
+    def select_by_text(self, identifier: Optional[str], option_text: str, identifier_type: str = 'data_attr_id',
+                       timeout: int = 15, clear_first: bool = False, use_context: bool = False) -> bool:
         """
         Select an option by visible text
         
         Args:
             identifier: Value to identify the dropdown (data-attr-id, label, type, or position)
             option_text: Text of the option to select
-            identifier_type: Type of identifier ('data_attr', 'label', 'type', 'position', 'auto')
+            identifier_type: Type of identifier ('data_attr_id', 'label', 'type', 'position', 'auto')
             timeout: Maximum wait time in seconds
             clear_first: If True, clears existing selection first (for multiple selects)
             use_context: If True, tries to use context first
@@ -157,7 +157,7 @@ class DropdownHandler(BasePage):
         context_to_use = self.context if self.context else None
         
         try:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_dropdown_by_data_attr(identifier, timeout, context_to_use)
             elif identifier_type == 'label':
                 element = self.locator.find_dropdown_by_semantic_label(identifier, timeout, context_to_use)
@@ -166,19 +166,47 @@ class DropdownHandler(BasePage):
                 if elements:
                     element = elements[0]
             elif identifier_type == 'position':
-                position = int(identifier) if identifier.isdigit() else 1
-                element = self.locator.find_dropdown_by_position(position, timeout=timeout, context=context_to_use)
+                if identifier is None:
+                    # Find first dropdown
+                    element = self.locator.find_dropdown_by_position(1, timeout=timeout, context=context_to_use)
+                else:
+                    position = int(identifier) if identifier.isdigit() else 1
+                    element = self.locator.find_dropdown_by_position(position, timeout=timeout, context=context_to_use)
             elif identifier_type == 'auto':
-                # PRIORITY ORDER: data-attr-id first, then label, then type
-                data_attr_candidates = [
-                    identifier.lower().replace(' ', '-'),
-                    identifier.lower().replace(' ', '_'),
-                    identifier.lower().replace(' ', ''),
-                ]
-                for candidate in data_attr_candidates:
-                    element = self.locator.find_dropdown_by_data_attr(candidate, timeout=3, context=context_to_use)
-                    if element:
-                        break
+                # PRIORITY ORDER: pattern discovery -> data-attr-id -> label -> type
+                # Use pattern discovery to automatically find matching data-attr-id
+                try:
+                    from framework.utils.pattern_discovery import PatternDiscovery
+                    pattern_discovery = PatternDiscovery(self.driver)
+                    
+                    # Normalize identifier for pattern matching
+                    normalized_id = identifier.lower().replace(' ', '-').replace('_', '-')
+                    
+                    # Try to find matching data-attr-id using pattern discovery
+                    matching_attr_id = pattern_discovery.find_matching_data_attr_id(normalized_id, 'dropdown')
+                    if matching_attr_id:
+                        element = self.locator.find_dropdown_by_data_attr(matching_attr_id, timeout=1, context=context_to_use)
+                        if element:
+                            try:
+                                from conftest import _current_step_name
+                                step_name = _current_step_name or "Unknown Step"
+                                print(f"   >> STEP: {step_name[:45]:<45} | data-attr-id: '{matching_attr_id}'")
+                            except:
+                                print(f"   >> STEP: {'Unknown':<45} | data-attr-id: '{matching_attr_id}'")
+                    
+                    # If not found, try candidates
+                    if not element:
+                        data_attr_candidates = [
+                            identifier.lower().replace(' ', '-'),
+                            identifier.lower().replace(' ', '_'),
+                            identifier.lower().replace(' ', ''),
+                        ]
+                        for candidate in data_attr_candidates:
+                            element = self.locator.find_dropdown_by_data_attr(candidate, timeout=3, context=context_to_use)
+                            if element:
+                                break
+                except Exception as e:
+                    print(f"   >> Pattern discovery error: {str(e)}")
                 
                 if not element:
                     element = self.locator.find_dropdown_by_label(identifier, exact_match=False, timeout=5, context=context_to_use)
@@ -194,7 +222,7 @@ class DropdownHandler(BasePage):
             # Store element in context if context is available and element not already stored
             if context_to_use:
                 context_key = None
-                if identifier_type == 'data_attr':
+                if identifier_type == 'data_attr_id':
                     context_key = identifier
                 elif identifier_type == 'type':
                     context_key = identifier
@@ -227,55 +255,94 @@ class DropdownHandler(BasePage):
             print(f"Error selecting dropdown: {str(e)}")
             return False
     
-    def select_by_index(self, identifier: str, index: int, identifier_type: str = 'data_attr',
-                        timeout: int = 10, use_context: bool = False) -> bool:
+    def select_by_index(self, identifier: Optional[str], index: int, identifier_type: str = 'data_attr_id',
+                        timeout: int = 15, use_context: bool = False) -> bool:
         """
         Select an option by index (0-based)
         
         Args:
-            identifier: Value to identify the dropdown
+            identifier: Value to identify the dropdown (None means first dropdown)
             index: Index of the option to select (0-based)
             identifier_type: Type of identifier
-            timeout: Maximum wait time in seconds
+            timeout: Maximum wait time in seconds (increased for reliability)
             use_context: If True, tries to use context first
             
         Returns:
             True if option was selected successfully, False otherwise
         """
-        # Get available options first
-        element = None
-        if use_context and self.context:
-            element_info = self.context.get_element(identifier)
-            if element_info:
-                element = element_info.element
+        # Handle None identifier - find first dropdown
+        if identifier is None:
+            if identifier_type == 'position':
+                # Find first dropdown by position
+                element = self.locator.find_dropdown_by_position(1, timeout=timeout, context=self.context)
             else:
-                # Find element
-                if identifier_type == 'data_attr':
+                # Find first dropdown by any means
+                all_dropdowns = self.locator.find_all_dropdowns(timeout=timeout)
+                if all_dropdowns:
+                    element = all_dropdowns[0]
+                else:
+                    print("No dropdowns found on the page")
+                    return False
+        else:
+            # Get available options first
+            element = None
+            if use_context and self.context:
+                element_info = self.context.get_element(identifier)
+                if element_info:
+                    element = element_info.element
+                else:
+                    # Find element
+                    if identifier_type == 'data_attr_id':
+                        element = self.locator.find_dropdown_by_data_attr(identifier, timeout, self.context)
+                    elif identifier_type == 'label':
+                        element = self.locator.find_dropdown_by_semantic_label(identifier, timeout, self.context)
+                    elif identifier_type == 'position':
+                        position = int(identifier) if identifier.isdigit() else 1
+                        element = self.locator.find_dropdown_by_position(position, timeout=timeout, context=self.context)
+            
+            if not element:
+                if identifier_type == 'data_attr_id':
                     element = self.locator.find_dropdown_by_data_attr(identifier, timeout, self.context)
                 elif identifier_type == 'label':
                     element = self.locator.find_dropdown_by_semantic_label(identifier, timeout, self.context)
-        
-        if not element:
-            if identifier_type == 'data_attr':
-                element = self.locator.find_dropdown_by_data_attr(identifier, timeout, self.context)
-            elif identifier_type == 'label':
-                element = self.locator.find_dropdown_by_semantic_label(identifier, timeout, self.context)
+                elif identifier_type == 'position':
+                    position = int(identifier) if identifier.isdigit() else 1
+                    element = self.locator.find_dropdown_by_position(position, timeout=timeout, context=self.context)
         
         if not element:
             print(f"Dropdown not found: {identifier}")
             return False
         
-        # Get available options
-        options = self._get_available_options_with_retry(element, timeout=timeout)
+        # Get available options with increased timeout
+        options = self._get_available_options_with_retry(element, timeout=timeout + 5)
         
         if 0 <= index < len(options):
             option_text = options[index]
-            return self.select_by_text(identifier, option_text, identifier_type, timeout, use_context=use_context)
+            # Use the element directly instead of identifier for better reliability
+            return self._select_option_direct(element, option_text, timeout=timeout + 5)
         else:
             print(f"Index {index} out of range. Available options: {len(options)}")
             return False
     
-    def select_multiple(self, identifier: str, option_texts: List[str], identifier_type: str = 'data_attr',
+    def _select_option_direct(self, element: WebElement, option_text: str, timeout: int = 15) -> bool:
+        """
+        Select an option directly on an element (bypasses identifier lookup)
+        
+        Args:
+            element: Dropdown element
+            option_text: Text of option to select
+            timeout: Maximum wait time
+            
+        Returns:
+            True if successful
+        """
+        try:
+            return self._select_option(element, option_text, clear_first=False)
+        except Exception as e:
+            print(f"Error selecting option directly: {str(e)}")
+            return False
+    
+    def select_multiple(self, identifier: str, option_texts: List[str], identifier_type: str = 'data_attr_id',
                         timeout: int = 10, use_context: bool = False) -> bool:
         """
         Select multiple options (for multiple/tags dropdowns)
@@ -299,7 +366,7 @@ class DropdownHandler(BasePage):
             time.sleep(0.5)  # Small delay between selections
         return success
     
-    def select_first_in(self, identifier: str, identifier_type: str = 'data_attr',
+    def select_first_in(self, identifier: str, identifier_type: str = 'data_attr_id',
                        timeout: int = 10, use_context: bool = False) -> bool:
         """
         Select the first option in dropdown
@@ -315,7 +382,7 @@ class DropdownHandler(BasePage):
         """
         return self.select_by_index(identifier, 0, identifier_type, timeout, use_context)
     
-    def select_last_in(self, identifier: str, identifier_type: str = 'data_attr',
+    def select_last_in(self, identifier: str, identifier_type: str = 'data_attr_id',
                       timeout: int = 10, use_context: bool = False) -> bool:
         """
         Select the last option in dropdown
@@ -337,7 +404,7 @@ class DropdownHandler(BasePage):
                 element = element_info.element
         
         if not element:
-            if identifier_type == 'data_attr':
+            if identifier_type == 'data_attr_id':
                 element = self.locator.find_dropdown_by_data_attr(identifier, timeout, self.context)
             elif identifier_type == 'label':
                 element = self.locator.find_dropdown_by_semantic_label(identifier, timeout, self.context)
@@ -390,7 +457,7 @@ class DropdownHandler(BasePage):
                 self._open_dropdown(element)
             
             # Step 2: Wait for options to load (with retry for virtualized lists)
-            self._wait_for_options_loaded(element, timeout=10)
+            self._wait_for_options_loaded(element, timeout=20)
             
             # Step 3: Clear existing selection if needed
             if clear_first:
@@ -429,28 +496,30 @@ class DropdownHandler(BasePage):
             
             # Step 1: Close any open dropdowns first to avoid interference
             self._close_all_open_dropdowns()
-            time.sleep(0.3)
+            time.sleep(0.5)
             
             # Step 2: Scroll into view
             self.execute_js("arguments[0].scrollIntoView({block: 'center'});", element)
-            time.sleep(0.5)
+            time.sleep(1.0)
             
             # Step 3: Try clicking the element first to open menu (more reliable than hover)
             try:
                 element.click()
-                time.sleep(1.0)
+                time.sleep(2.0)  # Increased wait for menu to open
             except:
                 # If click fails, try hover
                 actions = ActionChains(self.driver)
                 actions.move_to_element(element).perform()
-                time.sleep(1.5)
+                time.sleep(2.0)  # Increased wait for menu to open
             
             # Step 4: Wait for menu to be visible and find the SPECIFIC menu for this dropdown
             try:
-                WebDriverWait(self.driver, 5).until(
+                WebDriverWait(self.driver, 10).until(  # Increased timeout
                     EC.presence_of_element_located((By.CSS_SELECTOR, '.ant-dropdown-menu, .ant-dropdown-menu-item'))
                 )
+                time.sleep(1.0)  # Additional wait for menu to fully render
             except:
+                time.sleep(2.0)  # Wait even if timeout occurs
                 pass
             
             # Step 5: Find menu items scoped to THIS specific dropdown (not all dropdowns)
@@ -636,7 +705,7 @@ class DropdownHandler(BasePage):
                             except:
                                 pass
                     
-                    time.sleep(0.5)
+                    time.sleep(1.5)  # Increased wait for selection to complete
                     if clicked:
                         print(f"Selected first menu item (text: '{first_text}') from dropdown menu")
                         return True
@@ -894,7 +963,7 @@ class DropdownHandler(BasePage):
         
         return False
     
-    def _get_available_options_with_retry(self, element: WebElement, timeout: int = 10) -> List[str]:
+    def _get_available_options_with_retry(self, element: WebElement, timeout: int = 20) -> List[str]:
         """Get available options with retry for virtualized lists"""
         max_retries = 3
         retry_delay = 1

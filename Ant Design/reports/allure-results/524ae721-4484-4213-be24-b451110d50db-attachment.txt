@@ -1,0 +1,61 @@
+
+================================================================================
+TEST CASE: Admin lands on Admin Panel Dashboard - Firms View by default
+FEATURE FILE: maven_automation.feature (Line 7)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> ADMIN scenario detected: test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   >> Checking login status and logging in if needed...
+   >> Not logged in (no dashboard elements found), performing login...
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Stored element in context with key: 'login-page--input--email'
+      Element type: input, Application type: None, Data-attr-id: None
+   >> Found input using pattern discovery: login-page--input--email
+   >> Detected field type: 'email' (data-attr-id: login-page--input--email)
+Filled input 'email' with value: 'ammarah.yousaf@rolustech.net'
+   >> No associated button found or button was disabled
+   >> Stored element in context with key: 'login-page--input--password'
+      Element type: input, Application type: None, Data-attr-id: None
+   >> Found input using pattern discovery: login-page--input--password
+   >> Detected field type: 'password' (data-attr-id: login-page--input--password)
+Filled input 'password' with value: 'Lorem123'
+   >> No associated button found or button was disabled
+   >> Found button using pattern discovery: login-page--button--login
+Found button - Type: primary, Text: 'Log in', Disabled: False, Loading: False
+Successfully clicked button: Log In
+   >> Login successful, navigated to: https://dev-admin.maventech.ai/firms
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/firms
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Admin lands on Admin Panel Dashboard - Firms View by default
+FEATURE FILE: maven_automation.feature (Line 40)
+STEP: I am on the Admin Panel dashboard
+================================================================================
+   >> Already on dashboard, verifying login state...
+   >> Already logged in and on dashboard
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   ✓ Step completed: I am on the Admin Panel dashboard
+
+================================================================================
+TEST CASE: Admin lands on Admin Panel Dashboard - Firms View by default
+FEATURE FILE: maven_automation.feature (Line 41)
+STEP: I should be on the Firms list page by default
+================================================================================
+   >> Verifying on Firms list page by default
+   >> On Firms list page by default
+   ✓ Step completed: I should be on the Firms list page by default
+
+================================================================================
+TEST CASE: Admin lands on Admin Panel Dashboard - Firms View by default
+FEATURE FILE: maven_automation.feature (Line 42)
+STEP: the "Firms" section should be selected in the navigation menu
+================================================================================
+   >> Verifying 'Firms' section is selected in navigation
+   >> 'Firms' section found in navigation
+   ✓ Step completed: the "Firms" section should be selected in the navigation menu

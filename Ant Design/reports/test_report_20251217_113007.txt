@@ -1,0 +1,285 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-17 11:26:28
+End Time: 2025-12-17 11:30:07
+Duration: 0:03:39.129145
+
+TOTAL TESTS: 2
+PASSED: 0
+FAILED: 2
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 99.10s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x000001E6819C4500>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Automatically gets URL from browser and waits for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        # Get initial URL to detect navigation
+        initial_url = context.driver.current_url.lower()
+        print(f"   >> Initial URL: {initial_url}")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            import time
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 30)  # Wait up to 30 seconds for navigation
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                if 'login' in current_url:
+                    return False  # Still on login page, keep waiting
+                # Check if we're on dashboard, admin, or firms page
+                if 'dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or 'users' in current_url:
+                    return True
+                # If URL changed from login page, consider it navigation (might be different URL structure)
+                if current_url != initial_url and 'login' not in current_url:
+                    return True
+                return False
+    
+>           wait.until(url_contains_dashboard_or_admin)
+
+steps\maven_steps.py:1434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.support.wait.WebDriverWait (session="81df5b9e9c9ae955d047c834032f71a3")>
+method = <function step_redirected_to_dashboard.<locals>.url_contains_dashboard_or_admin at 0x000001E6819CBC40>
+message = ''
+
+    def until(self, method: Callable[[D], Literal[False] | T], message: str = "") -> T:
+        """Wait until the method returns a value that is not False.
+    
+        Calls the method provided with the driver as an argument until the
+        return value does not evaluate to ``False``.
+    
+        Args:
+            method: A callable object that takes a WebDriver instance as an
+                argument.
+            message: Optional message for TimeoutException.
+    
+        Returns:
+            The result of the last call to `method`.
+    
+        Raises:
+            TimeoutException: If 'method' does not return a truthy value within
+                the WebDriverWait object's timeout.
+    
+        Example:
+            >>> from selenium.webdriver.common.by import By
+            >>> from selenium.webdriver.support.ui import WebDriverWait
+            >>> from selenium.webdriver.support import expected_conditions as EC
+            >>>
+            >>> # Wait until an element is visible on the page
+            >>> wait = WebDriverWait(driver, 10)
+            >>> element = wait.until(EC.visibility_of_element_located((By.ID, "exampleId")))
+            >>> print(element.text)
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            if time.monotonic() > end_time:
+                break
+            time.sleep(self._poll)
+>       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message:
+
+.venv\Lib\site-packages\selenium\webdriver\support\wait.py:122: TimeoutException
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_redirected_to_dashboard at 0x000001E68175D300>
+request = <FixtureRequest for <Function test_admin_can_successfully_log_in>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001E6819C4500>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000001E6819C4500>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Automatically gets URL from browser and waits for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        # Get initial URL to detect navigation
+        initial_url = context.driver.current_url.lower()
+        print(f"   >> Initial URL: {initial_url}")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            import time
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 30)  # Wait up to 30 seconds for navigation
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                if 'login' in current_url:
+                    return False  # Still on login page, keep waiting
+                # Check if we're on dashboard, admin, or firms page
+                if 'dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or 'users' in current_url:
+                    return True
+                # If URL changed from login page, consider it navigation (might be different URL structure)
+                if current_url != initial_url and 'login' not in current_url:
+                    return True
+                return False
+    
+            wait.until(url_contains_dashboard_or_admin)
+            current_url = context.driver.current_url
+            print(f"   >> Navigation detected: {current_url}")
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+            print(f"   >> Page ready state complete")
+    
+            # Additional wait for dynamic content
+            import time
+            time.sleep(2)  # Wait for dynamic content to load
+            print(f"   >> Dynamic content loaded")
+    
+            current_url_lower = current_url.lower()
+            # Verify we're not on login page
+            assert 'login' not in current_url_lower, \
+                f"Still on login page. Current URL: {current_url}"
+    
+            # Set global login state for session reuse (happy case login)
+            try:
+                from conftest import _login_state
+                _login_state['logged_in'] = True
+                _login_state['login_url'] = current_url
+                context.logged_in = True
+                print(f"   >> Login state set for session reuse")
+            except:
+                context.logged_in = True
+    
+            print(f"   >> Redirected to Admin Dashboard Home (URL: {current_url})")
+        except Exception as e:
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Error waiting for redirect: {str(e)}")
+            print(f"   >> Current URL: {context.driver.current_url}")
+    
+            # Check if we're actually on a valid page (not login)
+            if 'login' not in current_url:
+                # We're not on login page, so navigation likely succeeded
+                print(f"   >> Not on login page - navigation likely succeeded")
+                # Still verify we're on a valid admin page
+                assert ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or 'users' in current_url), \
+                    f"Not on expected Admin Dashboard page. Current URL: {context.driver.current_url}"
+    
+                # Set global login state for session reuse (happy case login)
+                try:
+                    from conftest import _login_state
+                    _login_state['logged_in'] = True
+                    _login_state['login_url'] = context.driver.current_url
+                    context.logged_in = True
+                    print(f"   >> Login state set for session reuse")
+                except:
+                    context.logged_in = True
+    
+                print(f"   >> Redirected to Admin Dashboard Home (URL: {context.driver.current_url})")
+            else:
+                # Still on login page - navigation failed
+>               assert False, f"Not redirected to Admin Dashboard. Still on login page. Current URL: {context.driver.current_url}"
+                       ^^^^^
+E               AssertionError: Not redirected to Admin Dashboard. Still on login page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:1489: AssertionError
+
+2. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 116.07s
+   Error:
+fixturefunc = <function step_should_be_on_firms_page_default at 0x000001E681777060>
+request = <FixtureRequest for <Function test_admin_lands_on_admin_panel_dashboard__firms_view_by_default>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001E681DE1EE0>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000001E681DE1EE0>
+
+    @then('I should be on the Firms list page by default')
+    def step_should_be_on_firms_page_default(context):
+        """
+        Verify we are on the Firms list page by default
+        """
+        print(f"   >> Verifying on Firms list page by default")
+        current_url = context.driver.current_url.lower()
+>       assert 'firms' in current_url, f"Not on Firms list page. Current URL: {current_url}"
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Not on Firms list page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:2534: AssertionError
+

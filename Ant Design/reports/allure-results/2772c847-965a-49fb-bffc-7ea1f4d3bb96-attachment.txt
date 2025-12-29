@@ -1,0 +1,10 @@
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "I should see a table with the following columns:
+    | Column Name |
+    | Firm Name |
+    | Status |
+    | Email |
+    | Phone |
+    | Website |
+    | Date Created |
+    | Action |". Line 65 in scenario "Firms list displays all required columns" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.

@@ -1,0 +1,27 @@
+
+================================================================================
+TEST CASE: Firms list displays all required columns
+FEATURE FILE: maven_automation.feature (Line 7)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> ADMIN scenario detected: test_firms_list_displays_all_required_columns
+   >> Checking login status and logging in if needed...
+   >> Already logged in, reusing session
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/firms
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Firms list displays all required columns
+FEATURE FILE: maven_automation.feature (Line 64)
+STEP: I am on the Firms list page
+================================================================================
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Firms list page: https://dev-admin.maventech.ai/firms
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Firms list page loaded successfully
+   ✓ Step completed: I am on the Firms list page

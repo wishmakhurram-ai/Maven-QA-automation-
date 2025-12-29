@@ -1,0 +1,1103 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-09 15:28:09
+End Time: 2025-12-09 16:52:11
+Duration: 1:24:02.566227
+
+TOTAL TESTS: 35
+PASSED: 16
+FAILED: 19
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_login_page_displays_email_and_password_fields
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 145.22s
+
+2. test_invalid_credentials_show_error_message
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.37s
+
+3. test_empty_email_field_shows_validation_error
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 123.73s
+
+4. test_empty_password_field_shows_validation_error
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 125.30s
+
+5. test_invalid_email_format_shows_validation_error
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.66s
+
+6. test_email_and_password_fields_have_proper_labels_and_placeholders
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 31.28s
+
+7. test_system_correctly_identifies_admin_vs_nonadmin_users
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.97s
+
+8. test_system_handles_nonexistent_email_addresses
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.22s
+
+9. test_user_session_is_created_upon_successful_login
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.05s
+
+10. test_invalid_password_shows_appropriate_error_message
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.52s
+
+11. test_field_validation_for_empty_email
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.43s
+
+12. test_email_format_validation
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 208.78s
+
+13. test_error_messages_clear_when_user_starts_typing
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 105.13s
+
+14. test_activity_resets_inactivity_timer
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.46s
+
+15. test_failed_login_attempts_are_tracked_and_counted
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 495.06s
+
+16. test_account_lockout_after_5_failed_attempts
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 581.84s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 138.10s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x000001A5B54FD3A0>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Uses WebDriverWait to properly wait for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 8)  # Reduced from 15 to 8 seconds
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                return ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url) and 'login' not in current_url
+    
+>           wait.until(url_contains_dashboard_or_admin)
+
+steps\maven_steps.py:1060: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selenium.webdriver.support.wait.WebDriverWait (session="0d543168b1a65db70ee7f49b026bf38d")>
+method = <function step_redirected_to_dashboard.<locals>.url_contains_dashboard_or_admin at 0x000001A5B54F6520>, message = ''
+
+    def until(self, method: Callable[[WebDriver], Union[Literal[False], T]], message: str = "") -> T:
+        """Calls the method provided with the driver as an argument until the \
+        return value does not evaluate to ``False``.
+    
+        :param method: callable(WebDriver)
+        :param message: optional message for :exc:`TimeoutException`
+        :returns: the result of the last call to `method`
+        :raises: :exc:`selenium.common.exceptions.TimeoutException` if timeout occurs
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            time.sleep(self._poll)
+            if time.monotonic() > end_time:
+                break
+>       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message:
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\support\wait.py:101: TimeoutException
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_redirected_to_dashboard at 0x000001A5B51728E0>
+request = <FixtureRequest for <Function test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B54FD3A0>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B54FD3A0>
+
+    @then('I should be redirected to the Admin Dashboard Home')
+    @when('I should be redirected to the Admin Dashboard Home')
+    def step_redirected_to_dashboard(context):
+        """
+        Verify redirect to Admin Dashboard Home
+        Uses WebDriverWait to properly wait for navigation
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying redirect to Admin Dashboard Home")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+    
+            # Wait for URL to contain dashboard/admin/firms or not contain login
+            wait = WebDriverWait(context.driver, 8)  # Reduced from 15 to 8 seconds
+    
+            # Wait for URL to change to dashboard/admin/firms
+            def url_contains_dashboard_or_admin(driver):
+                current_url = driver.current_url.lower()
+                # Check if we're on dashboard, admin, or firms page (and not on login)
+                return ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url) and 'login' not in current_url
+    
+            wait.until(url_contains_dashboard_or_admin)
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Current URL after redirect: {current_url}")
+    
+            # Verify we're not on login page
+            assert 'login' not in current_url or ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url), \
+                f"Still on login page or not redirected. Current URL: {current_url}"
+    
+            print(f"   >> Redirected to Admin Dashboard Home")
+        except Exception as e:
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Error waiting for redirect: {str(e)}")
+            print(f"   >> Current URL: {current_url}")
+            # Fallback to simple check
+>           assert ('dashboard' in current_url or 'admin' in current_url or ('firms' in current_url and 'login' not in current_url)), \
+                f"Not redirected to Admin Dashboard. Current URL: {current_url}"
+E           AssertionError: Not redirected to Admin Dashboard. Current URL: https://dev-app.maventech.ai/login
+
+steps\maven_steps.py:1078: AssertionError
+
+2. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 58.52s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x000001A5B58D85F0>, link_text = 'Forgot Password?'
+
+    @then(parsers.parse('I should see a "{link_text}" link'))
+    def step_see_link(context, link_text):
+        """
+        Verify link is visible
+        Tries multiple strategies to find the link
+        """
+        print(f"   >> Verifying link '{link_text}' is visible")
+        link = None
+    
+        try:
+            from selenium.webdriver.common.by import By
+            wait = WebDriverWait(context.driver, 3)  # Reduced from 5 to 3 seconds
+            # Try exact link text
+            try:
+                link = wait.until(EC.presence_of_element_located((By.LINK_TEXT, link_text)))
+            except:
+                # Try partial link text
+                try:
+                    link = wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, link_text)))
+                except:
+                    # Try XPath with contains
+                    try:
+                        link = wait.until(EC.presence_of_element_located((By.XPATH, f"//a[contains(text(), '{link_text}')]")))
+                    except:
+                        pass
+    
+            if link:
+                assert link.is_displayed(), f"Link '{link_text}' not visible"
+                print(f"   >> Link is visible")
+            else:
+>               assert False, f"Link '{link_text}' not found"
+E               AssertionError: Link 'Forgot Password?' not found
+
+steps\maven_steps.py:844: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_see_link at 0x000001A5B5171300>
+request = <FixtureRequest for <Function test_admin_users_can_navigate_to_dedicated_admin_portal_login_page>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B58D85F0>, 'link_text': 'Forgot Password?'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B58D85F0>, link_text = 'Forgot Password?'
+
+    @then(parsers.parse('I should see a "{link_text}" link'))
+    def step_see_link(context, link_text):
+        """
+        Verify link is visible
+        Tries multiple strategies to find the link
+        """
+        print(f"   >> Verifying link '{link_text}' is visible")
+        link = None
+    
+        try:
+            from selenium.webdriver.common.by import By
+            wait = WebDriverWait(context.driver, 3)  # Reduced from 5 to 3 seconds
+            # Try exact link text
+            try:
+                link = wait.until(EC.presence_of_element_located((By.LINK_TEXT, link_text)))
+            except:
+                # Try partial link text
+                try:
+                    link = wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, link_text)))
+                except:
+                    # Try XPath with contains
+                    try:
+                        link = wait.until(EC.presence_of_element_located((By.XPATH, f"//a[contains(text(), '{link_text}')]")))
+                    except:
+                        pass
+    
+            if link:
+                assert link.is_displayed(), f"Link '{link_text}' not visible"
+                print(f"   >> Link is visible")
+            else:
+                assert False, f"Link '{link_text}' not found"
+        except Exception as e:
+            # Try pattern discovery for links (if they have data-attr-id)
+            try:
+                from framework.utils.pattern_discovery import PatternDiscovery
+                pattern_discovery = PatternDiscovery(context.driver)
+                all_patterns = pattern_discovery.discover_all_data_attr_ids()
+                # Check if any element contains the link text
+                page_text = context.driver.page_source
+                if link_text.lower() in page_text.lower():
+                    print(f"   >> Link text '{link_text}' found on page")
+                    return
+            except:
+                pass
+>           assert False, f"Link '{link_text}' not found: {str(e)}"
+E           AssertionError: Link 'Forgot Password?' not found: Link 'Forgot Password?' not found
+
+steps\maven_steps.py:858: AssertionError
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 12.35s
+   Error:
+fixturefunc = <function step_click_menu at 0x000001A5B528E840>
+request = <FixtureRequest for <Function test_forgot_password_link_redirects_to_password_reset_flow>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B59685F0>, 'menu_text': 'on the "Forgot Password?" link'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B59685F0>, menu_text = 'on the "Forgot Password?" link'
+
+    @when(parsers.parse('I click {menu_text}'))
+    @then(parsers.parse('I click {menu_text}'))
+    def step_click_menu(context, menu_text):
+        """
+        Click a menu item by text
+        This step should NOT match button steps - button steps are more specific
+        """
+        # Check if this looks like a button step (contains "button")
+        # Button steps use: "I click the "{button_text}" button"
+        # Menu steps use: "I click {menu_text}" where menu_text is just the menu name
+        menu_text_clean = menu_text.strip().lower()
+    
+        # If it contains "button", it's definitely a button step - use button handler instead
+        if 'button' in menu_text_clean:
+            # Extract the actual button text
+            # Handle cases like: 'the "Log In" button' -> 'Log In'
+            actual_text = menu_text.replace('button', '').replace('the ', '').strip()
+            # Remove quotes from both ends
+            actual_text = actual_text.strip('"').strip("'").strip()
+            print(f"   >> Step 'I click {menu_text}' matched menu step but contains 'button'.")
+            print(f"   >> Using button handler instead for: '{actual_text}'")
+    
+            # Use button handler instead
+            context.button_clicked = context.button_handler.click_button(
+                actual_text,
+                identifier_type='auto'
+            )
+            if not context.button_clicked:
+                context.button_clicked = context.button_handler.click_button(
+                    actual_text,
+                    identifier_type='text'
+                )
+            assert context.button_clicked, f"Failed to click button '{actual_text}'"
+            print(f"   >> Button clicked successfully via button handler")
+            return
+    
+        print(f"   >> Clicking menu item: '{menu_text}'")
+        success = context.menu_handler.click_menu_item(menu_text, timeout=15)
+>       assert success, f"Failed to click menu item '{menu_text}'"
+E       AssertionError: Failed to click menu item 'on the "Forgot Password?" link'
+
+steps\menu_steps.py:80: AssertionError
+
+4. test_system_verifies_admin_credentials_against_mavenai_user_database
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 125.18s
+   Error:
+fixturefunc = <function step_authentication_succeeds at 0x000001A5B51722A0>
+request = <FixtureRequest for <Function test_system_verifies_admin_credentials_against_mavenai_user_database>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B59694F0>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B59694F0>
+
+    @then('if credentials are valid, authentication should succeed')
+    def step_authentication_succeeds(context):
+        """
+        Verify authentication succeeds
+        """
+        print(f"   >> Verifying authentication succeeds")
+        # Removed sleep - use explicit wait for authentication
+        # Check if redirected away from login page
+        current_url = context.driver.current_url.lower()
+>       assert 'login' not in current_url or 'dashboard' in current_url, \
+            "Authentication did not succeed - still on login page"
+E       AssertionError: Authentication did not succeed - still on login page
+
+steps\maven_steps.py:1005: AssertionError
+
+5. test_upon_successful_authentication_user_is_redirected_to_admin_dashboard_home
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.58s
+   Error:
+fixturefunc = <function step_successfully_authenticated at 0x000001A5B5172480>
+request = <FixtureRequest for <Function test_upon_successful_authentication_user_is_redirected_to_admin_dashboard_home>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B596BA40>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B596BA40>
+
+    @then('I should be successfully authenticated')
+    def step_successfully_authenticated(context):
+        """
+        Verify successful authentication
+        """
+        print(f"   >> Verifying successful authentication")
+        # Removed sleep - use explicit waits
+        current_url = context.driver.current_url.lower()
+>       assert 'login' not in current_url or 'dashboard' in current_url, \
+            "Not successfully authenticated"
+E       AssertionError: Not successfully authenticated
+
+steps\maven_steps.py:1018: AssertionError
+
+6. test_system_displays_welcome_message_upon_successful_login
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.33s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "I successfully log in with email ammarah.yousaf@rolustech.net". Line 71 in scenario "System displays welcome message upon successful login" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+7. test_success_message_displays_during_login_process
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.76s
+   Error:
+fixturefunc = <function step_redirected_to at 0x000001A5B5171D00>
+request = <FixtureRequest for <Function test_success_message_displays_during_login_process>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B58D8950>, 'destination': 'Admin Dashboard'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B58D8950>, destination = 'Admin Dashboard'
+
+    @then(parsers.parse('I should be redirected to the {destination}'))
+    def step_redirected_to(context, destination):
+        """
+        Verify redirect to destination
+        """
+        print(f"   >> Verifying redirect to {destination}")
+        # Removed sleep - use explicit wait for redirect
+        current_url = context.driver.current_url.lower()
+        destination_lower = destination.lower()
+>       assert destination_lower in current_url or 'dashboard' in current_url or 'reset' in current_url, \
+            f"Not redirected to {destination}. Current URL: {current_url}"
+E       AssertionError: Not redirected to Admin Dashboard. Current URL: https://dev-app.maventech.ai/login
+
+steps\maven_steps.py:966: AssertionError
+
+8. test_autologout_after_inactivity_period
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 1.29s
+   Error:
+fixturefunc = <function step_redirected_to at 0x000001A5B5171D00>
+request = <FixtureRequest for <Function test_autologout_after_inactivity_period>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B5969370>, 'destination': 'Admin Portal Login Page'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B5969370>, destination = 'Admin Portal Login Page'
+
+    @then(parsers.parse('I should be redirected to the {destination}'))
+    def step_redirected_to(context, destination):
+        """
+        Verify redirect to destination
+        """
+        print(f"   >> Verifying redirect to {destination}")
+        # Removed sleep - use explicit wait for redirect
+        current_url = context.driver.current_url.lower()
+        destination_lower = destination.lower()
+>       assert destination_lower in current_url or 'dashboard' in current_url or 'reset' in current_url, \
+            f"Not redirected to {destination}. Current URL: {current_url}"
+E       AssertionError: Not redirected to Admin Portal Login Page. Current URL: https://dev-app.maventech.ai/firms
+
+steps\maven_steps.py:966: AssertionError
+
+9. test_account_temporarily_locked_after_multiple_failed_login_attempts
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 677.03s
+   Error:
+fixturefunc = <function step_able_to_login at 0x000001A5B51847C0>
+request = <FixtureRequest for <Function test_account_temporarily_locked_after_multiple_failed_login_attempts>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B5904260>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B5904260>
+
+    @then('I should be able to log in successfully')
+    def step_able_to_login(context):
+        """
+        Verify able to log in
+        """
+        print(f"   >> Verifying able to log in")
+        # Removed sleep - use explicit waits
+        current_url = context.driver.current_url.lower()
+>       assert 'dashboard' in current_url or 'login' not in current_url, \
+            "Not able to log in successfully"
+E       AssertionError: Not able to log in successfully
+
+steps\maven_steps.py:1327: AssertionError
+
+10. test_failed_login_attempts_counter_resets_after_successful_login
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 304.52s
+   Error:
+fixturefunc = <function step_failed_attempts_specific at 0x000001A5B5184D60>
+request = <FixtureRequest for <Function test_failed_login_attempts_counter_resets_after_successful_login>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B59063C0>, 'count': 'at 3'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B59063C0>, count = 'at 3'
+
+    @then(parsers.parse('the failed attempts counter should be {count}'))
+    def step_failed_attempts_specific(context, count):
+        """
+        Verify failed attempts counter value
+        """
+        print(f"   >> Failed attempts counter is {count}")
+        if not hasattr(context, 'failed_attempts'):
+            context.failed_attempts = 0
+>       context.failed_attempts = int(count)
+E       ValueError: invalid literal for int() with base 10: 'at 3'
+
+steps\maven_steps.py:1362: ValueError
+
+11. test_generic_error_message_displays_for_invalid_credentials
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.50s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "Test Cases". Line 165 in scenario "Generic error message displays for invalid credentials" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+12. test_admin_portal_login_page_displays_all_required_elements
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.24s
+   Error:
+fixturefunc = <function step_see_screen at 0x000001A5B5171EE0>
+request = <FixtureRequest for <Function test_admin_portal_login_page_displays_all_required_elements>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B5932150>, 'screen_name': 'page title or heading "Admin Portal" or "MavenAI Admin Portal"'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B5932150>
+screen_name = 'page title or heading "Admin Portal" or "MavenAI Admin Portal"'
+
+    @then(parsers.parse('I should see the {screen_name}'))
+    def step_see_screen(context, screen_name):
+        """
+        Verify screen is displayed
+        """
+        print(f"   >> Verifying {screen_name} is displayed")
+        # Removed sleep - use explicit wait for page load
+        # Check URL or page content
+        current_url = context.driver.current_url.lower()
+        screen_lower = screen_name.lower()
+>       assert screen_lower in current_url or any(word in current_url for word in screen_lower.split()), \
+            f"{screen_name} not displayed. Current URL: {current_url}"
+E       AssertionError: page title or heading "Admin Portal" or "MavenAI Admin Portal" not displayed. Current URL: https://dev-app.maventech.ai/login/login
+
+steps\maven_steps.py:981: AssertionError
+
+13. test_forgot_password_link_navigation_works_correctly
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 13.90s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x000001A5B5905EB0>, link_text = 'Forgot Password?'
+
+    @then(parsers.parse('I should see a "{link_text}" link'))
+    def step_see_link(context, link_text):
+        """
+        Verify link is visible
+        Tries multiple strategies to find the link
+        """
+        print(f"   >> Verifying link '{link_text}' is visible")
+        link = None
+    
+        try:
+            from selenium.webdriver.common.by import By
+            wait = WebDriverWait(context.driver, 3)  # Reduced from 5 to 3 seconds
+            # Try exact link text
+            try:
+                link = wait.until(EC.presence_of_element_located((By.LINK_TEXT, link_text)))
+            except:
+                # Try partial link text
+                try:
+                    link = wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, link_text)))
+                except:
+                    # Try XPath with contains
+                    try:
+                        link = wait.until(EC.presence_of_element_located((By.XPATH, f"//a[contains(text(), '{link_text}')]")))
+                    except:
+                        pass
+    
+            if link:
+                assert link.is_displayed(), f"Link '{link_text}' not visible"
+                print(f"   >> Link is visible")
+            else:
+>               assert False, f"Link '{link_text}' not found"
+E               AssertionError: Link 'Forgot Password?' not found
+
+steps\maven_steps.py:844: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_see_link at 0x000001A5B5171300>
+request = <FixtureRequest for <Function test_forgot_password_link_navigation_works_correctly>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B5905EB0>, 'link_text': 'Forgot Password?'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B5905EB0>, link_text = 'Forgot Password?'
+
+    @then(parsers.parse('I should see a "{link_text}" link'))
+    def step_see_link(context, link_text):
+        """
+        Verify link is visible
+        Tries multiple strategies to find the link
+        """
+        print(f"   >> Verifying link '{link_text}' is visible")
+        link = None
+    
+        try:
+            from selenium.webdriver.common.by import By
+            wait = WebDriverWait(context.driver, 3)  # Reduced from 5 to 3 seconds
+            # Try exact link text
+            try:
+                link = wait.until(EC.presence_of_element_located((By.LINK_TEXT, link_text)))
+            except:
+                # Try partial link text
+                try:
+                    link = wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, link_text)))
+                except:
+                    # Try XPath with contains
+                    try:
+                        link = wait.until(EC.presence_of_element_located((By.XPATH, f"//a[contains(text(), '{link_text}')]")))
+                    except:
+                        pass
+    
+            if link:
+                assert link.is_displayed(), f"Link '{link_text}' not visible"
+                print(f"   >> Link is visible")
+            else:
+                assert False, f"Link '{link_text}' not found"
+        except Exception as e:
+            # Try pattern discovery for links (if they have data-attr-id)
+            try:
+                from framework.utils.pattern_discovery import PatternDiscovery
+                pattern_discovery = PatternDiscovery(context.driver)
+                all_patterns = pattern_discovery.discover_all_data_attr_ids()
+                # Check if any element contains the link text
+                page_text = context.driver.page_source
+                if link_text.lower() in page_text.lower():
+                    print(f"   >> Link text '{link_text}' found on page")
+                    return
+            except:
+                pass
+>           assert False, f"Link '{link_text}' not found: {str(e)}"
+E           AssertionError: Link 'Forgot Password?' not found: Link 'Forgot Password?' not found
+
+steps\maven_steps.py:858: AssertionError
+
+14. test_successful_login_with_valid_admin_credentials
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.24s
+   Error:
+fixturefunc = <function step_authentication_succeeds_simple at 0x000001A5B5186A20>
+request = <FixtureRequest for <Function test_successful_login_with_valid_admin_credentials>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B5905070>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+steps\maven_steps.py:1535: in step_authentication_succeeds_simple
+    step_authentication_succeeds(context)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B5905070>
+
+    @then('if credentials are valid, authentication should succeed')
+    def step_authentication_succeeds(context):
+        """
+        Verify authentication succeeds
+        """
+        print(f"   >> Verifying authentication succeeds")
+        # Removed sleep - use explicit wait for authentication
+        # Check if redirected away from login page
+        current_url = context.driver.current_url.lower()
+>       assert 'login' not in current_url or 'dashboard' in current_url, \
+            "Authentication did not succeed - still on login page"
+E       AssertionError: Authentication did not succeed - still on login page
+
+steps\maven_steps.py:1005: AssertionError
+
+15. test_complete_successful_login_flow_with_welcome_message
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 92.85s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "I should see a brief success message "Login successful. Redirecting to Admin Dashboard..."". Line 242 in scenario "Complete successful login flow with welcome message" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+16. test_autologout_after_30_minutes_of_inactivity
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.28s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Given "I can see my active session". Line 312 in scenario "Auto-logout after 30 minutes of inactivity" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+17. test_account_unlock_after_lockout_period_expires
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.17s
+   Error:
+fixturefunc = <function step_failed_attempts_specific at 0x000001A5B5184D60>
+request = <FixtureRequest for <Function test_account_unlock_after_lockout_period_expires>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B5913380>, 'count': 'reset'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B5913380>, count = 'reset'
+
+    @then(parsers.parse('the failed attempts counter should be {count}'))
+    def step_failed_attempts_specific(context, count):
+        """
+        Verify failed attempts counter value
+        """
+        print(f"   >> Failed attempts counter is {count}")
+        if not hasattr(context, 'failed_attempts'):
+            context.failed_attempts = 0
+>       context.failed_attempts = int(count)
+E       ValueError: invalid literal for int() with base 10: 'reset'
+
+steps\maven_steps.py:1362: ValueError
+
+18. test_failed_attempts_counter_resets_after_successful_login
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 302.81s
+   Error:
+fixturefunc = <function step_failed_attempts_specific at 0x000001A5B5184D60>
+request = <FixtureRequest for <Function test_failed_attempts_counter_resets_after_successful_login>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B59119D0>, 'count': 'at 3'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B59119D0>, count = 'at 3'
+
+    @then(parsers.parse('the failed attempts counter should be {count}'))
+    def step_failed_attempts_specific(context, count):
+        """
+        Verify failed attempts counter value
+        """
+        print(f"   >> Failed attempts counter is {count}")
+        if not hasattr(context, 'failed_attempts'):
+            context.failed_attempts = 0
+>       context.failed_attempts = int(count)
+E       ValueError: invalid literal for int() with base 10: 'at 3'
+
+steps\maven_steps.py:1362: ValueError
+
+19. test_complete_successful_login_flow_from_start_to_finish
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 124.25s
+   Error:
+fixturefunc = <function step_redirected_to at 0x000001A5B5171D00>
+request = <FixtureRequest for <Function test_complete_successful_login_flow_from_start_to_finish>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001A5B5913380>, 'destination': 'Admin Dashboard Home'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001A5B5913380>, destination = 'Admin Dashboard Home'
+
+    @then(parsers.parse('I should be redirected to the {destination}'))
+    def step_redirected_to(context, destination):
+        """
+        Verify redirect to destination
+        """
+        print(f"   >> Verifying redirect to {destination}")
+        # Removed sleep - use explicit wait for redirect
+        current_url = context.driver.current_url.lower()
+        destination_lower = destination.lower()
+>       assert destination_lower in current_url or 'dashboard' in current_url or 'reset' in current_url, \
+            f"Not redirected to {destination}. Current URL: {current_url}"
+E       AssertionError: Not redirected to Admin Dashboard Home. Current URL: https://dev-app.maventech.ai/login
+
+steps\maven_steps.py:966: AssertionError
+

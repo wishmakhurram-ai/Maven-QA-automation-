@@ -1,0 +1,65 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-15 10:34:21
+End Time: 2025-12-15 10:37:37
+Duration: 0:03:16.122156
+
+TOTAL TESTS: 7
+PASSED: 6
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: ..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 52.74s
+
+2. test_login_page_displays_email_and_password_fields
+   File: ..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 39.40s
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: ..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 2.41s
+
+4. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: ..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 70.99s
+
+5. test_admin_can_access_firms_section_and_view_firms_list
+   File: ..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 13.83s
+
+6. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: ..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 13.32s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_firms_list_displays_all_required_columns
+   File: ..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 1.01s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "I should see a table with the following columns:
+    | Column Name |
+    | Firm Name |
+    | Status |
+    | Email |
+    | Phone |
+    | Website |
+    | Date Created |
+    | Actions |". Line 65 in scenario "Firms list displays all required columns" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

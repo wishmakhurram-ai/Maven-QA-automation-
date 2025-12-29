@@ -1,0 +1,84 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-19 13:00:11
+End Time: 2025-12-19 13:07:38
+Duration: 0:07:27.061558
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 444.43s
+   Error:
+fixturefunc = <function step_click_add_firm_button at 0x000002039C8B39C0>, request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000002039CB2F770>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000002039CB2F770>
+
+        current_url = context.driver.current_url.lower()
+        assert 'firms' in current_url, f"Not on firms list page. Current URL: {current_url}"
+        print(f"   >> Firms list is displayed")
+    
+    
+    # ==================== FIRM CREATION STEPS ====================
+    
+    @when('i click Add Firm button')
+    @when('I click Add Firm button')
+    def step_click_add_firm_button(context):
+        """
+        Click the Add Firm button
+        """
+        print(f"   >> Clicking Add Firm button...")
+    
+        # Wait for page to fully load
+        time.sleep(2)
+    
+        # Try multiple button text variations
+        button_texts = ["Add Firm", "Add", "Create Firm", "New Firm"]
+        context.button_clicked = False
+    
+        for button_text in button_texts:
+            print(f"   >> Trying to click button: '{button_text}'...")
+            context.button_clicked = context.button_handler.click_button(button_text, identifier_type='auto')
+            if context.button_clicked:
+                print(f"   >> ✓ Successfully clicked button: '{button_text}'")
+                break
+            time.sleep(0.5)
+    
+        if not context.button_clicked:
+            # Try using button steps directly
+>           try:
+               ^^
+E           AssertionError: Failed to click Add Firm button. Tried: Add Firm, Add, Create Firm, New Firm
+
+steps\maven_steps.py:2750: AssertionError
+

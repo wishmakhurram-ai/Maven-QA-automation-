@@ -1,0 +1,337 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-11 14:28:18
+End Time: 2025-12-11 14:33:27
+Duration: 0:05:09.035810
+
+TOTAL TESTS: 8
+PASSED: 3
+FAILED: 5
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 36.83s
+
+2. test_login_page_displays_email_and_password_fields
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 38.92s
+
+3. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 4.53s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_forgot_password_link_redirects_to_password_reset_flow
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 33.46s
+   Error:
+fixturefunc = <function step_redirected_to at 0x000002597AF26200>
+request = <FixtureRequest for <Function test_forgot_password_link_redirects_to_password_reset_flow>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000002597B23A630>, 'destination': 'password reset flow'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000002597B23A630>, destination = 'password reset flow'
+
+    @then(parsers.parse('I should be redirected to the {destination}'))
+    def step_redirected_to(context, destination):
+        """
+        Verify redirect to destination
+        """
+        print(f"   >> Verifying redirect to {destination}")
+        # Removed sleep - use explicit wait for redirect
+        current_url = context.driver.current_url.lower()
+        destination_lower = destination.lower()
+>       assert destination_lower in current_url or 'dashboard' in current_url or 'reset' in current_url, \
+            f"Not redirected to {destination}. Current URL: {current_url}"
+E       AssertionError: Not redirected to password reset flow. Current URL: https://dev-admin.maventech.ai/forgot-password
+
+steps\maven_steps.py:1260: AssertionError
+
+2. test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 65.74s
+   Error:
+context = <conftest.context.<locals>.Context object at 0x000002597B6BFF80>
+
+    @then('I should see the Admin Dashboard')
+    @when('I should see the Admin Dashboard')
+    def step_see_admin_dashboard(context):
+        """
+        Verify Admin Dashboard is displayed
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying Admin Dashboard is displayed")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            from selenium.webdriver.common.by import By
+    
+            wait = WebDriverWait(context.driver, 3)  # Optimized for speed
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    
+            # Wait a bit more for dynamic content
+            import time
+            # Removed sleep - use explicit waits
+    
+            # Check if we're on the dashboard/firms/admin page (not login)
+            current_url = context.driver.current_url.lower()
+>           assert 'login' not in current_url, f"Still on login page. Current URL: {current_url}"
+E           AssertionError: Still on login page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:1401: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+fixturefunc = <function step_see_admin_dashboard at 0x000002597AF27100>
+request = <FixtureRequest for <Function test_happy_case__successful_login_with_valid_credentials_and_redirect_to_firms_page>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000002597B6BFF80>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000002597B6BFF80>
+
+    @then('I should see the Admin Dashboard')
+    @when('I should see the Admin Dashboard')
+    def step_see_admin_dashboard(context):
+        """
+        Verify Admin Dashboard is displayed
+        Can be used as When or Then
+        """
+        print(f"   >> Verifying Admin Dashboard is displayed")
+    
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            from selenium.webdriver.common.by import By
+    
+            wait = WebDriverWait(context.driver, 3)  # Optimized for speed
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    
+            # Wait a bit more for dynamic content
+            import time
+            # Removed sleep - use explicit waits
+    
+            # Check if we're on the dashboard/firms/admin page (not login)
+            current_url = context.driver.current_url.lower()
+            assert 'login' not in current_url, f"Still on login page. Current URL: {current_url}"
+    
+            # Accept dashboard, admin, firms, or any non-login page as valid dashboard
+            is_dashboard = ('dashboard' in current_url or 'admin' in current_url or 'firms' in current_url or
+                           ('/' in current_url and 'login' not in current_url))
+    
+            assert is_dashboard, f"Not on Admin Dashboard. Current URL: {current_url}"
+    
+            # Try to find dashboard elements (Firms heading, navigation, etc.)
+            try:
+                # Look for common dashboard elements
+                firms_heading = wait.until(EC.presence_of_element_located((By.XPATH, "//h1[contains(text(), 'Firms')] | //h2[contains(text(), 'Firms')] | //*[contains(text(), 'Firms')]")))
+                if firms_heading:
+                    print(f"   >> Found Firms heading on dashboard")
+            except:
+                # Try to find any heading or title
+                try:
+                    page_title = context.driver.title
+                    print(f"   >> Page title: {page_title}")
+                except:
+                    pass
+    
+            print(f"   >> Admin Dashboard is displayed (URL: {current_url})")
+        except Exception as e:
+            print(f"   >> Error verifying dashboard: {str(e)}")
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Current URL: {current_url}")
+            # Basic check - just verify we're not on login and we're on a valid page
+>           assert 'login' not in current_url, f"Still on login page. Current URL: {current_url}"
+E           AssertionError: Still on login page. Current URL: https://dev-admin.maventech.ai/login
+
+steps\maven_steps.py:1429: AssertionError
+
+3. test_admin_can_access_firms_section_and_view_firms_list
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 106.97s
+   Error:
+fixturefunc = <function step_click_navigation_section at 0x000002597AFEAAC0>
+request = <FixtureRequest for <Function test_admin_can_access_firms_section_and_view_firms_list>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000002597B6BDBB0>, 'section_name': 'Firms'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000002597B6BDBB0>, section_name = 'Firms'
+
+    # Find the row containing the item name
+    item_row_xpath = f"//tr[contains(., '{item_name}')] | //*[contains(@class, 'row')][contains(., '{item_name}')]"
+    item_row = wait.until(EC.presence_of_element_located((By.XPATH, item_row_xpath)))
+    
+    # Within that row, find the icon
+    # Try different icon identification methods
+    icon_keywords = [clean_icon_name.lower(), 'delete', 'suspend', 'edit', 'remove']
+    icon_selectors = []
+    for keyword in icon_keywords:
+        icon_selectors.extend([
+            f".//*[contains(@class, '{keyword}')]",
+            f".//*[contains(@aria-label, '{keyword}')]",
+            f".//*[contains(@title, '{keyword}')]",
+            f".//button[contains(@aria-label, '{keyword}')]",
+            f".//*[contains(@data-attr-id, '{keyword.replace(' ', '-')}')]"
+        ])
+    
+    icon_found = False
+    for selector in icon_selectors:
+        try:
+            icon = item_row.find_element(By.XPATH, selector)
+            icon.click()
+            context.button_clicked = True
+            icon_found = True
+            break
+        except:
+            continue
+    
+    if not icon_found:
+        # Fallback: try button handler with icon name
+        context.button_clicked = context.button_handler.click_button(
+            clean_icon_name,
+            identifier_type='auto'
+>       )
+E       AssertionError: Failed to click navigation section 'Firms'
+
+steps\button_steps.py:772: AssertionError
+
+4. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 18.98s
+   Error:
+fixturefunc = <function step_redirected_to at 0x000002597AF26200>
+request = <FixtureRequest for <Function test_admin_can_access_users_section_and_view_users_list_readonly>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000002597B6ABEC0>, 'destination': 'Users list page'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000002597B6ABEC0>, destination = 'Users list page'
+
+    @then(parsers.parse('I should be redirected to the {destination}'))
+    def step_redirected_to(context, destination):
+        """
+        Verify redirect to destination
+        Uses explicit wait for URL change and checks for common patterns
+        """
+        print(f"   >> Verifying redirect to {destination}")
+    
+        from selenium.webdriver.support.ui import WebDriverWait
+>       from selenium.webdriver.support import expected_conditions as EC
+E       AssertionError: Not redirected to Users list page. Current URL: https://dev-admin.maventech.ai/firms
+
+steps\maven_steps.py:1260: AssertionError
+
+5. test_firms_list_displays_all_required_columns
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.49s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "I should see a table with the following columns:
+    | Column Name |
+    | Firm Name |
+    | Status |
+    | Email |
+    | Phone |
+    | Website |
+    | Date Created |
+    | Actions |". Line 77 in scenario "Firms list displays all required columns" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

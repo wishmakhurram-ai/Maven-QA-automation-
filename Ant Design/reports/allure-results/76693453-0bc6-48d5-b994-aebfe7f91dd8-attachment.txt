@@ -1,0 +1,77 @@
+
+================================================================================
+TEST CASE: Admin users can navigate to dedicated Admin Portal Login Page
+FEATURE FILE: maven_automation.feature (Line 7)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> Browser URL is not HTTP/HTTPS (data), using default/base URL
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/login
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Admin users can navigate to dedicated Admin Portal Login Page
+FEATURE FILE: maven_automation.feature (Line 13)
+STEP: I am on the Admin Portal Login Page
+================================================================================
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Navigating to Admin Portal Login Page: https://dev-admin.maventech.ai/login
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Base URL extracted from browser: https://dev-admin.maventech.ai
+   >> Page loaded successfully at: https://dev-admin.maventech.ai/login
+   ✓ Step completed: I am on the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Admin users can navigate to dedicated Admin Portal Login Page
+FEATURE FILE: maven_automation.feature (Line 14)
+STEP: I should see the Admin Portal Login Page
+================================================================================
+   >> Verifying Admin Portal Login Page is displayed
+   >> Admin Portal Login Page is displayed
+   ✓ Step completed: I should see the Admin Portal Login Page
+
+================================================================================
+TEST CASE: Admin users can navigate to dedicated Admin Portal Login Page
+FEATURE FILE: maven_automation.feature (Line 15)
+STEP: I should see an email input field
+================================================================================
+   >> Verifying email input field is visible
+   >> Found email field using semantic label
+   >> Email input field is visible
+   ✓ Step completed: I should see an email input field
+
+================================================================================
+TEST CASE: Admin users can navigate to dedicated Admin Portal Login Page
+FEATURE FILE: maven_automation.feature (Line 16)
+STEP: I should see a password input field
+================================================================================
+   >> Verifying password input field is visible
+   >> Found pattern: login-page--input--password
+   >> Found password field using pattern discovery
+   >> Password input field is visible
+   ✓ Step completed: I should see a password input field
+
+================================================================================
+TEST CASE: Admin users can navigate to dedicated Admin Portal Login Page
+FEATURE FILE: maven_automation.feature (Line 17)
+STEP: I should see a "Log In" or "Sign In" button
+================================================================================
+   >> Verifying button 'Log In' or 'Sign In' is visible
+   >> Found button using pattern discovery: login-page--button--login
+   >> Found button 'Log In' using text search
+   >> Found button using pattern discovery: login-page--button--login
+   >> Found button 'Sign In' using text search
+   >> Button 'Log In' is visible
+   ✓ Step completed: I should see a "Log In" or "Sign In" button
+
+================================================================================
+TEST CASE: Admin users can navigate to dedicated Admin Portal Login Page
+FEATURE FILE: maven_automation.feature (Line 18)
+STEP: I should see a "Forgot password" link
+================================================================================
+   >> Verifying link 'Forgot password' is visible
+   >> Found link using pattern discovery: login-page--link--forgot-password
+   >> Link 'Forgot password' is visible
+   ✓ Step completed: I should see a "Forgot password" link

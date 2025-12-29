@@ -1,0 +1,82 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-19 12:09:51
+End Time: 2025-12-19 12:10:34
+Duration: 0:00:42.832898
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 40.27s
+   Error:
+fixturefunc = <function step_click_button_by_text_no_quotes at 0x000001E07E8F8A40>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'button_text': '"Add Firm"', 'context': <conftest.context.<locals>.Context object at 0x000001E07EAE3800>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001E07EAE3800>, button_text = '"Add Firm"'
+
+    @when(parsers.parse('I click the button with text {button_text}'))
+    def step_click_button_by_text_no_quotes(context, button_text):
+        """
+        Click a button by its visible text (without quotes)
+        Automatically discovers data-attr-id patterns if text search fails
+    
+        Args:
+            context: Context fixture from conftest.py
+            button_text: Text visible on the button
+        """
+        print(f"   >> Clicking button with text: '{button_text}'...")
+    
+        # Use 'auto' identifier type which tries pattern discovery first
+        context.button_clicked = context.button_handler.click_button(
+            button_text,
+            identifier_type='auto'
+        )
+    
+        # If auto failed, try text as fallback
+        if not context.button_clicked:
+            context.button_clicked = context.button_handler.click_button(
+                button_text,
+                identifier_type='text'
+            )
+    
+        context.last_clicked_button_info = context.button_handler.get_button_info(button_text, identifier_type='auto')
+        if not context.last_clicked_button_info:
+            context.last_clicked_button_info = context.button_handler.get_button_info(button_text, identifier_type='text')
+    
+>       assert context.button_clicked, f"Failed to click button with text '{button_text}'"
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Failed to click button with text '"Add Firm"'
+
+steps\button_steps.py:80: AssertionError
+

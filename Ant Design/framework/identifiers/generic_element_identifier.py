@@ -55,7 +55,10 @@ class GenericElementIdentifier:
             )
             
             # Read custom data attributes
+            # Try data-atr-id first, then data-attr-id as fallback
             element_info['data_attr_id'] = element.get_attribute('data-atr-id')
+            if not element_info['data_attr_id']:
+                element_info['data_attr_id'] = element.get_attribute('data-attr-id')
             element_info['application_type'] = element.get_attribute('data-type')
             
             # Get text content
@@ -146,6 +149,9 @@ class GenericElementIdentifier:
         
         # Default to generic
         return 'generic'
+
+
+
 
 
 
