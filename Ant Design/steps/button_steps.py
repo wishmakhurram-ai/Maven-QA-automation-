@@ -902,6 +902,10 @@ def step_click_icon_for_item(context, icon_name, item_type, item_name):
 @then(parsers.parse('I click the "{button_text}" button'))
 @then(parsers.parse('I click "{button_text}" button'))
 @then(parsers.parse('I click "{button_text}"'))
+@then(parsers.parse('then i click "{button_text}" button'))
+@then(parsers.parse('then I click "{button_text}" button'))
+@then(parsers.parse('And then i click "{button_text}" button'))
+@then(parsers.parse('And then I click "{button_text}" button'))
 def step_click_button_generic(context, button_text):
     """
     Generic button click step that handles all button actions

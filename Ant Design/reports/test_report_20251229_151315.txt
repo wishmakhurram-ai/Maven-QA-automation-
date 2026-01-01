@@ -1,0 +1,84 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-29 15:00:52
+End Time: 2025-12-29 15:13:15
+Duration: 0:12:22.939271
+
+TOTAL TESTS: 11
+PASSED: 9
+FAILED: 2
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 41.29s
+
+2. test_login_page_displays_email_and_password_fields
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 41.94s
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 30.00s
+
+4. test_empty_email_field_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 55.56s
+
+5. test_invalid_email_format_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 54.45s
+
+6. test_admin_can_successfully_log_in
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 66.71s
+
+7. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 5.61s
+
+8. test_admin_can_access_firms_section_and_view_firms_list
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 20.39s
+
+9. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 20.33s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_firms_list_displays_all_required_columns
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 6.45s
+   Error:
+E   AssertionError: Found 8 row(s) with missing data:
+      Row 0: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+      Row 1: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+      Row 2: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+      Row 3: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+      Row 4: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+      ... and 3 more
+
+2. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 397.84s
+   Error:
+E   AssertionError: Firm status 'Pending' not found on page
+

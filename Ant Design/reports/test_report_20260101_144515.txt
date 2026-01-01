@@ -1,0 +1,32 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-01 14:43:48
+End Time: 2026-01-01 14:45:15
+Duration: 0:01:27.367206
+
+TOTAL TESTS: 2
+PASSED: 1
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 82.96s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 1.68s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: When "I click "Add Firm" button". Line 27 in scenario "Admin can create a new firm with owner" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+

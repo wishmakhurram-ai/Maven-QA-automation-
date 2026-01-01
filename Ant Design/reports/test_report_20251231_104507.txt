@@ -1,0 +1,118 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-31 10:44:18
+End Time: 2025-12-31 10:45:07
+Duration: 0:00:49.100592
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 46.61s
+   Error:
+fixturefunc = <function step_fill_all_mandatory_fields at 0x000001B775A1BC40>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001B775C84BC0>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001B775C84BC0>, table = None
+
+    @when('I fill in all mandatory fields:')
+    def step_fill_all_mandatory_fields(context, table=None):
+        """
+        Fill in all mandatory fields from a Gherkin table
+        Table format: | Field | Value |
+        pytest-bdd automatically injects the table parameter, but we also support frame introspection as fallback
+        """
+        print(f"   >> Filling in all mandatory fields...")
+    
+        # Clear pattern cache to ensure fresh patterns for the form page
+        try:
+            context.pattern_discovery.clear_cache()
+            print(f"   >> Cleared pattern cache for fresh form patterns")
+        except Exception as e:
+            print(f"   >> Could not clear pattern cache: {str(e)}")
+    
+        # Get table data - try multiple methods
+        table_data = []
+        gherkin_table = None
+    
+        # Method 1: Try table parameter (pytest-bdd injects this automatically)
+        if table:
+            gherkin_table = table
+            print(f"   >> Using table from pytest-bdd parameter")
+        else:
+            # Method 2: Try frame introspection (fallback method used in other steps)
+            try:
+                import inspect
+                frame = inspect.currentframe()
+                caller = frame.f_back if frame else None
+                if caller and 'table' in caller.f_locals:
+                    gherkin_table = caller.f_locals['table']
+                    if gherkin_table:
+                        print(f"   >> Using table from frame introspection")
+                # Clean up frame references
+                try:
+                    del frame
+                    del caller
+                except:
+                    pass
+            except Exception as e:
+                print(f"   >> Could not get table from frame introspection: {str(e)}")
+    
+        # Parse table data
+        if gherkin_table:
+            try:
+                # Parse table rows - pytest-bdd provides table as a list of dicts
+                for row in gherkin_table:
+                    if isinstance(row, dict):
+                        # Dictionary format: {'Field': 'Firm Name', 'Value': 'kkkk'}
+                        field = row.get('Field', '').strip()
+                        value = row.get('Value', '').strip()
+                        if field and value:
+                            table_data.append({'field': field, 'value': value})
+                    elif hasattr(row, '__iter__') and not isinstance(row, str):
+                        # List/tuple format: ['Firm Name', 'kkkk']
+                        row_list = list(row) if hasattr(row, '__iter__') else [row]
+                        if len(row_list) >= 2:
+                            table_data.append({'field': str(row_list[0]).strip(), 'value': str(row_list[1]).strip()})
+            except Exception as e:
+                print(f"   >> Error parsing table: {str(e)}")
+                import traceback
+                traceback.print_exc()
+                raise AssertionError(f"Failed to parse table data: {str(e)}")
+    
+        if not table_data:
+>           raise AssertionError("No table data found! The Gherkin table must be provided in the feature file.")
+E           AssertionError: No table data found! The Gherkin table must be provided in the feature file.
+
+steps\maven_steps.py:2878: AssertionError
+

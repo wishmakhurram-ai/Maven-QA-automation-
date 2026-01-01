@@ -1,0 +1,29 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-31 10:37:59
+End Time: 2025-12-31 10:42:44
+Duration: 0:04:45.099596
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 282.50s
+   Error:
+.venv\Lib\site-packages\_pytest\fixtures.py:915: in call_fixture_func
+    fixture_result = fixturefunc(**kwargs)
+                     ^^^^^^^^^^^^^^^^^^^^^
+steps\maven_steps.py:2807: in step_click_add_firm_button
+    assert context.button_clicked, f"Failed to click Add Firm button. Tried: {', '.join(button_texts)}"
+           ^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: Failed to click Add Firm button. Tried: Add Firm, Add, Create Firm, New Firm
+

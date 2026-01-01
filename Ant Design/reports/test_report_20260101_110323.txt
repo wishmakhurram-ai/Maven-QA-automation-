@@ -1,0 +1,182 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-01 10:54:08
+End Time: 2026-01-01 11:03:23
+Duration: 0:09:15.083260
+
+TOTAL TESTS: 6
+PASSED: 4
+FAILED: 2
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 64.88s
+
+2. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 6.27s
+
+3. test_admin_can_access_firms_section_and_view_firms_list
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 20.70s
+
+4. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 20.73s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_firms_list_displays_all_required_columns
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 0.38s
+   Error:
+E   pytest_bdd.exceptions.StepDefinitionNotFoundError: Step definition is not found: Then "I should see a table with the following columns:
+    | Column Name |
+    | Firm Name |
+    | Status |
+    | Email |
+    | Phone |
+    | Website |
+    | Date Created |
+    | Action |". Line 51 in scenario "Firms list displays all required columns" in the feature "C:\Users\wishma.khurram\work\Ant Design\features\maven_automation.feature"
+All traceback entries are hidden. Pass `--full-trace` to see hidden and internal frames.
+
+2. test_admin_can_create_a_new_firm_with_owner
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 421.66s
+   Error:
+fixturefunc = <function step_enter_value_in_field_quoted at 0x000002BDAE8B98A0>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000002BDAEFB02C0>, 'field_name': 'City', 'value': 'New York'}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000002BDAEFB02C0>, value = 'New York', field_name = 'City'
+
+    @when(parsers.parse('I enter "{value}" in the "{field_name}" field'))
+    def step_enter_value_in_field_quoted(context, value, field_name):
+        """
+        Enter a value in a specific field by name (with quoted parameters)
+        Automatically detects if field is input or dropdown and handles accordingly
+        All values come from the feature file - no hardcoding
+        This step is flexible and adapts to UI changes (e.g., if Country changes from dropdown to input)
+    
+        Args:
+            context: Context fixture from conftest.py
+            value: Value to enter (from feature file)
+            field_name: Name of the field (from feature file)
+        """
+        print(f"   >> Entering '{value}' in '{field_name}' field...")
+    
+        # Strip quotes if present
+        value = value.strip('"\'')
+        field_name = field_name.strip('"\'')
+    
+        # Try to detect field type dynamically by checking the page
+        from selenium.webdriver.common.by import By
+        from selenium.common.exceptions import NoSuchElementException
+    
+        success = False
+        field_type_detected = None
+    
+        # Try to find the field element to determine its type
+        try:
+            # Use pattern discovery to find the field
+            matching_id = context.pattern_discovery.find_matching_data_attr_id(field_name, 'input')
+            if matching_id:
+                # Found as input, try input handler
+                success = context.input_handler.fill_input(
+                    field_name,
+                    value,
+                    identifier_type='auto'
+                )
+                if success:
+                    field_type_detected = 'input'
+                    print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (detected as input)")
+    
+            # If not found as input, try as dropdown
+            if not success:
+                matching_id = context.pattern_discovery.find_matching_data_attr_id(field_name, 'dropdown')
+                if matching_id:
+                    # Found as dropdown, try dropdown handler
+                    success = context.dropdown_handler.select_by_text(
+                        field_name,
+                        value,
+                        identifier_type='auto'
+                    )
+                    if success:
+                        field_type_detected = 'dropdown'
+                        print(f"   >> [OK] Successfully selected '{value}' in '{field_name}' field (detected as dropdown)")
+        except:
+            pass
+    
+        # If pattern discovery didn't work, try both methods sequentially
+        if not success:
+            # Try input first (most common)
+            success = context.input_handler.fill_input(
+                field_name,
+                value,
+                identifier_type='auto'
+            )
+            if success:
+                field_type_detected = 'input'
+                print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (as input)")
+            else:
+                # Try dropdown as fallback
+                try:
+                    success = context.dropdown_handler.select_by_text(
+                        field_name,
+                        value,
+                        identifier_type='auto'
+                    )
+                    if success:
+                        field_type_detected = 'dropdown'
+                        print(f"   >> [OK] Successfully selected '{value}' in '{field_name}' field (as dropdown)")
+                except Exception as e:
+                    # If dropdown fails, try input with label as last resort
+                    success = context.input_handler.fill_input(
+                        field_name,
+                        value,
+                        identifier_type='label'
+                    )
+                    if success:
+                        field_type_detected = 'input'
+                        print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (as input, label fallback)")
+    
+>       assert success, f"Failed to enter/select '{value}' in '{field_name}' field. Tried both input and dropdown methods."
+E       AssertionError: Failed to enter/select 'New York' in 'City' field. Tried both input and dropdown methods.
+
+steps\input_steps.py:830: AssertionError
+

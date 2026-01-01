@@ -1,0 +1,111 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-01 12:35:55
+End Time: 2026-01-01 12:41:55
+Duration: 0:06:00.451579
+
+TOTAL TESTS: 2
+PASSED: 1
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 84.02s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: ..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 274.00s
+   Error:
+fixturefunc = <function step_click_button_generic at 0x00000231C3FCA8E0>, request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'button_text': 'Create', 'context': <conftest.context.<locals>.Context object at 0x00000231C4705DC0>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x00000231C4705DC0>, button_text = 'Create'
+
+    @when(parsers.parse('I click the "{button_text}" button'))
+    @when(parsers.parse('I click "{button_text}" button'))
+    @when(parsers.parse('I click "{button_text}"'))
+    @then(parsers.parse('I click the "{button_text}" button'))
+    @then(parsers.parse('I click "{button_text}" button'))
+    @then(parsers.parse('I click "{button_text}"'))
+    @then(parsers.parse('then i click "{button_text}" button'))
+    @then(parsers.parse('then I click "{button_text}" button'))
+    @then(parsers.parse('And then i click "{button_text}" button'))
+    @then(parsers.parse('And then I click "{button_text}" button'))
+    def step_click_button_generic(context, button_text):
+        """
+        Generic button click step that handles all button actions
+        Handles patterns like:
+        - "I click the Send Verification Code button"
+        - "I click Send Verification Code"
+        - "I click Verify or Continue button"
+        Uses data-attr-id pattern discovery FIRST, then fallbacks
+        """
+        print(f"   >> Clicking button: '{button_text}'")
+    
+        # Strip quotes if present
+        button_text = button_text.strip('"\'')
+    
+        context.button_clicked = False
+    
+        # PRIORITY 1: Try data-attr-id pattern discovery FIRST
+        try:
+            context.pattern_discovery.clear_cache()  # Fresh patterns
+    
+            # Normalize button text for pattern matching
+            button_normalized = button_text.lower().replace(' ', '-').replace('_', '-')
+    
+            # Try multiple pattern variations
+            button_patterns = [
+                button_normalized,
+                button_text.lower().replace(' ', ''),
+                button_text.lower().replace(' ', '_'),
+                button_text.lower()
+            ]
+    
+            # For "Create" button, add more specific patterns
+            if button_text.lower() == 'create':
+>               button_patterns.extend([
+                    'create-button',
+                    'create-btn',
+                    'create-submit',
+                    'create-owner',
+                    'create-firm',
+                    'save',
+                    'submit'
+                ])
+E               AssertionError: Failed to click button 'Create'
+
+steps\button_steps.py:942: AssertionError
+

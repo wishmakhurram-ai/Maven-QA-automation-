@@ -1,0 +1,252 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-31 10:12:05
+End Time: 2025-12-31 10:49:52
+Duration: 0:37:47.513761
+
+TOTAL TESTS: 11
+PASSED: 9
+FAILED: 2
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 43.90s
+
+2. test_login_page_displays_email_and_password_fields
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 41.66s
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 27.10s
+
+4. test_empty_email_field_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 54.62s
+
+5. test_invalid_email_format_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 50.73s
+
+6. test_admin_can_successfully_log_in
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 65.26s
+
+7. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 5.40s
+
+8. test_admin_can_access_firms_section_and_view_firms_list
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 20.30s
+
+9. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 20.27s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_firms_list_displays_all_required_columns
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 5.93s
+   Error:
+fixturefunc = <function step_verify_row_details at 0x00000247DF061940>
+request = <FixtureRequest for <Function test_firms_list_displays_all_required_columns>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x00000247DF62EF30>, 'entity_type': 'firm'}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x00000247DF62EF30>, entity_type = 'firm', scenario = None
+
+    @then(parsers.parse('each row should display these details'))
+    @then(parsers.parse('each {entity_type} row should display these details'))
+    def step_verify_row_details(context, entity_type=None, scenario=None):
+        """
+        Verify that each row in the table displays the expected details
+        Generic step that works with any table - checks that rows have data in expected columns
+    
+        Args:
+            context: Context fixture from conftest.py
+            entity_type: Optional entity type (e.g., 'firm', 'user') - for readability only
+            scenario: pytest-bdd scenario fixture (optional, for future table data)
+        """
+        entity_text = f"{entity_type} " if entity_type else ""
+        print(f"   >> Verifying that each {entity_text}row displays expected details...")
+    
+        # Get expected columns from previous step or from context
+        expected_columns = getattr(context, 'expected_columns', None)
+        if not expected_columns:
+            # Try to get from table summary
+            summary = context.table_handler.get_table_summary()
+            if summary:
+                expected_columns = summary.get('headers', [])
+                expected_columns = [h.strip() for h in expected_columns if h and h.strip()]
+    
+        if not expected_columns:
+            raise AssertionError("No expected columns found. Make sure to verify columns first with 'I should see a table with the following columns'")
+    
+        # Read all rows from table
+        rows = context.table_handler.read_all_rows()
+        if not rows:
+            raise AssertionError("Table has no data rows")
+    
+        print(f"   >> Checking {len(rows)} rows for {len(expected_columns)} expected columns...")
+    
+        # Verify each row has data in expected columns
+        rows_with_missing_data = []
+        for row_index, row in enumerate(rows):
+            missing_data = []
+            for col in expected_columns:
+                # Find matching column in row (case-insensitive)
+                row_value = None
+                for key, value in row.items():
+                    if col.strip().lower() == key.strip().lower():
+                        row_value = value
+                        break
+                    # Try partial match
+                    if col.strip().lower() in key.strip().lower() or key.strip().lower() in col.strip().lower():
+                        row_value = value
+                        break
+    
+                # Check if value exists and is not empty
+                if not row_value or (isinstance(row_value, str) and not row_value.strip()):
+                    missing_data.append(col)
+    
+            if missing_data:
+                rows_with_missing_data.append({
+                    'row_index': row_index,
+                    'row_data': row,
+                    'missing_columns': missing_data
+                })
+                print(f"   >> ✗ Row {row_index} missing data in: {missing_data}")
+            else:
+                print(f"   >> ✓ Row {row_index} has all expected data")
+    
+        if rows_with_missing_data:
+            error_msg = f"Found {len(rows_with_missing_data)} row(s) with missing data:\n"
+            for issue in rows_with_missing_data[:5]:  # Show first 5 issues
+                error_msg += f"  Row {issue['row_index']}: missing {issue['missing_columns']}\n"
+            if len(rows_with_missing_data) > 5:
+                error_msg += f"  ... and {len(rows_with_missing_data) - 5} more\n"
+>           raise AssertionError(error_msg)
+E           AssertionError: Found 8 row(s) with missing data:
+E             Row 0: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+E             Row 1: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+E             Row 2: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+E             Row 3: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+E             Row 4: missing ['Firm Name', 'Status', 'Email', 'Phone', 'Website', 'Date Created', 'Action']
+E             ... and 3 more
+
+steps\table_steps.py:449: AssertionError
+
+2. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 1915.48s
+   Error:
+fixturefunc = <function step_click_button_generic at 0x00000247DEFD8540>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'button_text': 'Create Firm', 'context': <conftest.context.<locals>.Context object at 0x00000247DF6473E0>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x00000247DF6473E0>, button_text = 'Create Firm'
+
+    @when(parsers.parse('I click the "{button_text}" button'))
+    @when(parsers.parse('I click "{button_text}" button'))
+    @when(parsers.parse('I click "{button_text}"'))
+    @then(parsers.parse('I click the "{button_text}" button'))
+    @then(parsers.parse('I click "{button_text}" button'))
+    @then(parsers.parse('I click "{button_text}"'))
+    def step_click_button_generic(context, button_text):
+        """
+        Generic button click step that handles all button actions
+        Handles patterns like:
+        - "I click the Send Verification Code button"
+        - "I click Send Verification Code"
+        - "I click Verify or Continue button"
+        Uses data-attr-id pattern discovery
+        """
+        print(f"   >> Clicking button: '{button_text}'")
+    
+        # Handle "or" patterns (e.g., "Verify or Continue")
+        if ' or ' in button_text.lower():
+            button_options = [opt.strip() for opt in button_text.split(' or ')]
+            for option in button_options:
+                context.button_clicked = context.button_handler.click_button(
+                    option,
+                    identifier_type='auto'
+                )
+                if context.button_clicked:
+                    print(f"   >> Clicked button: '{option}'")
+                    break
+        else:
+            context.button_clicked = context.button_handler.click_button(
+                button_text,
+                identifier_type='auto'
+            )
+            if not context.button_clicked:
+                context.button_clicked = context.button_handler.click_button(
+                    button_text,
+                    identifier_type='text'
+                )
+    
+>       assert context.button_clicked, f"Failed to click button '{button_text}'"
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Failed to click button 'Create Firm'
+
+steps\button_steps.py:938: AssertionError
+

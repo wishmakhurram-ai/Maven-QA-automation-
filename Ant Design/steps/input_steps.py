@@ -737,6 +737,248 @@ def step_type_in_search_field(context, text, field_name):
     print(f"   >> Text entered in search field")
 
 
+@when(parsers.parse('I enter "{value}" in the "{field_name}" field'))
+def step_enter_value_in_field_quoted(context, value, field_name):
+    """
+    Enter a value in a specific field by name (with quoted parameters)
+    Automatically detects if field is input or dropdown and handles accordingly
+    All values come from the feature file - no hardcoding
+    This step is flexible and adapts to UI changes (e.g., if Country changes from dropdown to input)
+    
+    Args:
+        context: Context fixture from conftest.py
+        value: Value to enter (from feature file)
+        field_name: Name of the field (from feature file)
+    """
+    print(f"   >> Entering '{value}' in '{field_name}' field...")
+    
+    # Strip quotes if present
+    value = value.strip('"\'')
+    field_name = field_name.strip('"\'')
+    
+    # Try to detect field type dynamically by checking the page
+    from selenium.webdriver.common.by import By
+    from selenium.common.exceptions import NoSuchElementException
+    
+    success = False
+    field_type_detected = None
+    
+    # PRIORITY 1: Find data-attr-id FIRST, then determine actual element type
+    try:
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        
+        # Clear cache for fresh discovery
+        context.pattern_discovery.clear_cache()
+        
+        # Normalize field name for pattern matching (handle ZIP Code / Postal Code variations)
+        field_name_normalized = field_name.lower()
+        is_zip_postal = 'zip' in field_name_normalized or 'postal' in field_name_normalized
+        
+        # For ZIP/Postal Code, try multiple variations
+        field_variations = [field_name]
+        if is_zip_postal:
+            # Add variations for ZIP/Postal Code
+            field_variations.extend([
+                'Postal Code',
+                'ZIP Code',
+                'Zip Code',
+                'postal-code',
+                'zip-code',
+                'postal_code',
+                'zip_code',
+                'postalcode',
+                'zipcode'
+            ])
+        
+        # Find data-attr-id for the field (try both input and dropdown patterns)
+        matching_id = None
+        element_type = None
+        
+        # For ZIP/Postal Code fields, prioritize input pattern (they're usually inputs, not dropdowns)
+        if is_zip_postal:
+            # Try input pattern first for ZIP/Postal Code
+            for variation in field_variations:
+                matching_id = context.pattern_discovery.find_matching_data_attr_id(variation, 'input')
+                if matching_id:
+                    element_type = 'input'
+                    print(f"   >> Found data-attr-id for '{field_name}' (variation: {variation}): {matching_id} (as input)")
+                    break
+        else:
+            # For other fields, try input pattern first
+            matching_id = context.pattern_discovery.find_matching_data_attr_id(field_name, 'input')
+            if matching_id:
+                element_type = 'input'
+                print(f"   >> Found data-attr-id for '{field_name}': {matching_id} (as input)")
+        
+        # If not found as input, try dropdown pattern (but skip for ZIP/Postal Code if we already tried)
+        if not matching_id:
+            if is_zip_postal:
+                # For ZIP/Postal Code, try dropdown only if input failed
+                for variation in field_variations:
+                    matching_id = context.pattern_discovery.find_matching_data_attr_id(variation, 'dropdown')
+                    if matching_id:
+                        element_type = 'dropdown'
+                        print(f"   >> Found data-attr-id for '{field_name}' (variation: {variation}): {matching_id} (as dropdown)")
+                        break
+            else:
+                matching_id = context.pattern_discovery.find_matching_data_attr_id(field_name, 'dropdown')
+                if matching_id:
+                    element_type = 'dropdown'
+                    print(f"   >> Found data-attr-id for '{field_name}': {matching_id} (as dropdown)")
+        
+        # If data-attr-id found, verify actual element type by inspecting the element
+        if matching_id:
+            try:
+                # Find the actual element by data-attr-id
+                element = context.driver.find_element(By.CSS_SELECTOR, f'[data-attr-id="{matching_id}"]')
+                
+                # Determine actual element type by inspecting the element
+                tag_name = element.tag_name.lower()
+                element_class = element.get_attribute('class') or ''
+                element_type_attr = element.get_attribute('type') or ''
+                
+                # Check if it's actually an input field
+                is_actual_input = (
+                    tag_name == 'input' or
+                    'input' in element_class.lower() or
+                    element_type_attr in ['text', 'email', 'tel', 'number', 'password']
+                )
+                
+                # Check if it's actually a dropdown/select
+                is_actual_dropdown = (
+                    tag_name == 'select' or
+                    'select' in element_class.lower() or
+                    'ant-select' in element_class.lower() or
+                    'dropdown' in element_class.lower()
+                )
+                
+                # For ZIP/Postal Code, prioritize input even if pattern discovery found it as dropdown
+                if is_zip_postal and not is_actual_dropdown:
+                    # Force as input for ZIP/Postal Code if not clearly a dropdown
+                    is_actual_input = True
+                    is_actual_dropdown = False
+                    print(f"   >> ZIP/Postal Code field - prioritizing as INPUT (tag: {tag_name})")
+                
+                # Use actual element type, not the pattern discovery type
+                if is_actual_input:
+                    print(f"   >> Element is actually an INPUT field (tag: {tag_name}, class: {element_class[:50]})")
+                    success = context.input_handler.fill_input(
+                        matching_id,
+                        value,
+                        identifier_type='data_attr_id'
+                    )
+                    if success:
+                        field_type_detected = 'input'
+                        print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (via data-attr-id: {matching_id})")
+                elif is_actual_dropdown:
+                    print(f"   >> Element is actually a DROPDOWN field (tag: {tag_name}, class: {element_class[:50]})")
+                    success = context.dropdown_handler.select_by_text(
+                        matching_id,
+                        value,
+                        identifier_type='data_attr_id'
+                    )
+                    if success:
+                        field_type_detected = 'dropdown'
+                        print(f"   >> [OK] Successfully selected '{value}' in '{field_name}' field (via data-attr-id: {matching_id})")
+                else:
+                    # Unknown type, try input first (especially for ZIP/Postal Code)
+                    print(f"   >> Element type unclear, trying as input first...")
+                    success = context.input_handler.fill_input(
+                        matching_id,
+                        value,
+                        identifier_type='data_attr_id'
+                    )
+                    if success:
+                        field_type_detected = 'input'
+                        print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (via data-attr-id: {matching_id})")
+            except Exception as e:
+                print(f"   >> Could not inspect element: {str(e)}")
+    except Exception as e:
+        print(f"   >> Pattern discovery failed: {str(e)}")
+    
+    # PRIORITY 2: If pattern discovery didn't work, try both methods sequentially
+    if not success:
+        # For ZIP/Postal Code, try all variations as input first
+        if is_zip_postal:
+            print(f"   >> Trying ZIP/Postal Code variations as input (pattern matching)...")
+            for variation in field_variations:
+                # Try with auto (uses pattern discovery)
+                success = context.input_handler.fill_input(
+                    variation,
+                    value,
+                    identifier_type='auto'
+                )
+                if success:
+                    field_type_detected = 'input'
+                    print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (variation: {variation}, as input)")
+                    break
+                
+                # Also try with label
+                if not success:
+                    success = context.input_handler.fill_input(
+                        variation,
+                        value,
+                        identifier_type='label'
+                    )
+                    if success:
+                        field_type_detected = 'input'
+                        print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (variation: {variation}, label, as input)")
+                        break
+            
+            # If input failed, try as dropdown (in case it's actually a dropdown)
+            if not success:
+                print(f"   >> Input failed for all variations, trying ZIP/Postal Code as dropdown...")
+                for variation in field_variations:
+                    try:
+                        success = context.dropdown_handler.select_by_text(
+                            variation,
+                            value,
+                            identifier_type='auto'
+                        )
+                        if success:
+                            field_type_detected = 'dropdown'
+                            print(f"   >> [OK] Successfully selected '{value}' in '{field_name}' field (variation: {variation}, as dropdown)")
+                            break
+                    except:
+                        continue
+        else:
+            # For other fields, try input first (most common)
+            success = context.input_handler.fill_input(
+                field_name,
+                value,
+                identifier_type='auto'
+            )
+            if success:
+                field_type_detected = 'input'
+                print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (as input)")
+            else:
+                # Try dropdown as fallback
+                try:
+                    success = context.dropdown_handler.select_by_text(
+                        field_name,
+                        value,
+                        identifier_type='auto'
+                    )
+                    if success:
+                        field_type_detected = 'dropdown'
+                        print(f"   >> [OK] Successfully selected '{value}' in '{field_name}' field (as dropdown)")
+                except Exception as e:
+                    # If dropdown fails, try input with label as last resort
+                    success = context.input_handler.fill_input(
+                        field_name,
+                        value,
+                        identifier_type='label'
+                    )
+                    if success:
+                        field_type_detected = 'input'
+                        print(f"   >> [OK] Successfully entered '{value}' in '{field_name}' field (as input, label fallback)")
+    
+    assert success, f"Failed to enter/select '{value}' in '{field_name}' field. Tried both input and dropdown methods."
+    print(f"   >> Field '{field_name}' set to '{value}' successfully (type: {field_type_detected or 'auto-detected'})")
+
+
 @when(parsers.parse('I type {text} in the search field'))
 def step_type_in_search_field_simple(context, text):
     """

@@ -1,0 +1,23 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-31 10:58:17
+End Time: 2025-12-31 11:00:31
+Duration: 0:02:14.705123
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 132.33s
+   Error:
+E   AssertionError: No table data found! The Gherkin table must be provided in the feature file.
+

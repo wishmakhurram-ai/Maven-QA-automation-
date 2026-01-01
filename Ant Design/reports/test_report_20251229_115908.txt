@@ -1,0 +1,23 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-29 11:57:39
+End Time: 2025-12-29 11:59:08
+Duration: 0:01:29.388994
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 87.22s
+   Error:
+E   AssertionError: Failed to click Add Firm button. Tried: Add Firm, Add, Create Firm, New Firm
+

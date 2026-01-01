@@ -1,0 +1,69 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-31 11:17:21
+End Time: 2025-12-31 11:18:32
+Duration: 0:01:10.529930
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 68.04s
+   Error:
+fixturefunc = <function step_fill_by_semantic_label at 0x000001E0F8266C00>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001E0F83F35C0>, 'label_text': 'in "Firm Name"', 'value': '"kkkk"'}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000001E0F83F35C0>, label_text = 'in "Firm Name"', value = '"kkkk"'
+
+    @when(parsers.parse('I fill {label_text} with {value}'))
+    def step_fill_by_semantic_label(context, label_text, value):
+        """
+        Fill an input by semantic label (no quotes needed, no "in" keyword)
+        Automatically discovers data-attr-id patterns from page
+        PRIORITY: Pattern discovery -> type -> data-attr-id -> semantic matching
+    
+        Args:
+            context: Context fixture from conftest.py
+            label_text: Label text (e.g., "Firm Name", "Email", "Password") - must NOT start with "in"
+            value: Value to fill (can be empty string "")
+        """
+        # Check if this step was incorrectly matched
+        # If label_text starts with "in", it should have matched step_fill_field_by_name instead
+        label_clean = label_text.strip()
+        if label_clean.lower().startswith('in ') or label_clean.lower() == 'in':
+>           assert False, f"Step matched incorrectly. Use 'I fill in \"<field>\" with \"<value>\"' syntax instead."
+                   ^^^^^
+E           AssertionError: Step matched incorrectly. Use 'I fill in "<field>" with "<value>"' syntax instead.
+
+steps\input_steps.py:199: AssertionError
+

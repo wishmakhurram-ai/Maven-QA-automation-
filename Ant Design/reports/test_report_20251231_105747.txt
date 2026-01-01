@@ -1,0 +1,28 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-31 10:56:32
+End Time: 2025-12-31 10:57:47
+Duration: 0:01:15.025243
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 72.38s
+   Error:
+.venv\Lib\site-packages\_pytest\fixtures.py:915: in call_fixture_func
+    fixture_result = fixturefunc(**kwargs)
+                     ^^^^^^^^^^^^^^^^^^^^^
+steps\maven_steps.py:2922: in step_fill_all_mandatory_fields
+    raise AssertionError("No table data found! The Gherkin table must be provided in the feature file.")
+E   AssertionError: No table data found! The Gherkin table must be provided in the feature file.
+

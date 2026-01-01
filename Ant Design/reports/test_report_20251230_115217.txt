@@ -1,0 +1,324 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2025-12-30 11:50:15
+End Time: 2025-12-30 11:52:17
+Duration: 0:02:02.114469
+
+TOTAL TESTS: 11
+PASSED: 0
+FAILED: 11
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_users_can_navigate_to_dedicated_admin_portal_login_page
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 119.62s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+During handling of the above exception, another exception occurred:
+E   AssertionError: Browser session lost: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+2. test_login_page_displays_email_and_password_fields
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+3. test_forgot_password_link_redirects_to_password_reset_flow
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.04s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+4. test_empty_email_field_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+5. test_invalid_email_format_shows_validation_error
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+6. test_admin_can_successfully_log_in
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+7. test_admin_lands_on_admin_panel_dashboard__firms_view_by_default
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+8. test_admin_can_access_firms_section_and_view_firms_list
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.02s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+9. test_admin_can_access_users_section_and_view_users_list_readonly
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+10. test_firms_list_displays_all_required_columns
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+
+11. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 0.03s
+   Error:
+E   selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+    Stacktrace:
+    Symbols not available. Dumping unresolved backtrace:
+    	0x7ff6d17288e5
+    	0x7ff6d1728940
+    	0x7ff6d1501465
+    	0x7ff6d1549d83
+    	0x7ff6d1581ee2
+    	0x7ff6d157c500
+    	0x7ff6d157b6f0
+    	0x7ff6d14cb325
+    	0x7ff6d1a40640
+    	0x7ff6d1a3af80
+    	0x7ff6d1a596e6
+    	0x7ff6d1745de4
+    	0x7ff6d174ed8c
+    	0x7ff6d14c9cb8
+    	0x7ff6d1b9f008
+    	0x7ffdc8107374
+    	0x7ffdc8efcc91
+

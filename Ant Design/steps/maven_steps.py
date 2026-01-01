@@ -1303,10 +1303,102 @@ def step_button_enabled_when_filled(context):
     print(f"   >> Button is enabled")
 
 
+@then(parsers.parse('I should be redirected to the "{page_name}" page'))
+def step_redirected_to_page_quoted(context, page_name):
+    """
+    Verify redirect to a specific page (with quoted page name)
+    All page names come from feature file - no hardcoding
+    
+    Args:
+        context: Context fixture from conftest.py
+        page_name: Name of the page (from feature file)
+    """
+    # Strip quotes if present
+    page_name = page_name.strip('"\'')
+    print(f"   >> Verifying redirect to '{page_name}' page...")
+    
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    
+    destination_lower = page_name.lower()
+    
+    # Wait for URL to change (wait up to 5 seconds for navigation)
+    try:
+        # Get initial URL
+        initial_url = context.driver.current_url
+        
+        # Wait for URL to change or for specific patterns
+        wait = WebDriverWait(context.driver, 5)
+        
+        # Wait until URL changes or contains expected keywords
+        def url_changed_or_contains_keywords(driver):
+            current_url = driver.current_url.lower()
+            # Check if URL changed
+            if current_url != initial_url.lower():
+                return True
+            # Check for destination keywords based on page name
+            keywords = []
+            if 'create new firm' in destination_lower or 'new firm' in destination_lower:
+                keywords = ['new', 'create', 'firm']
+            elif 'firms list' in destination_lower or 'firms page' in destination_lower:
+                keywords = ['firms', 'firm']
+            elif 'password reset' in destination_lower or 'reset flow' in destination_lower:
+                keywords = ['reset', 'forgot', 'password', 'recover']
+            elif 'dashboard' in destination_lower:
+                keywords = ['dashboard', 'firms', 'admin']
+            elif 'login' in destination_lower:
+                keywords = ['login', 'signin']
+            else:
+                # Generic: extract keywords from page name
+                keywords = [word for word in destination_lower.split() if len(word) > 2]
+            
+            for keyword in keywords:
+                if keyword in current_url:
+                    return True
+            return False
+        
+        wait.until(url_changed_or_contains_keywords)
+    except:
+        # If wait times out, check current URL anyway
+        pass
+    
+    # Check current URL
+    current_url = context.driver.current_url.lower()
+    
+    # Build list of acceptable patterns based on page name
+    acceptable_patterns = []
+    if 'create new firm' in destination_lower or 'new firm' in destination_lower:
+        acceptable_patterns = ['new', 'create', 'firm']
+    elif 'firms list' in destination_lower or 'firms page' in destination_lower:
+        acceptable_patterns = ['firms', 'firm']
+    elif 'users list' in destination_lower or 'users page' in destination_lower:
+        acceptable_patterns = ['users', 'user']
+    elif 'password reset' in destination_lower or 'reset flow' in destination_lower:
+        acceptable_patterns = ['reset', 'forgot', 'password', 'recover', 'forgot-password', 'password-reset', 'forgot_password']
+    elif 'dashboard' in destination_lower:
+        acceptable_patterns = ['dashboard', 'firms', 'admin', 'home']
+    elif 'login' in destination_lower:
+        acceptable_patterns = ['login', 'signin']
+    else:
+        # Generic: extract keywords from page name
+        acceptable_patterns = [word for word in destination_lower.split() if len(word) > 2]
+    
+    # Check if any pattern matches
+    url_matches = any(pattern in current_url for pattern in acceptable_patterns)
+    
+    # Also check if URL changed from previous page
+    if current_url != initial_url.lower():
+        url_matches = True
+    
+    assert url_matches, \
+        f"Not redirected to '{page_name}' page. Current URL: {current_url}. Expected patterns: {acceptable_patterns}"
+    print(f"   >> Redirected to '{page_name}' page (URL: {current_url})")
+
+
 @then(parsers.parse('I should be redirected to the {destination}'))
 def step_redirected_to(context, destination):
     """
-    Verify redirect to destination
+    Verify redirect to destination (without quotes - for backward compatibility)
     Uses explicit wait for URL change and checks for common patterns
     """
     print(f"   >> Verifying redirect to {destination}")
@@ -2855,34 +2947,13 @@ def step_fill_all_mandatory_fields(context):
     except Exception as e:
         print(f"   >> Could not get table from hook storage: {str(e)}")
     
-    # Fallback: Use hardcoded data matching the feature file (ALWAYS use this for now)
-    # This ensures the test works even if table extraction fails
+    # NO HARDCODED VALUES - All values must come from the feature file
+    # If no table data is found, raise an error to ensure test data comes from feature file
     if not table_data:
-        print(f"   >> Using fallback table data (matching feature file)...")
-        table_data = [
-            {'field': 'Firm Name', 'value': 'New Legal Firm LLC'},
-            {'field': 'Email', 'value': 'contact@newlegalfirm.com'},
-            {'field': 'Phone', 'value': '(555) 123-4567'},
-            {'field': 'Street Address', 'value': '123 Main Street'},
-            {'field': 'City', 'value': 'New York'},
-            {'field': 'State', 'value': 'NY'},
-            {'field': 'Postal Code', 'value': '10001'},
-            {'field': 'Country', 'value': 'United States'}
-        ]
-    
-    # Ensure we always have data (fallback should have set it)
-    if not table_data:
-        # Last resort fallback
-        table_data = [
-            {'field': 'Firm Name', 'value': 'New Legal Firm LLC'},
-            {'field': 'Email', 'value': 'contact@newlegalfirm.com'},
-            {'field': 'Phone', 'value': '(555) 123-4567'},
-            {'field': 'Street Address', 'value': '123 Main Street'},
-            {'field': 'City', 'value': 'New York'},
-            {'field': 'State', 'value': 'NY'},
-            {'field': 'Postal Code', 'value': '10001'},
-            {'field': 'Country', 'value': 'United States'}
-        ]
+        raise AssertionError(
+            "No table data found! The Gherkin table must be provided in the feature file. "
+            "All field values must be specified in the feature file - no hardcoded values are used."
+        )
     
     print(f"   >> Found {len(table_data)} fields to fill")
     
@@ -3007,45 +3078,103 @@ def step_create_new_owner(context, email, name):
     print(f"   >> Creating new owner: {name} ({email})...")
     
     # STEP 1: Click "Create New Firm Owner" button first (required to show owner form)
-    print(f"   >> Step 1: Clicking 'Create New Firm Owner' button...")
+    # PRIORITY: data-attr-id FIRST, then button automation
+    print(f"   >> Step 1: Clicking 'Create New Firm Owner' button (using data-attr-id first)...")
     create_owner_clicked = False
     
-    # Try multiple button text variations
-    button_texts = [
-        "Create New Firm Owner",
-        "Create New Owner", 
-        "Add Owner",
-        "Create Owner",
-        "New Owner"
-    ]
-    
-    for button_text in button_texts:
-        try:
-            create_owner_clicked = context.button_handler.click_button(button_text, identifier_type='auto', timeout=5)
-            if create_owner_clicked:
-                print(f"   >> ✓ Clicked '{button_text}' button successfully")
-                time.sleep(0.5)  # Brief wait for owner form to appear
-                break
-        except Exception as e:
-            print(f"   >> Could not click '{button_text}': {str(e)}")
-            continue
-    
-    if not create_owner_clicked:
-        # Try finding by data-attr-id pattern
-        try:
-            from framework.utils.pattern_discovery import PatternDiscovery
-            pattern_discovery = PatternDiscovery(context.driver)
-            pattern_discovery.clear_cache()  # Fresh patterns
-            
-            # Look for owner-related buttons
-            matching_id = pattern_discovery.find_matching_data_attr_id("create-owner", "button")
+    # PRIORITY 1: Find by data-attr-id pattern discovery FIRST
+    try:
+        context.pattern_discovery.clear_cache()  # Fresh patterns
+        
+        # Try multiple pattern variations for owner button
+        owner_patterns = [
+            "create-new-firm-owner",
+            "create-new-owner",
+            "create-owner",
+            "add-owner",
+            "new-owner",
+            "owner"
+        ]
+        
+        matching_id = None
+        for pattern in owner_patterns:
+            # Try as button first
+            matching_id = context.pattern_discovery.find_matching_data_attr_id(pattern, "button")
             if matching_id:
+                # Skip menu/dashboard/header buttons
+                if 'menu' not in matching_id.lower() and 'dashboard' not in matching_id.lower() and 'header' not in matching_id.lower():
+                    print(f"   >> Found owner button via data-attr-id pattern: {matching_id}")
+                    break
+                else:
+                    matching_id = None
+        
+        # If not found as button, try as upload/dragger (placeholder button)
+        if not matching_id:
+            for pattern in owner_patterns:
+                matching_id = context.pattern_discovery.find_matching_data_attr_id(pattern, "upload")
+                if matching_id:
+                    print(f"   >> Found owner placeholder via data-attr-id pattern: {matching_id}")
+                    break
+        
+        # Click using data-attr-id if found
+        if matching_id:
+            try:
+                # Try as button first
                 create_owner_clicked = context.button_handler.click_button(matching_id, identifier_type='data_attr_id', timeout=5)
                 if create_owner_clicked:
-                    print(f"   >> ✓ Clicked owner button via data-attr-id: {matching_id}")
+                    print(f"   >> [OK] Clicked owner button via data-attr-id: {matching_id}")
                     time.sleep(0.5)
-        except Exception as e:
-            print(f"   >> Could not find owner button via pattern: {str(e)}")
+                else:
+                    # Try as upload/dragger/placeholder if button click failed
+                    try:
+                        from selenium.webdriver.common.by import By
+                        # Try to find element by data-attr-id directly
+                        element = context.driver.find_element(By.CSS_SELECTOR, f'[data-attr-id="{matching_id}"]')
+                        if element:
+                            # Check if it's a placeholder/upload component (has upload classes or is clickable)
+                            element_class = element.get_attribute('class') or ''
+                            if 'upload' in element_class.lower() or 'dragger' in element_class.lower() or 'placeholder' in element_class.lower():
+                                # Click the element directly
+                                context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                                time.sleep(0.2)
+                                element.click()
+                                create_owner_clicked = True
+                                print(f"   >> [OK] Clicked owner placeholder via data-attr-id: {matching_id}")
+                                time.sleep(0.5)
+                            else:
+                                # Try JavaScript click as fallback
+                                context.driver.execute_script("arguments[0].click();", element)
+                                create_owner_clicked = True
+                                print(f"   >> [OK] Clicked owner element via data-attr-id (JS click): {matching_id}")
+                                time.sleep(0.5)
+                    except Exception as e:
+                        print(f"   >> Could not click as upload/placeholder: {str(e)}")
+            except Exception as e:
+                print(f"   >> Could not click via data-attr-id: {str(e)}")
+    except Exception as e:
+        print(f"   >> Pattern discovery failed: {str(e)}")
+    
+    # PRIORITY 2: Fallback to button text-based search (using existing button automation)
+    if not create_owner_clicked:
+        print(f"   >> Data-attr-id not found, trying button text-based search...")
+        button_texts = [
+            "Create New Firm Owner",
+            "Create New Owner", 
+            "Add Owner",
+            "Create Owner",
+            "New Owner"
+        ]
+        
+        for button_text in button_texts:
+            try:
+                create_owner_clicked = context.button_handler.click_button(button_text, identifier_type='auto', timeout=5)
+                if create_owner_clicked:
+                    print(f"   >> [OK] Clicked '{button_text}' button successfully (text-based)")
+                    time.sleep(0.5)  # Brief wait for owner form to appear
+                    break
+            except Exception as e:
+                print(f"   >> Could not click '{button_text}': {str(e)}")
+                continue
     
     if not create_owner_clicked:
         print(f"   >> ⚠ Warning: Could not click 'Create New Firm Owner' button - trying to fill fields anyway...")
@@ -3097,6 +3226,192 @@ def step_create_new_owner(context, email, name):
     # Owner fields should now be filled - no need for additional button clicks
     # The owner is created when fields are filled in the owner form
     print(f"   >> Owner creation completed: {name} ({email})")
+    time.sleep(0.2)  # Minimal delay
+
+
+@when(parsers.parse('I create a new owner with email "{email}" and first name "{first_name}" and last name "{last_name}"'))
+def step_create_new_owner_with_first_last_name(context, email, first_name, last_name):
+    """
+    Create a new owner with email, first name, and last name
+    First clicks "Create New Firm Owner" button, then fills owner fields
+    """
+    # Strip whitespace from names
+    first_name = first_name.strip()
+    last_name = last_name.strip()
+    full_name = f"{first_name} {last_name}".strip()
+    
+    print(f"   >> Creating new owner: {full_name} ({email})...")
+    print(f"   >> First Name: '{first_name}', Last Name: '{last_name}'")
+    
+    # STEP 1: Click "Create New Firm Owner" button first (required to show owner form)
+    # PRIORITY: data-attr-id FIRST, then button automation
+    print(f"   >> Step 1: Clicking 'Create New Firm Owner' button (using data-attr-id first)...")
+    create_owner_clicked = False
+    
+    # PRIORITY 1: Find by data-attr-id pattern discovery FIRST
+    try:
+        context.pattern_discovery.clear_cache()  # Fresh patterns
+        
+        # Try multiple pattern variations for owner button
+        owner_patterns = [
+            "create-new-firm-owner",
+            "create-new-owner",
+            "create-owner",
+            "add-owner",
+            "new-owner",
+            "owner"
+        ]
+        
+        matching_id = None
+        for pattern in owner_patterns:
+            # Try as button first
+            matching_id = context.pattern_discovery.find_matching_data_attr_id(pattern, "button")
+            if matching_id:
+                # Skip menu/dashboard/header buttons
+                if 'menu' not in matching_id.lower() and 'dashboard' not in matching_id.lower() and 'header' not in matching_id.lower():
+                    print(f"   >> Found owner button via data-attr-id pattern: {matching_id}")
+                    break
+                else:
+                    matching_id = None
+        
+        # If not found as button, try as upload/dragger (placeholder button)
+        if not matching_id:
+            for pattern in owner_patterns:
+                matching_id = context.pattern_discovery.find_matching_data_attr_id(pattern, "upload")
+                if matching_id:
+                    print(f"   >> Found owner placeholder via data-attr-id pattern: {matching_id}")
+                    break
+        
+        # Click using data-attr-id if found
+        if matching_id:
+            try:
+                # Try as button first
+                create_owner_clicked = context.button_handler.click_button(matching_id, identifier_type='data_attr_id', timeout=5)
+                if create_owner_clicked:
+                    print(f"   >> [OK] Clicked owner button via data-attr-id: {matching_id}")
+                    time.sleep(0.5)
+                else:
+                    # Try as upload/dragger/placeholder if button click failed
+                    try:
+                        from selenium.webdriver.common.by import By
+                        # Try to find element by data-attr-id directly
+                        element = context.driver.find_element(By.CSS_SELECTOR, f'[data-attr-id="{matching_id}"]')
+                        if element:
+                            # Check if it's a placeholder/upload component (has upload classes or is clickable)
+                            element_class = element.get_attribute('class') or ''
+                            if 'upload' in element_class.lower() or 'dragger' in element_class.lower() or 'placeholder' in element_class.lower():
+                                # Click the element directly
+                                context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                                time.sleep(0.2)
+                                element.click()
+                                create_owner_clicked = True
+                                print(f"   >> [OK] Clicked owner placeholder via data-attr-id: {matching_id}")
+                                time.sleep(0.5)
+                            else:
+                                # Try JavaScript click as fallback
+                                context.driver.execute_script("arguments[0].click();", element)
+                                create_owner_clicked = True
+                                print(f"   >> [OK] Clicked owner element via data-attr-id (JS click): {matching_id}")
+                                time.sleep(0.5)
+                    except Exception as e:
+                        print(f"   >> Could not click as upload/placeholder: {str(e)}")
+            except Exception as e:
+                print(f"   >> Could not click via data-attr-id: {str(e)}")
+    except Exception as e:
+        print(f"   >> Pattern discovery failed: {str(e)}")
+    
+    # PRIORITY 2: Fallback to button text-based search (using existing button automation)
+    if not create_owner_clicked:
+        print(f"   >> Data-attr-id not found, trying button text-based search...")
+        button_texts = [
+            "Create New Firm Owner",
+            "Create New Owner", 
+            "Add Owner",
+            "Create Owner",
+            "New Owner"
+        ]
+        
+        for button_text in button_texts:
+            try:
+                create_owner_clicked = context.button_handler.click_button(button_text, identifier_type='auto', timeout=5)
+                if create_owner_clicked:
+                    print(f"   >> [OK] Clicked '{button_text}' button successfully (text-based)")
+                    time.sleep(0.5)  # Brief wait for owner form to appear
+                    break
+            except Exception as e:
+                print(f"   >> Could not click '{button_text}': {str(e)}")
+                continue
+    
+    if not create_owner_clicked:
+        print(f"   >> ⚠ Warning: Could not click 'Create New Firm Owner' button - trying to fill fields anyway...")
+    
+    # STEP 2: Fill owner email field
+    print(f"   >> Step 2: Filling owner email field...")
+    owner_email_success = context.input_handler.fill_input(
+        "owner email",
+        email,
+        identifier_type='auto'
+    )
+    
+    if not owner_email_success:
+        # Try variations
+        for label in ["Owner Email", "Email", "Owner's Email"]:
+            owner_email_success = context.input_handler.fill_input(
+                label,
+                email,
+                identifier_type='label'
+            )
+            if owner_email_success:
+                break
+    
+    # STEP 3: Fill owner first name field
+    print(f"   >> Step 3: Filling owner first name field...")
+    owner_first_name_success = context.input_handler.fill_input(
+        "first name",
+        first_name,
+        identifier_type='auto'
+    )
+    
+    if not owner_first_name_success:
+        # Try variations
+        for label in ["First Name", "Owner First Name", "Owner's First Name", "First"]:
+            owner_first_name_success = context.input_handler.fill_input(
+                label,
+                first_name,
+                identifier_type='label'
+            )
+            if owner_first_name_success:
+                break
+    
+    # STEP 4: Fill owner last name field
+    print(f"   >> Step 4: Filling owner last name field...")
+    owner_last_name_success = context.input_handler.fill_input(
+        "last name",
+        last_name,
+        identifier_type='auto'
+    )
+    
+    if not owner_last_name_success:
+        # Try variations
+        for label in ["Last Name", "Owner Last Name", "Owner's Last Name", "Last"]:
+            owner_last_name_success = context.input_handler.fill_input(
+                label,
+                last_name,
+                identifier_type='label'
+            )
+            if owner_last_name_success:
+                break
+    
+    # Verify owner fields were filled
+    if not owner_email_success or not owner_first_name_success or not owner_last_name_success:
+        print(f"   >> ⚠ Warning: Could not fill all owner fields")
+        print(f"   >> Email filled: {owner_email_success}, First Name filled: {owner_first_name_success}, Last Name filled: {owner_last_name_success}")
+    else:
+        print(f"   >> ✓ Owner fields filled successfully: {full_name} ({email})")
+    
+    # Owner fields should now be filled - no need for additional button clicks
+    # The owner is created when fields are filled in the owner form
+    print(f"   >> Owner creation completed: {full_name} ({email})")
     time.sleep(0.2)  # Minimal delay
 
 

@@ -1,0 +1,131 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-01 10:52:38
+End Time: 2026-01-01 10:53:30
+Duration: 0:00:51.498174
+
+TOTAL TESTS: 1
+PASSED: 0
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: .venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 48.92s
+   Error:
+fixturefunc = <function step_redirected_to at 0x0000028225AFCA40>, request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x0000028225D637D0>, 'destination': '"Create New Firm" page'}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x0000028225D637D0>, destination = '"Create New Firm" page'
+
+    @then(parsers.parse('I should be redirected to the {destination}'))
+    def step_redirected_to(context, destination):
+        """
+        Verify redirect to destination (without quotes - for backward compatibility)
+        Uses explicit wait for URL change and checks for common patterns
+        """
+        print(f"   >> Verifying redirect to {destination}")
+    
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+    
+        destination_lower = destination.lower()
+    
+        # Wait for URL to change (wait up to 3 seconds for navigation - faster)
+        try:
+            # Get initial URL
+            initial_url = context.driver.current_url
+    
+            # Wait for URL to change or for specific patterns
+            wait = WebDriverWait(context.driver, 3)  # Faster timeout
+    
+            # Wait until URL changes or contains expected keywords
+            def url_changed_or_contains_keywords(driver):
+                current_url = driver.current_url.lower()
+                # Check if URL changed
+                if current_url != initial_url.lower():
+                    return True
+                # Check for destination keywords
+                keywords = []
+                if 'password' in destination_lower and 'reset' in destination_lower:
+                    keywords = ['reset', 'forgot', 'password', 'recover']
+                elif 'dashboard' in destination_lower:
+                    keywords = ['dashboard', 'firms', 'admin']
+                elif 'login' in destination_lower:
+                    keywords = ['login', 'signin']
+    
+                for keyword in keywords:
+                    if keyword in current_url:
+                        return True
+                return False
+    
+            wait.until(url_changed_or_contains_keywords)
+        except:
+            # If wait times out, check current URL anyway
+            pass
+    
+        # Check current URL
+        current_url = context.driver.current_url.lower()
+    
+        # Build list of acceptable patterns based on destination
+        acceptable_patterns = []
+        if 'password reset' in destination_lower or 'reset flow' in destination_lower:
+            acceptable_patterns = ['reset', 'forgot', 'password', 'recover', 'forgot-password', 'password-reset', 'forgot_password']
+        elif 'users list' in destination_lower or 'users page' in destination_lower:
+            acceptable_patterns = ['users', 'user']
+        elif 'firms list' in destination_lower or 'firms page' in destination_lower:
+            acceptable_patterns = ['firms', 'firm']
+        elif 'dashboard' in destination_lower:
+            acceptable_patterns = ['dashboard', 'firms', 'admin', 'home']
+        elif 'login' in destination_lower:
+            acceptable_patterns = ['login', 'signin']
+        else:
+            # Generic: check if destination keywords are in URL
+            destination_words = destination_lower.split()
+            acceptable_patterns = destination_words
+    
+        # Check if any pattern matches
+        url_matches = any(pattern in current_url for pattern in acceptable_patterns)
+    
+        # Also check if URL changed from login page (for login scenarios)
+        if 'login' not in current_url and 'login' in initial_url.lower():
+            url_matches = True
+    
+        # Special case: if we're checking for password reset and URL contains "forgot-password", it's valid
+        if 'password reset' in destination_lower or 'reset flow' in destination_lower:
+            if 'forgot' in current_url or 'reset' in current_url:
+                url_matches = True
+    
+>       assert url_matches, \
+               ^^^^^^^^^^^
+            f"Not redirected to {destination}. Current URL: {current_url}. Expected patterns: {acceptable_patterns}"
+E       AssertionError: Not redirected to "Create New Firm" page. Current URL: https://dev-admin.maventech.ai/firms. Expected patterns: ['"create', 'new', 'firm"', 'page']
+
+steps\maven_steps.py:1476: AssertionError
+
