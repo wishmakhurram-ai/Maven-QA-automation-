@@ -8,8 +8,6 @@ Feature: MavenAI Admin Portal Login Automation
 
   # ==================== ACCEPTANCE CRITERIA ====================
 
-
-
   @LOGIN-004 @smoke @required @admin
   Scenario: Admin can successfully log in
     Given I am on the Admin Portal Login Page
@@ -35,7 +33,7 @@ Feature: MavenAI Admin Portal Login Automation
     And I enter "202020" in the "Zip Code" field
     And I enter "Canada" in the "Country" field
     And I create a new owner with email "owner@firm.com" and first name " Doe" and last name "bro"
-    And I click the "Create" button
+    And I click the "Create" button on owner page
     And then i click "Create Firm" button
     Then the firm should be created successfully
     And I should see a success message "Firm created successfully"

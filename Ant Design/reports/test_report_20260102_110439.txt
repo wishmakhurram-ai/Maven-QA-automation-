@@ -1,0 +1,79 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-02 10:58:35
+End Time: 2026-01-02 11:04:39
+Duration: 0:06:04.021110
+
+TOTAL TESTS: 2
+PASSED: 1
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: ..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 68.83s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: ..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 292.53s
+   Error:
+fixturefunc = <function step_firm_created_successfully at 0x000001DE4B519940>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001DE4B894EC0>}
+
+    def call_fixture_func(
+        fixturefunc: "_FixtureFunc[FixtureValue]", request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if is_generator(fixturefunc):
+            fixturefunc = cast(
+                Callable[..., Generator[FixtureValue, None, None]], fixturefunc
+            )
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\fixtures.py:902: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+context = <conftest.context.<locals>.Context object at 0x000001DE4B894EC0>
+
+    @then('the firm should be created successfully')
+    def step_firm_created_successfully(context):
+        """
+        Verify that the firm was created successfully
+        """
+        print(f"   >> Verifying firm creation...")
+    
+        # Wait a bit for the creation to process
+        time.sleep(0.3)  # Faster wait
+    
+        # Check if we're redirected away from create page (successful creation)
+        current_url = context.driver.current_url.lower()
+    
+        # If we're still on create/new page, creation might have failed
+        if 'new' in current_url or 'create' in current_url:
+            # Check for error messages
+            page_text = context.driver.page_source.lower()
+            if 'error' in page_text or 'failed' in page_text:
+>               raise AssertionError("Firm creation failed - error detected on page")
+E               AssertionError: Firm creation failed - error detected on page
+
+steps\maven_steps.py:3735: AssertionError
+

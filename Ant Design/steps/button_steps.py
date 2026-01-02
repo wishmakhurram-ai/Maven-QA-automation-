@@ -2,6 +2,7 @@
 Gherkin step definitions for button automation using pytest-bdd
 pytest-bdd automatically discovers and loads these step definitions
 """
+import time
 from pytest_bdd import given, when, then, parsers
 from framework.components.button_handler import ButtonHandler
 
@@ -914,8 +915,14 @@ def step_click_button_generic(context, button_text):
     - "I click Send Verification Code"
     - "I click Verify or Continue button"
     Uses data-attr-id pattern discovery
+    For "Create" button, prioritizes buttons in modals/forms (especially owner forms)
     """
     print(f"   >> Clicking button: '{button_text}'")
+    
+    # Strip quotes if present
+    button_text = button_text.strip('"\'')
+    
+    context.button_clicked = False
     
     # Handle "or" patterns (e.g., "Verify or Continue")
     if ' or ' in button_text.lower():
@@ -929,10 +936,120 @@ def step_click_button_generic(context, button_text):
                 print(f"   >> Clicked button: '{option}'")
                 break
     else:
-        context.button_clicked = context.button_handler.click_button(
-            button_text,
-            identifier_type='auto'
-        )
+        # Special handling for "Create" button - prioritize buttons in modals/forms
+        if button_text.lower() == 'create':
+            print(f"   >> Detected 'Create' button - prioritizing buttons in modals/forms...")
+            
+            # PRIORITY 1: Try to find "Create" button in visible modals/forms first
+            try:
+                from selenium.webdriver.common.by import By
+                from selenium.webdriver.support.ui import WebDriverWait
+                from selenium.webdriver.support import expected_conditions as EC
+                from selenium.common.exceptions import TimeoutException
+                
+                # Look for buttons with "Create" text within modals/forms
+                # Ant Design modals typically have class "ant-modal" or "ant-drawer"
+                # Also look for buttons near owner-related fields (for inline forms)
+                modal_selectors = [
+                    # Modals and drawers
+                    "//div[contains(@class, 'ant-modal')]//button[contains(text(), 'Create')]",
+                    "//div[contains(@class, 'ant-drawer')]//button[contains(text(), 'Create')]",
+                    "//div[contains(@class, 'modal')]//button[contains(text(), 'Create')]",
+                    "//div[contains(@class, 'drawer')]//button[contains(text(), 'Create')]",
+                    # Forms with owner context
+                    "//div[contains(@class, 'ant-form')]//button[contains(text(), 'Create')]",
+                    # Buttons near owner-related input fields (for inline forms)
+                    "//input[contains(@placeholder, 'owner') or contains(@placeholder, 'Owner')]/ancestor::*[contains(@class, 'ant-form') or contains(@class, 'form')][1]//button[contains(text(), 'Create')]",
+                    "//label[contains(text(), 'owner') or contains(text(), 'Owner')]/ancestor::*[contains(@class, 'ant-form') or contains(@class, 'form')][1]//button[contains(text(), 'Create')]"
+                ]
+                
+                for selector in modal_selectors:
+                    try:
+                        elements = context.driver.find_elements(By.XPATH, selector)
+                        # Filter to only visible elements
+                        visible_elements = [el for el in elements if el.is_displayed()]
+                        if visible_elements:
+                            # Prioritize elements that are in owner-related contexts
+                            owner_button_found = False
+                            for element in visible_elements:
+                                try:
+                                    # Check if element is in owner form context
+                                    parent = element.find_element(By.XPATH, "./ancestor::*[contains(@class, 'ant-modal') or contains(@class, 'ant-drawer') or contains(@class, 'ant-form')][1]")
+                                    parent_html = parent.get_attribute('outerHTML') or ''
+                                    
+                                    # If parent contains owner-related text, prioritize it
+                                    if 'owner' in parent_html.lower() or 'firm owner' in parent_html.lower():
+                                        print(f"   >> Found 'Create' button in owner form/modal - clicking...")
+                                        context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                                        time.sleep(0.2)
+                                        element.click()
+                                        context.button_clicked = True
+                                        owner_button_found = True
+                                        print(f"   >> [OK] Clicked 'Create' button in owner form")
+                                        break
+                                except Exception:
+                                    # If parent not found, continue to next element
+                                    continue
+                            
+                            # If no owner-specific button found, use first visible button in modal
+                            if not owner_button_found and visible_elements:
+                                print(f"   >> Found 'Create' button in modal/form - clicking...")
+                                context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", visible_elements[0])
+                                time.sleep(0.2)
+                                visible_elements[0].click()
+                                context.button_clicked = True
+                                print(f"   >> [OK] Clicked 'Create' button in modal/form")
+                            
+                            # If button was clicked, break out of selector loop
+                            if context.button_clicked:
+                                break
+                    except Exception as e:
+                        continue
+                
+                # If found in modal, skip to assertion
+                if context.button_clicked:
+                    pass  # Will proceed to assertion
+                else:
+                    # PRIORITY 2: Try pattern discovery with owner-specific patterns
+                    try:
+                        context.pattern_discovery.clear_cache()
+                        
+                        # Try owner-specific patterns for Create button
+                        owner_create_patterns = [
+                            "create-owner",
+                            "owner-create",
+                            "add-owner-create",
+                            "create-new-owner",
+                            "owner-form-create"
+                        ]
+                        
+                        for pattern in owner_create_patterns:
+                            matching_id = context.pattern_discovery.find_matching_data_attr_id(pattern, "button")
+                            if matching_id:
+                                # Skip menu/dashboard/header buttons
+                                if 'menu' not in matching_id.lower() and 'dashboard' not in matching_id.lower() and 'header' not in matching_id.lower():
+                                    print(f"   >> Found owner Create button via data-attr-id pattern: {matching_id}")
+                                    context.button_clicked = context.button_handler.click_button(
+                                        matching_id,
+                                        identifier_type='data_attr_id',
+                                        timeout=5
+                                    )
+                                    if context.button_clicked:
+                                        break
+                    except Exception as e:
+                        print(f"   >> Pattern discovery for owner Create button failed: {str(e)}")
+            
+            except Exception as e:
+                print(f"   >> Modal/form search failed: {str(e)}")
+        
+        # PRIORITY 1: Try with auto (uses pattern discovery)
+        if not context.button_clicked:
+            context.button_clicked = context.button_handler.click_button(
+                button_text,
+                identifier_type='auto'
+            )
+        
+        # PRIORITY 2: Fallback to text-based search
         if not context.button_clicked:
             context.button_clicked = context.button_handler.click_button(
                 button_text,

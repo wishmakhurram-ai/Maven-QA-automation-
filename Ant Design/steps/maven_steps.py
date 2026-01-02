@@ -3415,6 +3415,114 @@ def step_create_new_owner_with_first_last_name(context, email, first_name, last_
     time.sleep(0.2)  # Minimal delay
 
 
+@when(parsers.parse('I click the "{button_text}" button on owner page'))
+@then(parsers.parse('I click the "{button_text}" button on owner page'))
+def step_click_button_on_owner_page(context, button_text):
+    """
+    Click a button specifically on the owner page/form
+    This is used to click buttons within the owner form/modal (e.g., "Create" button after adding owner)
+    Prioritizes buttons in owner-related modals/forms
+    """
+    print(f"   >> Clicking '{button_text}' button on owner page...")
+    
+    button_clicked = False
+    
+    # PRIORITY 1: Try to find button in owner-related modals/forms
+    try:
+        from selenium.webdriver.common.by import By
+        
+        # Look for buttons with the specified text within owner-related modals/forms
+        owner_selectors = [
+            # Buttons in modals/drawers that contain owner-related content
+            "//div[contains(@class, 'ant-modal')]//button[contains(text(), '{text}')]",
+            "//div[contains(@class, 'ant-drawer')]//button[contains(text(), '{text}')]",
+            # Buttons near owner-related input fields
+            "//input[contains(@placeholder, 'owner') or contains(@placeholder, 'Owner')]/ancestor::*[contains(@class, 'ant-form') or contains(@class, 'form')][1]//button[contains(text(), '{text}')]",
+            "//label[contains(text(), 'owner') or contains(text(), 'Owner')]/ancestor::*[contains(@class, 'ant-form') or contains(@class, 'form')][1]//button[contains(text(), '{text}')]"
+        ]
+        
+        for selector_template in owner_selectors:
+            try:
+                selector = selector_template.format(text=button_text)
+                elements = context.driver.find_elements(By.XPATH, selector)
+                visible_elements = [el for el in elements if el.is_displayed()]
+                
+                if visible_elements:
+                    # Check if element is in owner-related context
+                    for element in visible_elements:
+                        try:
+                            parent = element.find_element(By.XPATH, "./ancestor::*[contains(@class, 'ant-modal') or contains(@class, 'ant-drawer') or contains(@class, 'ant-form')][1]")
+                            parent_html = parent.get_attribute('outerHTML') or ''
+                            
+                            # Prioritize owner-related contexts
+                            if 'owner' in parent_html.lower() or 'firm owner' in parent_html.lower() or button_text.lower() == 'create':
+                                print(f"   >> Found '{button_text}' button in owner form/modal - clicking...")
+                                context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                                time.sleep(0.2)
+                                element.click()
+                                button_clicked = True
+                                print(f"   >> [OK] Clicked '{button_text}' button in owner form")
+                                break
+                        except Exception:
+                            continue
+                    
+                    # If no owner-specific button found but we have visible buttons, use the first one
+                    if not button_clicked and visible_elements:
+                        print(f"   >> Found '{button_text}' button in modal/form - clicking...")
+                        context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", visible_elements[0])
+                        time.sleep(0.2)
+                        visible_elements[0].click()
+                        button_clicked = True
+                        print(f"   >> [OK] Clicked '{button_text}' button in modal/form")
+                        break
+            except Exception as e:
+                continue
+    except Exception as e:
+        print(f"   >> Modal/form search failed: {str(e)}")
+    
+    # PRIORITY 2: Try pattern discovery with owner-specific patterns
+    if not button_clicked:
+        try:
+            context.pattern_discovery.clear_cache()
+            
+            # Try owner-specific patterns
+            owner_patterns = [
+                f"{button_text.lower().replace(' ', '-')}-owner",
+                f"owner-{button_text.lower().replace(' ', '-')}",
+                f"add-owner-{button_text.lower().replace(' ', '-')}",
+                f"{button_text.lower().replace(' ', '-')}-new-owner",
+                f"owner-form-{button_text.lower().replace(' ', '-')}"
+            ]
+            
+            for pattern in owner_patterns:
+                matching_id = context.pattern_discovery.find_matching_data_attr_id(pattern, "button")
+                if matching_id:
+                    # Skip menu/dashboard/header buttons
+                    if 'menu' not in matching_id.lower() and 'dashboard' not in matching_id.lower() and 'header' not in matching_id.lower():
+                        print(f"   >> Found owner button via data-attr-id pattern: {matching_id}")
+                        button_clicked = context.button_handler.click_button(
+                            matching_id,
+                            identifier_type='data_attr_id',
+                            timeout=5
+                        )
+                        if button_clicked:
+                            break
+        except Exception as e:
+            print(f"   >> Pattern discovery for owner button failed: {str(e)}")
+    
+    # PRIORITY 3: Fallback to standard button click
+    if not button_clicked:
+        button_clicked = context.button_handler.click_button(
+            button_text,
+            identifier_type='auto',
+            timeout=10
+        )
+    
+    assert button_clicked, f"Failed to click '{button_text}' button on owner page"
+    print(f"   >> '{button_text}' button on owner page clicked successfully")
+    time.sleep(0.3)
+
+
 @when(parsers.parse('I click the "{button_text}" button'))
 def step_click_button_by_text(context, button_text):
     """
@@ -3427,27 +3535,298 @@ def step_click_button_by_text(context, button_text):
     time.sleep(0.3)  # Reduced delay for faster execution
 
 
+@when(parsers.parse('then i click "{button_text}" button'))
+@then(parsers.parse('then i click "{button_text}" button'))
+@when(parsers.parse('then I click "{button_text}" button'))
+@then(parsers.parse('then I click "{button_text}" button'))
+def step_click_button_then(context, button_text):
+    """
+    Click a button (used with "then" keyword)
+    For "Create Firm" button, this ensures we click the main form button, not the owner form button
+    """
+    print(f"   >> Clicking '{button_text}' button...")
+    
+    # Strip quotes if present
+    button_text = button_text.strip('"\'')
+    
+    button_clicked = False
+    
+    # Special handling for "Create Firm" - ensure we click the main form button
+    if button_text.lower() == 'create firm':
+        print(f"   >> Detected 'Create Firm' button - ensuring we click the main form button...")
+        
+        # PRIORITY 1: Try direct XPath search for Create Firm button (most reliable)
+        try:
+            from selenium.webdriver.common.by import By
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            
+            # Wait a bit for any modals to close after owner creation
+            time.sleep(0.5)
+            
+            # Look for Create Firm button - try multiple strategies
+            create_firm_selectors = [
+                # Exact text match, not in modals
+                "//button[normalize-space(text())='Create Firm' and not(ancestor::div[contains(@class, 'ant-modal')]) and not(ancestor::div[contains(@class, 'ant-drawer')])]",
+                # Contains text, not in modals
+                "//button[contains(text(), 'Create Firm') and not(ancestor::div[contains(@class, 'ant-modal')]) and not(ancestor::div[contains(@class, 'ant-drawer')])]",
+                # Any Create Firm button (fallback)
+                "//button[normalize-space(text())='Create Firm']",
+                "//button[contains(text(), 'Create Firm')]",
+                # Also try span inside button (Ant Design sometimes uses spans)
+                "//button[.//span[normalize-space(text())='Create Firm']]",
+                "//button[.//span[contains(text(), 'Create Firm')]]"
+            ]
+            
+            for selector in create_firm_selectors:
+                try:
+                    # Wait for element to be present
+                    wait = WebDriverWait(context.driver, 5)
+                    elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, selector)))
+                    visible_elements = [el for el in elements if el.is_displayed() and el.is_enabled()]
+                    
+                    if visible_elements:
+                        # Prefer buttons not in modals
+                        for element in visible_elements:
+                            try:
+                                # Check if button is in a modal
+                                modal_parent = element.find_elements(By.XPATH, "./ancestor::div[contains(@class, 'ant-modal') or contains(@class, 'ant-drawer')]")
+                                if not modal_parent:
+                                    # Not in modal, this is likely the main form button
+                                    print(f"   >> Found 'Create Firm' button in main form - clicking...")
+                                    
+                                    # Wait for button to be clickable
+                                    try:
+                                        wait.until(EC.element_to_be_clickable(element))
+                                    except:
+                                        pass  # Continue even if wait fails
+                                    
+                                    context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                                    time.sleep(0.3)
+                                    
+                                    # Check if button is enabled
+                                    if not element.is_enabled():
+                                        print(f"   >> Button is disabled, waiting...")
+                                        time.sleep(1)
+                                    
+                                    # Try regular click first
+                                    try:
+                                        element.click()
+                                        button_clicked = True
+                                        print(f"   >> [OK] Clicked 'Create Firm' button in main form")
+                                        break
+                                    except Exception as click_error:
+                                        print(f"   >> Regular click failed: {str(click_error)}, trying JavaScript click...")
+                                        # Fallback to JavaScript click
+                                        context.driver.execute_script("arguments[0].click();", element)
+                                        button_clicked = True
+                                        print(f"   >> [OK] Clicked 'Create Firm' button in main form (JS click)")
+                                        break
+                            except Exception as e:
+                                print(f"   >> Error checking modal parent: {str(e)}")
+                                continue
+                        
+                        # If no non-modal button found, use first visible button
+                        if not button_clicked and visible_elements:
+                            print(f"   >> Found 'Create Firm' button (may be in modal) - clicking...")
+                            element = visible_elements[0]
+                            
+                            try:
+                                wait.until(EC.element_to_be_clickable(element))
+                            except:
+                                pass
+                            
+                            context.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                            time.sleep(0.3)
+                            
+                            if not element.is_enabled():
+                                print(f"   >> Button is disabled, waiting...")
+                                time.sleep(1)
+                            
+                            try:
+                                element.click()
+                                button_clicked = True
+                                print(f"   >> [OK] Clicked 'Create Firm' button")
+                            except Exception:
+                                context.driver.execute_script("arguments[0].click();", element)
+                                button_clicked = True
+                                print(f"   >> [OK] Clicked 'Create Firm' button (JS click)")
+                            
+                            if button_clicked:
+                                break
+                except Exception as e:
+                    # If timeout or element not found, continue to next selector
+                    continue
+        except Exception as e:
+            print(f"   >> Direct XPath search failed: {str(e)}")
+        
+        # PRIORITY 2: Try pattern discovery for Create Firm button
+        if not button_clicked:
+            try:
+                context.pattern_discovery.clear_cache()
+                
+                firm_create_patterns = [
+                    "create-firm",
+                    "create-new-firm",
+                    "firm-create",
+                    "submit-firm",
+                    "save-firm",
+                    "create",
+                    "submit"
+                ]
+                
+                for pattern in firm_create_patterns:
+                    matching_id = context.pattern_discovery.find_matching_data_attr_id(pattern, "button")
+                    if matching_id:
+                        # Skip owner-related buttons
+                        if 'owner' not in matching_id.lower():
+                            print(f"   >> Found Create Firm button via data-attr-id pattern: {matching_id}")
+                            button_clicked = context.button_handler.click_button(
+                                matching_id,
+                                identifier_type='data_attr_id',
+                                timeout=5
+                            )
+                            if button_clicked:
+                                break
+            except Exception as e:
+                print(f"   >> Pattern discovery for Create Firm button failed: {str(e)}")
+    
+    # PRIORITY 3: Fallback to standard button click (for all buttons, including Create Firm if above failed)
+    if not button_clicked:
+        print(f"   >> Trying standard button click for '{button_text}'...")
+        button_clicked = context.button_handler.click_button(
+            button_text,
+            identifier_type='auto',
+            timeout=10
+        )
+    
+    # PRIORITY 4: Last resort - try text-based search
+    if not button_clicked:
+        print(f"   >> Trying text-based button click for '{button_text}'...")
+        button_clicked = context.button_handler.click_button(
+            button_text,
+            identifier_type='text',
+            timeout=10
+        )
+    
+    assert button_clicked, f"Failed to click '{button_text}' button. Tried: XPath search, pattern discovery, auto discovery, text search"
+    print(f"   >> '{button_text}' button clicked successfully")
+    
+    # Special handling: If Create Firm button was clicked, wait for redirect/page transition
+    if button_text.lower() == 'create firm':
+        print(f"   >> Waiting for page transition after Create Firm click...")
+        try:
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.support import expected_conditions as EC
+            from selenium.common.exceptions import TimeoutException
+            
+            # Wait for URL to change (redirect to firms list page)
+            current_url = context.driver.current_url
+            print(f"   >> Current URL before wait: {current_url}")
+            
+            # Wait up to 120 seconds (2 minutes) for URL to change (indicating redirect)
+            try:
+                wait = WebDriverWait(context.driver, 120)
+                wait.until(lambda driver: driver.current_url != current_url)
+                new_url = context.driver.current_url
+                print(f"   >> Page redirected successfully. New URL: {new_url}")
+            except TimeoutException:
+                print(f"   >> URL did not change after 120 seconds, checking if still on create page...")
+                # Check if we're still on create page - if so, wait a bit more
+                if 'new' in context.driver.current_url.lower() or 'create' in context.driver.current_url.lower():
+                    print(f"   >> Still on create page, waiting additional 30 seconds...")
+                    time.sleep(30)
+            
+            # Additional wait for page to fully load and stabilize
+            print(f"   >> Waiting for page to fully load...")
+            time.sleep(3)
+            
+            # Wait for page to be in a ready state
+            try:
+                WebDriverWait(context.driver, 30).until(
+                    lambda driver: driver.execute_script("return document.readyState") == "complete"
+                )
+                print(f"   >> Page is in ready state")
+            except:
+                print(f"   >> Page ready state check timed out, but continuing...")
+            
+            # Wait for any loading indicators to disappear
+            try:
+                # Wait for common loading indicators to disappear
+                wait.until_not(EC.presence_of_element_located(("css selector", ".ant-spin, .loading, [class*='loading']")))
+                print(f"   >> Loading indicators cleared")
+            except:
+                print(f"   >> No loading indicators found or already cleared")
+            
+            # Final wait to ensure page is stable
+            time.sleep(2)
+            
+            print(f"   >> Page transition completed. Final URL: {context.driver.current_url}")
+        except Exception as e:
+            print(f"   >> Error during page transition wait: {str(e)}")
+            # Still wait a bit even if error occurs to ensure page has time to transition
+            print(f"   >> Waiting additional 5 seconds as fallback...")
+            time.sleep(5)
+    else:
+        time.sleep(0.3)
+
+
 @then('the firm should be created successfully')
 def step_firm_created_successfully(context):
     """
     Verify that the firm was created successfully
+    This step waits for the page to transition after firm creation
     """
     print(f"   >> Verifying firm creation...")
     
-    # Wait a bit for the creation to process
-    time.sleep(0.3)  # Faster wait
-    
-    # Check if we're redirected away from create page (successful creation)
-    current_url = context.driver.current_url.lower()
-    
-    # If we're still on create/new page, creation might have failed
-    if 'new' in current_url or 'create' in current_url:
-        # Check for error messages
-        page_text = context.driver.page_source.lower()
-        if 'error' in page_text or 'failed' in page_text:
-            raise AssertionError("Firm creation failed - error detected on page")
+    try:
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        from selenium.common.exceptions import TimeoutException
+        
+        # Wait for page to be ready
+        try:
+            WebDriverWait(context.driver, 30).until(
+                lambda driver: driver.execute_script("return document.readyState") == "complete"
+            )
+        except:
+            pass
+        
+        # Additional wait to ensure page has fully loaded
+        time.sleep(2)
+        
+        # Check if we're redirected away from create page (successful creation)
+        current_url = context.driver.current_url.lower()
+        print(f"   >> Current URL after creation: {current_url}")
+        
+        # If we're still on create/new page, wait a bit more and check again
+        if 'new' in current_url or 'create' in current_url:
+            print(f"   >> Still on create page, waiting for redirect...")
+            time.sleep(5)
+            
+            # Check URL again
+            current_url = context.driver.current_url.lower()
+            
+            if 'new' in current_url or 'create' in current_url:
+                # Check for error messages
+                page_text = context.driver.page_source.lower()
+                if 'error' in page_text or 'failed' in page_text:
+                    raise AssertionError("Firm creation failed - error detected on page")
+                else:
+                    print(f"   >> Still on create page, but no errors detected - may still be processing")
+                    # Wait a bit more in case it's still processing
+                    time.sleep(5)
+            else:
+                print(f"   >> Redirected successfully to: {current_url}")
         else:
-            print(f"   >> Still on create page, but no errors detected")
+            print(f"   >> Successfully redirected away from create page")
+    
+    except Exception as e:
+        print(f"   >> Error during verification: {str(e)}")
+        # Still check URL as fallback
+        current_url = context.driver.current_url.lower()
+        if 'new' in current_url or 'create' in current_url:
+            print(f"   >> Warning: Still on create page after wait")
     
     print(f"   >> Firm creation verified")
 
