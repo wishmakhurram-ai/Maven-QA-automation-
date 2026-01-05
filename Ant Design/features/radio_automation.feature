@@ -9,6 +9,8 @@ Feature: Ant Design Radio Component Automation
   Scenario: Detect and summarize all radios on the page
     When I navigate to a page with radios
     Then I should see a summary of all radios
+  
+  
 
   Scenario: Select radio by semantic label
     Given I am on a page with radios
