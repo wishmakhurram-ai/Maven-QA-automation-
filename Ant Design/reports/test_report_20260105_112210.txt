@@ -1,0 +1,26 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-05 11:11:36
+End Time: 2026-01-05 11:22:10
+Duration: 0:10:34.422314
+
+TOTAL TESTS: 2
+PASSED: 2
+FAILED: 0
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: ..\..\..\Ant Design\.venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 66.86s
+
+2. test_admin_can_create_a_new_firm_with_owner
+   File: ..\..\..\Ant Design\.venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 565.27s
+

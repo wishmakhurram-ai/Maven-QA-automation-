@@ -1,0 +1,83 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-05 10:33:23
+End Time: 2026-01-05 10:43:47
+Duration: 0:10:24.031827
+
+TOTAL TESTS: 2
+PASSED: 1
+FAILED: 1
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: ..\..\..\Ant Design\.venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 66.94s
+
+================================================================================
+FAILED TESTS:
+================================================================================
+1. test_admin_can_create_a_new_firm_with_owner
+   File: ..\..\..\Ant Design\.venv\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 295
+   Duration: 553.99s
+   Error:
+fixturefunc = <function step_redirected_to_firms_page at 0x000001791B0D9120>
+request = <FixtureRequest for <Function test_admin_can_create_a_new_firm_with_owner>>
+kwargs = {'context': <conftest.context.<locals>.Context object at 0x000001791B69E360>}
+
+    def call_fixture_func(
+        fixturefunc: _FixtureFunc[FixtureValue], request: FixtureRequest, kwargs
+    ) -> FixtureValue:
+        if inspect.isgeneratorfunction(fixturefunc):
+            fixturefunc = cast(Callable[..., Generator[FixtureValue]], fixturefunc)
+            generator = fixturefunc(**kwargs)
+            try:
+                fixture_result = next(generator)
+            except StopIteration:
+                raise ValueError(f"{request.fixturename} did not yield a value") from None
+            finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+            request.addfinalizer(finalizer)
+        else:
+            fixturefunc = cast(Callable[..., FixtureValue], fixturefunc)
+>           fixture_result = fixturefunc(**kwargs)
+                             ^^^^^^^^^^^^^^^^^^^^^
+
+..\..\..\Ant Design\.venv\Lib\site-packages\_pytest\fixtures.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+context = <conftest.context.<locals>.Context object at 0x000001791B69E360>
+
+    @then('I should be redirected to the Firms list page')
+    def step_redirected_to_firms_page(context):
+        """
+        Verify redirect to Firms list page
+        Uses WebDriverWait to properly wait for navigation and page load
+        """
+        print(f"   >> Verifying redirect to Firms list page")
+        try:
+            wait = WebDriverWait(context.driver, 3)  # Optimized for speed
+    
+            # Wait for URL to contain 'firms'
+            wait.until(lambda driver: 'firms' in driver.current_url.lower())
+    
+            # Wait for page to be fully loaded
+            wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    
+            # Wait for any dynamic content (removed jQuery wait for speed)
+            pass
+        except Exception as e:
+            print(f"   >> Error waiting for redirect: {str(e)}")
+    
+        current_url = context.driver.current_url.lower()
+>       assert 'firms' in current_url, f"Not redirected to Firms list page. Current URL: {current_url}"
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Not redirected to Firms list page. Current URL: https://dev-admin.maventech.ai/users
+
+steps\menu_steps.py:183: AssertionError
+

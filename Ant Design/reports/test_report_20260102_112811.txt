@@ -1,0 +1,26 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+
+Start Time: 2026-01-02 11:20:02
+End Time: 2026-01-02 11:28:11
+Duration: 0:08:09.053746
+
+TOTAL TESTS: 2
+PASSED: 2
+FAILED: 0
+SKIPPED: 0
+
+================================================================================
+PASSED TESTS:
+================================================================================
+1. test_admin_can_successfully_log_in
+   File: ..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 62.67s
+
+2. test_admin_can_create_a_new_firm_with_owner
+   File: ..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pytest_bdd\scenario.py
+   Line: 266
+   Duration: 424.05s
+

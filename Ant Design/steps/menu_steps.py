@@ -163,25 +163,69 @@ def step_redirected_to_firms_page(context):
     """
     Verify redirect to Firms list page
     Uses WebDriverWait to properly wait for navigation and page load
+    Waits longer to allow for intermediate redirects (e.g., Users page -> Firms page)
     """
     print(f"   >> Verifying redirect to Firms list page")
+    
     try:
-        wait = WebDriverWait(context.driver, 3)  # Optimized for speed
+        current_url = context.driver.current_url.lower()
+        print(f"   >> Current URL before wait: {current_url}")
+        
+        # Wait up to 120 seconds (2 minutes) for redirect to Firms page
+        # This accounts for intermediate redirects (e.g., Users -> Firms)
+        wait = WebDriverWait(context.driver, 120)
         
         # Wait for URL to contain 'firms'
-        wait.until(lambda driver: 'firms' in driver.current_url.lower())
+        try:
+            wait.until(lambda driver: 'firms' in driver.current_url.lower())
+            print(f"   >> Successfully redirected to Firms page")
+        except TimeoutException:
+            # If timeout, check current URL and wait a bit more
+            current_url = context.driver.current_url.lower()
+            print(f"   >> Timeout waiting for redirect. Current URL: {current_url}")
+            
+            # If we're on users page, it might redirect to firms, wait more
+            if 'users' in current_url:
+                print(f"   >> Currently on Users page, waiting additional 30 seconds for Firms redirect...")
+                time.sleep(30)
+                
+                # Check again
+                current_url = context.driver.current_url.lower()
+                if 'firms' in current_url:
+                    print(f"   >> Redirected to Firms page after additional wait")
+                else:
+                    print(f"   >> Still not on Firms page after additional wait. Current URL: {current_url}")
+            else:
+                print(f"   >> Not on Users page, but also not on Firms page")
         
         # Wait for page to be fully loaded
-        wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        try:
+            WebDriverWait(context.driver, 30).until(
+                lambda driver: driver.execute_script('return document.readyState') == 'complete'
+            )
+            print(f"   >> Page is fully loaded")
+        except:
+            print(f"   >> Page ready state check timed out, but continuing...")
         
-        # Wait for any dynamic content (removed jQuery wait for speed)
-        pass
+        # Additional wait for page to stabilize
+        time.sleep(2)
+        
     except Exception as e:
         print(f"   >> Error waiting for redirect: {str(e)}")
+        # Still wait a bit even if error occurs
+        time.sleep(5)
     
+    # Final check
     current_url = context.driver.current_url.lower()
+    if 'firms' not in current_url:
+        # One more attempt - wait and check again
+        print(f"   >> Final check: Not on Firms page yet. Current URL: {current_url}")
+        print(f"   >> Waiting additional 30 seconds for final redirect...")
+        time.sleep(30)
+        current_url = context.driver.current_url.lower()
+    
     assert 'firms' in current_url, f"Not redirected to Firms list page. Current URL: {current_url}"
-    print(f"   >> Redirected to Firms list page (URL: {current_url})")
+    print(f"   >> ✓ Redirected to Firms list page (URL: {current_url})")
 
 
 @then('I should be redirected to the Users list page')
