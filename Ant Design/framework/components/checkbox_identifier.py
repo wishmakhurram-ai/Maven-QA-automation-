@@ -26,47 +26,25 @@ class CheckboxIdentifier:
     }
     
     @staticmethod
-    def identify_checkbox_type(element: WebElement) -> Dict[str, any]:
+    def identify_checkbox_type(element: WebElement, fast_mode: bool = False) -> Dict[str, any]:
         """
         Automatically identify the type and properties of an Ant Design Checkbox
-        Integrates with GenericElementIdentifier to read custom attributes
+        Optimized version with fast mode for bulk operations
         
         Args:
             element: WebElement representing the checkbox
+            fast_mode: If True, skip expensive operations (group info, check all detection)
             
         Returns:
-            Dictionary containing checkbox properties:
-            {
-                'type': 'basic'|'disabled'|'controlled'|'group'|'check_all'|'indeterminate'|'grid_layout',
-                'checked': bool,  # Checked/unchecked state
-                'disabled': bool,
-                'indeterminate': bool,  # Indeterminate state (true/false)
-                'label_text': str|None,
-                'data_attr_id': str|None,
-                'group_name': str|None,  # Checkbox group name
-                'group_id': str|None,  # Checkbox group identifier
-                'total_in_group': int|None,  # Total checkboxes in group
-                'checked_in_group': List[str]|None,  # List of checked options in group
-                'has_check_all': bool,  # True if has "Check All" behavior
-                'aria_checked': str|None,  # 'true'|'false'|'mixed' (for indeterminate)
-                'aria_disabled': str|None,  # 'true'|'false'
-                'aria_label': str|None,
-                'value': str|None,  # Checkbox value
-                'name': str|None,  # Checkbox name (for grouping)
-                'controlled': bool|None,  # True if controlled, False if uncontrolled
-                'metadata': dict
-            }
+            Dictionary containing checkbox properties
         """
-        # First, get generic element information
-        generic_info = GenericElementIdentifier.identify_element(element)
-        
         checkbox_info = {
             'type': 'basic',
             'checked': False,
             'disabled': False,
             'indeterminate': False,
             'label_text': None,
-            'data_attr_id': generic_info.get('data_attr_id'),
+            'data_attr_id': None,
             'group_name': None,
             'group_id': None,
             'total_in_group': None,
@@ -78,100 +56,231 @@ class CheckboxIdentifier:
             'value': None,
             'name': None,
             'controlled': None,
-            'metadata': generic_info.get('metadata', {})
+            'metadata': {}
         }
         
         try:
-            # Get class attribute
-            class_attr = element.get_attribute('class') or ''
-            classes = class_attr.split()
-            
-            # Find the actual checkbox input element
-            checkbox_input = CheckboxIdentifier._find_checkbox_input(element)
-            if not checkbox_input:
-                # If element itself is input[type="checkbox"]
-                if element.tag_name.lower() == 'input' and element.get_attribute('type') == 'checkbox':
-                    checkbox_input = element
-                else:
-                    # Try to find wrapper and then input
-                    wrapper = CheckboxIdentifier._find_checkbox_wrapper(element)
-                    if wrapper:
-                        try:
-                            checkbox_input = wrapper.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
-                        except:
-                            pass
-            
-            if checkbox_input:
-                # Get checkbox input properties
-                checkbox_info['checked'] = checkbox_input.is_selected()
-                checkbox_info['disabled'] = not checkbox_input.is_enabled() or checkbox_input.get_attribute('disabled') is not None
-                checkbox_info['value'] = checkbox_input.get_attribute('value')
-                checkbox_info['name'] = checkbox_input.get_attribute('name')
-                checkbox_info['aria_checked'] = checkbox_input.get_attribute('aria-checked')
-                checkbox_info['aria_disabled'] = checkbox_input.get_attribute('aria-disabled')
-                checkbox_info['aria_label'] = checkbox_input.get_attribute('aria-label')
+            # Fast path: Use JavaScript to batch read all attributes at once
+            try:
+                # Get driver from element (optimized - single attempt)
+                driver = getattr(element, '_parent', None)
+                if not driver or not hasattr(driver, 'execute_script'):
+                    driver = None
                 
-                # Check for indeterminate state via JavaScript (more reliable)
-                try:
-                    is_indeterminate = checkbox_input.get_property('indeterminate')
-                    if is_indeterminate:
+                if driver:
+                    # Optimized batch read attributes via JavaScript (single execution, all data)
+                    attrs = driver.execute_script("""
+                        var e=arguments[0],i=e;
+                        if(e.tagName!=='INPUT'||e.type!=='checkbox'){
+                            i=e.querySelector('input[type="checkbox"]')||e.closest('.ant-checkbox-wrapper')?.querySelector('input[type="checkbox"]')||e;
+                        }
+                        var w=e.closest('.ant-checkbox-wrapper')||e,ec=e.className||'',wc=w.className||'',c=ec+' '+wc;
+                        var g=e.closest('.ant-checkbox-group'),gi=null;
+                        if(g){
+                            var gc=g.className||'',p=g.parentElement,pc=p?p.className||'':'';
+                            gi={exists:true,isGrid:gc.includes('ant-col')||gc.toLowerCase().includes('grid')||pc.includes('ant-row')||pc.includes('ant-col')||g.querySelector('.ant-col,.ant-row')!==null,totalInGroup:(g.querySelectorAll('input[type="checkbox"]')||[]).length,groupId:g.getAttribute('data-attr-id')||g.getAttribute('data-atr-id')||''};
+                        }
+                        var t=(w!==e?(w.innerText||w.textContent||''):(e.innerText||e.textContent||'')).trim();
+                        return {tagName:e.tagName.toLowerCase(),isInput:e.tagName==='INPUT'&&e.type==='checkbox',hasInput:i&&i.tagName==='INPUT',classes:c,checked:i?i.checked:false,disabled:i?(i.disabled||i.hasAttribute('disabled')):false,indeterminate:i?i.indeterminate:false,value:i?(i.value||''):'',name:i?(i.name||''):'',ariaChecked:i?(i.getAttribute('aria-checked')||''):'',ariaDisabled:i?(i.getAttribute('aria-disabled')||''):'',ariaLabel:i?(i.getAttribute('aria-label')||''):(e.getAttribute('aria-label')||''),dataAttrId:e.getAttribute('data-attr-id')||e.getAttribute('data-atr-id')||'',text:t,group:gi};
+                    """, element)
+                    
+                    # Populate from JavaScript results (fast) - with comprehensive null safety
+                    if not isinstance(attrs, dict):
+                        raise ValueError("JavaScript returned invalid data")
+                    
+                    # Safe class extraction
+                    classes_str = attrs.get('classes', '') or ''
+                    classes = classes_str.split() if isinstance(classes_str, str) and classes_str else []
+                    
+                    # Safe boolean extraction with defaults
+                    checkbox_info['checked'] = bool(attrs.get('checked', False))
+                    checkbox_info['disabled'] = bool(attrs.get('disabled', False))
+                    checkbox_info['indeterminate'] = bool(attrs.get('indeterminate', False))
+                    
+                    # Safe attribute extraction (only set if value exists and is not empty)
+                    value = attrs.get('value', '')
+                    checkbox_info['value'] = value if value else None
+                    
+                    name = attrs.get('name', '')
+                    checkbox_info['name'] = name if name else None
+                    
+                    aria_checked = attrs.get('ariaChecked', '')
+                    checkbox_info['aria_checked'] = aria_checked if aria_checked else None
+                    
+                    aria_disabled = attrs.get('ariaDisabled', '')
+                    checkbox_info['aria_disabled'] = aria_disabled if aria_disabled else None
+                    
+                    aria_label = attrs.get('ariaLabel', '')
+                    checkbox_info['aria_label'] = aria_label if aria_label else None
+                    
+                    data_attr_id = attrs.get('dataAttrId', '')
+                    checkbox_info['data_attr_id'] = data_attr_id if data_attr_id else None
+                    
+                    # Improved label extraction from text - optimized
+                    text = attrs.get('text', '') if attrs else ''
+                    if text and isinstance(text, str) and text.strip():
+                        # Clean up text - remove checkbox-related words and whitespace
+                        cleaned_text = text.replace('Checkbox', '').replace('checkbox', '').strip()
+                        # Remove empty strings and very short meaningless text
+                        if cleaned_text and 0 < len(cleaned_text) < 100:
+                            # Remove common prefixes/suffixes
+                            cleaned_text = cleaned_text.strip(' -•·')
+                            if cleaned_text:
+                                checkbox_info['label_text'] = cleaned_text
+                    
+                    # Fallback to aria-label if text extraction failed
+                    if not checkbox_info['label_text'] and checkbox_info.get('aria_label'):
+                        checkbox_info['label_text'] = checkbox_info['aria_label']
+                    
+                    # Final fallback to value if available
+                    if not checkbox_info['label_text'] and checkbox_info.get('value'):
+                        checkbox_info['label_text'] = checkbox_info['value']
+                    
+                    # Check classes for state
+                    if 'ant-checkbox-checked' in classes:
+                        checkbox_info['checked'] = True
+                    if 'ant-checkbox-disabled' in classes:
+                        checkbox_info['disabled'] = True
+                    if 'ant-checkbox-indeterminate' in classes:
                         checkbox_info['indeterminate'] = True
+                    
+                    # Use aria-checked as source of truth
+                    if checkbox_info['aria_checked']:
+                        aria_checked = checkbox_info['aria_checked'].lower()
+                        if aria_checked == 'true':
+                            checkbox_info['checked'] = True
+                        elif aria_checked == 'false':
+                            checkbox_info['checked'] = False
+                        elif aria_checked == 'mixed':
+                            checkbox_info['indeterminate'] = True
+                            checkbox_info['checked'] = False
+                    
+                    # Quick check for "Check All" from label
+                    if checkbox_info['label_text']:
+                        label_lower = checkbox_info['label_text'].lower()
+                        if any(kw in label_lower for kw in ['check all', 'select all', 'all', '全选']):
+                            checkbox_info['has_check_all'] = True
+                    
+                    # Determine type quickly
+                    if checkbox_info['indeterminate']:
+                        checkbox_info['type'] = 'indeterminate'
+                    elif checkbox_info['disabled']:
+                        checkbox_info['type'] = 'disabled'
+                    elif checkbox_info['has_check_all']:
+                        checkbox_info['type'] = 'check_all'
+                    elif checkbox_info['name']:
+                        checkbox_info['type'] = 'group'
+                        checkbox_info['group_name'] = checkbox_info['name']
+                    else:
+                        checkbox_info['type'] = 'basic'
+                    
+                    # Use group info from JavaScript (already computed) - with safe extraction
+                    group_info = attrs.get('group')
+                    if group_info and isinstance(group_info, dict) and group_info.get('exists'):
+                        group_id = group_info.get('groupId', '')
+                        checkbox_info['group_id'] = group_id if group_id else None
+                        
+                        total_in_group = group_info.get('totalInGroup')
+                        if total_in_group is not None:
+                            try:
+                                checkbox_info['total_in_group'] = int(total_in_group)
+                            except (ValueError, TypeError):
+                                checkbox_info['total_in_group'] = None
+                        else:
+                            checkbox_info['total_in_group'] = None
+                        
+                        # Mark as group or grid_layout
+                        if group_info.get('isGrid'):
+                            checkbox_info['type'] = 'grid_layout'
+                        elif checkbox_info['name'] or checkbox_info['group_id']:
+                            checkbox_info['type'] = 'group'
+                        
+                        # Use a generic group identifier if not already set
+                        if not checkbox_info['group_name']:
+                            checkbox_info['group_name'] = checkbox_info['name'] or 'checkbox-group'
+                    
+                    # Skip expensive operations in fast mode
+                    if not fast_mode:
+                        # Only do expensive operations if needed
+                        if checkbox_info['name']:
+                            # Quick group name from name attribute
+                            checkbox_info['group_name'] = checkbox_info['name']
+                        
+                        # Try to get better label if not found
+                        if not checkbox_info['label_text']:
+                            checkbox_info['label_text'] = checkbox_info.get('aria_label')
+                    
+            except Exception as js_error:
+                # Fallback to original method if JavaScript fails
+                # Get class attribute
+                class_attr = element.get_attribute('class') or ''
+                classes = class_attr.split()
+                
+                # Quick data-attr-id
+                checkbox_info['data_attr_id'] = element.get_attribute('data-attr-id') or element.get_attribute('data-atr-id')
+                
+                # Find the actual checkbox input element (simplified)
+                checkbox_input = None
+                try:
+                    if element.tag_name.lower() == 'input' and element.get_attribute('type') == 'checkbox':
+                        checkbox_input = element
+                    else:
+                        checkbox_input = element.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
                 except:
                     pass
                 
-                # Check for checked state via class
+                if checkbox_input:
+                    checkbox_info['checked'] = checkbox_input.is_selected()
+                    checkbox_info['disabled'] = not checkbox_input.is_enabled()
+                    checkbox_info['value'] = checkbox_input.get_attribute('value')
+                    checkbox_info['name'] = checkbox_input.get_attribute('name')
+                    checkbox_info['aria_checked'] = checkbox_input.get_attribute('aria-checked')
+                    checkbox_info['aria_label'] = checkbox_input.get_attribute('aria-label')
+                    
+                    # Quick indeterminate check
+                    try:
+                        if checkbox_input.get_property('indeterminate'):
+                            checkbox_info['indeterminate'] = True
+                    except:
+                        pass
+                
+                # Check classes
                 if 'ant-checkbox-checked' in classes:
                     checkbox_info['checked'] = True
-                
-                # Check for indeterminate state via class
+                if 'ant-checkbox-disabled' in classes:
+                    checkbox_info['disabled'] = True
                 if 'ant-checkbox-indeterminate' in classes:
                     checkbox_info['indeterminate'] = True
                 
-                # Use aria-checked as source of truth if available
-                if checkbox_info['aria_checked']:
-                    aria_checked = checkbox_info['aria_checked'].lower()
-                    if aria_checked == 'true':
-                        checkbox_info['checked'] = True
-                    elif aria_checked == 'false':
-                        checkbox_info['checked'] = False
-                    elif aria_checked == 'mixed':
-                        checkbox_info['indeterminate'] = True
-                        checkbox_info['checked'] = False  # Indeterminate is neither checked nor unchecked
-            
-            # Check if disabled via class
-            if 'ant-checkbox-disabled' in classes:
-                checkbox_info['disabled'] = True
-            
-            # Get label text
-            checkbox_info['label_text'] = CheckboxIdentifier._extract_label_text(element, checkbox_input)
-            
-            # Get group information
-            group_info = CheckboxIdentifier._get_group_info(element, checkbox_input)
-            checkbox_info.update(group_info)
-            
-            # Check for "Check All" behavior
-            checkbox_info['has_check_all'] = CheckboxIdentifier._has_check_all_behavior(element, checkbox_info)
-            
-            # Determine checkbox type
-            checkbox_info['type'] = CheckboxIdentifier._determine_checkbox_type(element, classes, checkbox_info)
-            
-            # Determine if controlled
-            if checkbox_input:
-                has_checked_attr = checkbox_input.get_attribute('checked') is not None
-                has_default_checked = checkbox_input.get_attribute('defaultChecked') is not None
+                # Quick label from text - optimized
+                try:
+                    text = element.text.strip()
+                    if text and 0 < len(text) < 100:
+                        # Clean up text
+                        cleaned = text.replace('Checkbox', '').replace('checkbox', '').strip(' -•·')
+                        if cleaned:
+                            checkbox_info['label_text'] = cleaned
+                except:
+                    pass
                 
-                if has_checked_attr:
-                    checkbox_info['controlled'] = True
-                elif has_default_checked:
-                    checkbox_info['controlled'] = False
+                # Fallback chain: aria-label -> value -> None
+                if not checkbox_info['label_text']:
+                    checkbox_info['label_text'] = checkbox_info.get('aria_label') or checkbox_info.get('value')
+                
+                # Determine type
+                if checkbox_info['indeterminate']:
+                    checkbox_info['type'] = 'indeterminate'
+                elif checkbox_info['disabled']:
+                    checkbox_info['type'] = 'disabled'
+                elif checkbox_info['name']:
+                    checkbox_info['type'] = 'group'
+                    checkbox_info['group_name'] = checkbox_info['name']
                 else:
-                    # Try to infer from data attributes
-                    data_controlled = element.get_attribute('data-controlled')
-                    if data_controlled:
-                        checkbox_info['controlled'] = data_controlled.lower() == 'true'
+                    checkbox_info['type'] = 'basic'
             
         except Exception as e:
-            print(f"Error identifying checkbox type: {str(e)}")
+            # Silent fail - return basic info
+            pass
         
         return checkbox_info
     

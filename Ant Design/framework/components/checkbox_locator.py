@@ -288,10 +288,11 @@ class CheckboxLocator(BasePage):
     
     def find_all_checkboxes(self, timeout: int = 10) -> List[WebElement]:
         """
-        Find all Ant Design Checkbox components on the page
+        Find all Ant Design Checkbox components on the page (optimized)
+        Uses JavaScript for faster bulk finding
         
         Args:
-            timeout: Maximum wait time in seconds (not used directly, but for consistency)
+            timeout: Maximum wait time in seconds
             
         Returns:
             List of WebElements representing checkboxes
@@ -301,53 +302,50 @@ class CheckboxLocator(BasePage):
         
         import time
         start_time = time.time()
-        max_time = 5  # Maximum 5 seconds for finding checkboxes
+        max_time = 3  # Reduced to 3 seconds for faster execution
         
-        # Strategy 1: Find by Ant Design class (fastest and most reliable)
-        if time.time() - start_time < max_time:
+        # Optimized Strategy: Use JavaScript to find all wrappers at once
+        try:
+            # Single JavaScript call to find all checkbox wrappers
+            wrapper_elements = self.driver.execute_script("""
+                var wrappers = document.querySelectorAll('.ant-checkbox-wrapper');
+                var result = [];
+                for(var i=0; i<wrappers.length; i++){
+                    var w = wrappers[i];
+                    if(w && w.className && w.className.includes('ant-checkbox-wrapper')){
+                        result.push(w);
+                    }
+                }
+                return result;
+            """)
+            
+            # Convert to WebElements (they're already WebElements from execute_script)
+            for wrapper in wrapper_elements[:100]:  # Limit to 100 for performance
+                if time.time() - start_time > max_time:
+                    break
+                try:
+                    elem_id = id(wrapper)
+                    if elem_id not in seen_elements:
+                        checkboxes.append(wrapper)
+                        seen_elements.add(elem_id)
+                except:
+                    continue
+        except:
+            # Fallback to Selenium find_elements
             try:
-                # Find checkbox wrappers
                 wrappers = self.driver.find_elements(By.CSS_SELECTOR, '.ant-checkbox-wrapper')
-                for wrapper in wrappers:
+                for wrapper in wrappers[:100]:  # Limit to 100
                     if time.time() - start_time > max_time:
                         break
                     try:
                         elem_id = id(wrapper)
                         if elem_id not in seen_elements:
-                            if self.identifier.is_checkbox_element(wrapper):
-                                checkboxes.append(wrapper)
-                                seen_elements.add(elem_id)
+                            checkboxes.append(wrapper)
+                            seen_elements.add(elem_id)
                     except:
                         continue
             except Exception as e:
-                print(f"   >> Error finding checkboxes by wrapper: {str(e)}")
-        
-        # Strategy 2: Find by input[type="checkbox"]
-        if time.time() - start_time < max_time:
-            try:
-                inputs = self.driver.find_elements(By.CSS_SELECTOR, 'input[type="checkbox"]')
-                for input_elem in inputs:
-                    if time.time() - start_time > max_time:
-                        break
-                    try:
-                        elem_id = id(input_elem)
-                        if elem_id not in seen_elements:
-                            # Get wrapper for this input
-                            try:
-                                wrapper = input_elem.find_element(By.XPATH, './ancestor::*[contains(@class, "ant-checkbox-wrapper")][1]')
-                                wrapper_id = id(wrapper)
-                                if wrapper_id not in seen_elements:
-                                    checkboxes.append(wrapper)
-                                    seen_elements.add(wrapper_id)
-                                    seen_elements.add(elem_id)
-                            except:
-                                # If no wrapper, use input itself
-                                checkboxes.append(input_elem)
-                                seen_elements.add(elem_id)
-                    except:
-                        continue
-            except Exception as e:
-                print(f"   >> Error finding checkboxes by input: {str(e)}")
+                print(f"   >> Error finding checkboxes: {str(e)[:50]}")
         
         print(f"   → Identified {len(checkboxes)} unique checkbox(es)")
         return checkboxes

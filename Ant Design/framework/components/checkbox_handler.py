@@ -5,6 +5,7 @@ Uses CheckboxLocator for finding checkboxes and CheckboxIdentifier for analyzing
 Uses ElementContext for context-driven interactions
 """
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -404,62 +405,90 @@ class CheckboxHandler(BasePage):
                 if checkbox_info['indeterminate']:
                     summary['indeterminate_count'] += 1
                 
-                # Track groups
+                # Track groups (optimized - only track unique groups)
                 group_name = checkbox_info.get('group_name')
-                if group_name:
-                    if group_name not in groups_seen:
-                        groups_seen.add(group_name)
+                group_id = checkbox_info.get('group_id')
+                group_key = group_id or group_name
+                
+                if group_key:
+                    if group_key not in groups_seen:
+                        groups_seen.add(group_key)
                         summary['total_groups'] += 1
-                        # Get full group info only once per group
+                        # Get full group info only once per group (skip in fast mode for performance)
                         try:
-                            group_info = self.get_group_info(group_name, timeout=2)
-                            if group_info:
-                                summary['groups'][group_name] = {
-                                    'group_name': group_name,
-                                    'group_id': group_info.get('group_id'),
-                                    'total_options': group_info.get('total_options', 0),
-                                    'checked_count': group_info.get('checked_count', 0),
-                                    'checked_options': group_info.get('checked_options', [])
-                                }
+                            # Only get detailed group info if not in fast mode - with safe extraction
+                            total_in_group = checkbox_info.get('total_in_group')
+                            checked_in_group = checkbox_info.get('checked_in_group')
+                            
+                            # Safe integer conversion
+                            try:
+                                total_options = int(total_in_group) if total_in_group is not None else 0
+                            except (ValueError, TypeError):
+                                total_options = 0
+                            
+                            # Safe list handling
+                            if isinstance(checked_in_group, list):
+                                checked_count = len(checked_in_group)
+                                checked_options = checked_in_group
                             else:
-                                summary['groups'][group_name] = {
-                                    'group_name': group_name,
-                                    'group_id': checkbox_info.get('group_id'),
-                                    'total_options': checkbox_info.get('total_in_group', 0),
-                                    'checked_count': len(checkbox_info.get('checked_in_group', [])),
-                                    'checked_options': checkbox_info.get('checked_in_group', [])
-                                }
-                        except:
-                            summary['groups'][group_name] = {
-                                'group_name': group_name,
-                                'group_id': checkbox_info.get('group_id'),
-                                'total_options': checkbox_info.get('total_in_group', 0),
-                                'checked_count': len(checkbox_info.get('checked_in_group', [])),
-                                'checked_options': checkbox_info.get('checked_in_group', [])
+                                checked_count = 0
+                                checked_options = []
+                            
+                            summary['groups'][group_key] = {
+                                'group_name': group_name or group_key or 'Unknown Group',
+                                'group_id': group_id,
+                                'total_options': total_options,
+                                'checked_count': checked_count,
+                                'checked_options': checked_options
+                            }
+                        except Exception as e:
+                            # Fallback with safe defaults
+                            summary['groups'][group_key] = {
+                                'group_name': group_name or group_key or 'Unknown Group',
+                                'group_id': group_id,
+                                'total_options': 0,
+                                'checked_count': 0,
+                                'checked_options': []
                             }
                 
-                # Add identifier for each checkbox
-                checkbox_info['identifier'] = checkbox_info.get('data_attr_id') or checkbox_info.get('label_text') or f"checkbox_{idx + 1}"
+                # Add identifier for each checkbox (with safe defaults)
+                identifier = checkbox_info.get('data_attr_id') or checkbox_info.get('label_text')
+                if not identifier or identifier == 'Unknown' or (isinstance(identifier, str) and not identifier.strip()):
+                    identifier = f"checkbox_{idx + 1}"
+                checkbox_info['identifier'] = identifier
                 summary['checkboxes'].append(checkbox_info)
                 
             except Exception as e:
-                print(f"   ⚠ Error analyzing checkbox {idx + 1}: {str(e)}")
+                # Safe error handling
+                error_msg = str(e) if e else 'Unknown error'
+                # Add error info to summary without breaking
                 summary['checkboxes'].append({
                     'identifier': f"checkbox_{idx + 1}",
                     'checked': False,
                     'disabled': False,
                     'indeterminate': False,
-                    'error': str(e)
+                    'error': error_msg[:100]  # Limit error message length
+                })
+                print(f"   ⚠ Error analyzing checkbox {idx + 1}: {error_msg[:50]}")
+                summary['checkboxes'].append({
+                    'identifier': f"checkbox_{idx + 1}",
+                    'checked': False,
+                    'disabled': False,
+                    'indeterminate': False,
+                    'type': 'basic',
+                    'label_text': None,
+                    'error': error_msg[:100]
                 })
         
         return summary
     
-    def print_checkboxes_summary(self, timeout: int = 10):
+    def print_checkboxes_summary(self, timeout: int = 10, max_display: int = 50):
         """
-        Print a readable summary of all detected checkboxes
+        Print a readable summary of all detected checkboxes (optimized)
         
         Args:
             timeout: Maximum wait time in seconds
+            max_display: Maximum number of checkboxes to display in detail (for performance)
         """
         summary = self.get_all_checkboxes_summary(timeout)
         
@@ -474,35 +503,48 @@ class CheckboxHandler(BasePage):
         print(f"  Indeterminate: {summary['indeterminate_count']}")
         print("-"*60)
         
-        if summary['groups']:
+        if summary.get('groups'):
             print("\nCheckbox Groups:")
-            for group_name, group_info in summary['groups'].items():
+            for group_name, group_info in list(summary['groups'].items())[:10]:  # Limit to first 10 groups
                 print(f"  Group: {group_name}")
                 if group_info.get('group_id'):
                     print(f"    ID: {group_info['group_id']}")
                 print(f"    Total Options: {group_info.get('total_options', 0)}")
                 print(f"    Checked: {group_info.get('checked_count', 0)}")
-                if group_info.get('checked_options'):
-                    print(f"    Checked Options: {', '.join(group_info['checked_options'])}")
+                checked_options = group_info.get('checked_options', [])
+                if checked_options and isinstance(checked_options, list):
+                    # Limit displayed options
+                    display_options = checked_options[:5]
+                    print(f"    Checked Options: {', '.join(display_options)}")
+                    if len(checked_options) > 5:
+                        print(f"      ... and {len(checked_options) - 5} more")
         
-        if summary['checkboxes']:
+        if summary.get('checkboxes'):
             print("\nDetailed Checkbox Information:")
-            for idx, checkbox_info in enumerate(summary['checkboxes'], 1):
-                state = "CHECKED" if checkbox_info['checked'] else "UNCHECKED"
-                if checkbox_info.get('indeterminate'):
+            # Limit display for performance
+            checkboxes_to_display = summary['checkboxes'][:max_display]
+            for idx, checkbox_info in enumerate(checkboxes_to_display, 1):
+                state = "CHECKED" if checkbox_info.get('checked', False) else "UNCHECKED"
+                if checkbox_info.get('indeterminate', False):
                     state = "INDETERMINATE"
-                disabled = " (DISABLED)" if checkbox_info['disabled'] else ""
+                disabled = " (DISABLED)" if checkbox_info.get('disabled', False) else ""
                 identifier = checkbox_info.get('identifier', f"Checkbox {idx}")
                 
                 print(f"  {idx}. {identifier}: {state}{disabled}")
-                if checkbox_info.get('label_text'):
-                    print(f"      Label: {checkbox_info['label_text']}")
-                if checkbox_info.get('group_name'):
-                    print(f"      Group: {checkbox_info['group_name']}")
-                if checkbox_info.get('type') != 'basic':
-                    print(f"      Type: {checkbox_info['type']}")
-                if checkbox_info.get('has_check_all'):
+                label_text = checkbox_info.get('label_text')
+                if label_text:
+                    print(f"      Label: {label_text}")
+                group_name = checkbox_info.get('group_name')
+                if group_name:
+                    print(f"      Group: {group_name}")
+                cb_type = checkbox_info.get('type', 'basic')
+                if cb_type != 'basic':
+                    print(f"      Type: {cb_type}")
+                if checkbox_info.get('has_check_all', False):
                     print(f"      Has Check All: Yes")
+            
+            if len(summary['checkboxes']) > max_display:
+                print(f"\n  ... and {len(summary['checkboxes']) - max_display} more checkboxes (not displayed)")
         
         print("="*60 + "\n")
     
@@ -559,183 +601,272 @@ class CheckboxHandler(BasePage):
         
         return element
     
-    def _check_checkbox_element(self, element: WebElement, retry_count: int = 3, retry_delay: float = 0.5) -> bool:
+    def _check_checkbox_element(self, element: WebElement, retry_count: int = 3, retry_delay: float = 0.5, 
+                                 cached_info: Optional[Dict] = None) -> bool:
         """
-        Check a checkbox element directly (internal method)
+        Check a checkbox element directly (optimized with single JS execution)
         
         Args:
             element: WebElement of the checkbox to check
             retry_count: Number of retries
             retry_delay: Delay between retries
+            cached_info: Optional pre-computed checkbox info to avoid redundant calls
             
         Returns:
             True if checked successfully, False otherwise
         """
         try:
-            # Check if already checked
-            checkbox_info = self.identifier.identify_checkbox_type(element)
-            if checkbox_info['checked']:
-                print(f"            [INFO] Checkbox is already checked, no action needed")
-                return True
+            # Quick check with cached info
+            if cached_info:
+                if cached_info.get('checked'):
+                    return True
+                if cached_info.get('disabled'):
+                    return False
+            else:
+                # Fast mode check
+                checkbox_info = self.identifier.identify_checkbox_type(element, fast_mode=True)
+                if checkbox_info.get('checked'):
+                    return True
+                if checkbox_info.get('disabled'):
+                    return False
             
-            if checkbox_info['disabled']:
-                print(f"            [WARN] Checkbox is disabled, cannot check")
-                return False
-            
-            # Scroll into view
+            # Find the actual clickable element (wrapper or input)
             try:
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'instant'});", element)
-                time.sleep(0.1)
+                # Scroll into view first
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", element)
+                time.sleep(0.2)  # Wait for scroll
             except:
                 pass
             
-            # Get clickable element
-            clickable_element = self._get_clickable_checkbox_element(element)
-            
-            # Try multiple strategies
+            # Try multiple strategies to click
             for attempt in range(retry_count):
                 try:
-                    # Strategy 1: Click wrapper (most reliable for Ant Design)
-                    wrapper = self.identifier._find_checkbox_wrapper(element)
+                    # Strategy 1: Find wrapper and click it (most reliable for Ant Design)
+                    wrapper = None
+                    try:
+                        # Check if element itself is wrapper
+                        class_attr = element.get_attribute('class') or ''
+                        if 'ant-checkbox-wrapper' in class_attr:
+                            wrapper = element
+                        else:
+                            # Find wrapper ancestor
+                            wrapper = element.find_element(By.XPATH, './ancestor::*[contains(@class, "ant-checkbox-wrapper")][1]')
+                    except:
+                        pass
+                    
+                    # Strategy 2: Find the input element
+                    checkbox_input = None
+                    try:
+                        if element.tag_name.lower() == 'input' and element.get_attribute('type') == 'checkbox':
+                            checkbox_input = element
+                        else:
+                            checkbox_input = element.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+                    except:
+                        pass
+                    
+                    # Click the wrapper if available (Ant Design prefers wrapper clicks)
                     if wrapper:
                         try:
-                            wrapper.click()
-                            clicked = True
+                            # Use ActionChains for more reliable clicking
+                            from selenium.webdriver.common.action_chains import ActionChains
+                            ActionChains(self.driver).move_to_element(wrapper).click().perform()
                         except:
-                            self.driver.execute_script("arguments[0].click();", wrapper)
-                            clicked = True
+                            # Fallback to direct click
+                            wrapper.click()
+                    elif checkbox_input:
+                        # Click input directly
+                        try:
+                            from selenium.webdriver.common.action_chains import ActionChains
+                            ActionChains(self.driver).move_to_element(checkbox_input).click().perform()
+                        except:
+                            checkbox_input.click()
                     else:
-                        clicked = False
+                        # Last resort: click the element itself
+                        element.click()
                     
-                    # Strategy 2: If no wrapper, click input directly
-                    if not clicked and clickable_element:
-                        if clickable_element.tag_name.lower() == 'input':
-                            # Use JavaScript to set checked and trigger events
-                            self.driver.execute_script("""
-                                var elem = arguments[0];
-                                if (elem.type === 'checkbox') {
-                                    elem.checked = true;
-                                    elem.dispatchEvent(new Event('change', {bubbles: true, cancelable: true}));
-                                    elem.dispatchEvent(new Event('click', {bubbles: true, cancelable: true}));
-                                    elem.dispatchEvent(new Event('input', {bubbles: true, cancelable: true}));
-                                }
-                            """, clickable_element)
-                            clicked = True
-                        else:
-                            clickable_element.click()
-                            clicked = True
+                    # Wait for state to update
+                    time.sleep(retry_delay * 0.5)
                     
-                    # Verify check
-                    time.sleep(retry_delay * 0.8)
-                    fresh_info = self.identifier.identify_checkbox_type(element)
-                    if fresh_info['checked']:
-                        print(f"            [VERIFIED] ✓ Checkbox checked successfully!")
+                    # Verify the checkbox is now checked
+                    if checkbox_input:
+                        is_checked = checkbox_input.is_selected()
+                    else:
+                        # Re-find input to check state
+                        try:
+                            fresh_input = element.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+                            is_checked = fresh_input.is_selected()
+                        except:
+                            # Use JavaScript to verify
+                            is_checked = self.driver.execute_script(
+                                "var e = arguments[0]; var i = e.querySelector('input[type=\"checkbox\"]') || e; return i ? i.checked : false;",
+                                element
+                            )
+                    
+                    if is_checked:
                         return True
+                    
+                    # If still not checked, try JavaScript click as fallback
+                    if attempt == retry_count - 1:
+                        try:
+                            click_script = """
+                            var e = arguments[0];
+                            var w = e.closest ? e.closest('.ant-checkbox-wrapper') : null;
+                            var i = e.querySelector ? e.querySelector('input[type="checkbox"]') : null;
+                            if (!i && w) i = w.querySelector('input[type="checkbox"]');
+                            if (i && !i.disabled) {
+                                i.checked = true;
+                                if (w && w !== i) w.click();
+                                else if (i) i.click();
+                                return i.checked;
+                            }
+                            return false;
+                            """
+                            result = self.driver.execute_script(click_script, element)
+                            if result:
+                                time.sleep(retry_delay * 0.5)
+                                return True
+                        except:
+                            pass
                     
                     if attempt < retry_count - 1:
                         time.sleep(retry_delay)
-                    
+                        
                 except Exception as e:
                     if attempt < retry_count - 1:
                         time.sleep(retry_delay)
                     else:
-                        print(f"            [ERROR] Exception during attempt {attempt + 1}: {str(e)[:50]}")
+                        print(f"            [DEBUG] Click attempt {attempt + 1} failed: {str(e)[:50]}")
             
-            print(f"            [FAILED] Could not check checkbox after {retry_count} attempts")
             return False
-            
-        except Exception as e:
-            print(f"            [ERROR] Fatal error: {str(e)[:50]}")
+        except:
             return False
     
-    def _uncheck_checkbox_element(self, element: WebElement, retry_count: int = 3, retry_delay: float = 0.5) -> bool:
+    def _uncheck_checkbox_element(self, element: WebElement, retry_count: int = 3, retry_delay: float = 0.5,
+                                   cached_info: Optional[Dict] = None) -> bool:
         """
-        Uncheck a checkbox element directly (internal method)
+        Uncheck a checkbox element directly (internal method, optimized)
         
         Args:
             element: WebElement of the checkbox to uncheck
             retry_count: Number of retries
             retry_delay: Delay between retries
+            cached_info: Optional pre-computed checkbox info to avoid redundant calls
             
         Returns:
             True if unchecked successfully, False otherwise
         """
         try:
-            # Check if already unchecked
-            checkbox_info = self.identifier.identify_checkbox_type(element)
-            if not checkbox_info['checked'] and not checkbox_info['indeterminate']:
-                print(f"            [INFO] Checkbox is already unchecked, no action needed")
-                return True
+            # Use cached info if provided
+            checkbox_info = cached_info or self.identifier.identify_checkbox_type(element, fast_mode=True)
+            if not checkbox_info.get('checked') and not checkbox_info.get('indeterminate'):
+                return True  # Already unchecked
             
-            if checkbox_info['disabled']:
-                print(f"            [WARN] Checkbox is disabled, cannot uncheck")
-                return False
+            if checkbox_info.get('disabled'):
+                return False  # Disabled
             
-            # Scroll into view
+            # Find the actual clickable element (wrapper or input)
             try:
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'instant'});", element)
-                time.sleep(0.1)
+                # Scroll into view first
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", element)
+                time.sleep(0.2)  # Wait for scroll
             except:
                 pass
             
-            # Get clickable element
-            clickable_element = self._get_clickable_checkbox_element(element)
-            
-            # Try multiple strategies
+            # Try multiple strategies to uncheck
             for attempt in range(retry_count):
                 try:
-                    # Strategy 1: Click wrapper
-                    wrapper = self.identifier._find_checkbox_wrapper(element)
+                    # Strategy 1: Find wrapper and click it (most reliable for Ant Design)
+                    wrapper = None
+                    try:
+                        class_attr = element.get_attribute('class') or ''
+                        if 'ant-checkbox-wrapper' in class_attr:
+                            wrapper = element
+                        else:
+                            wrapper = element.find_element(By.XPATH, './ancestor::*[contains(@class, "ant-checkbox-wrapper")][1]')
+                    except:
+                        pass
+                    
+                    # Strategy 2: Find the input element
+                    checkbox_input = None
+                    try:
+                        if element.tag_name.lower() == 'input' and element.get_attribute('type') == 'checkbox':
+                            checkbox_input = element
+                        else:
+                            checkbox_input = element.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+                    except:
+                        pass
+                    
+                    # Click the wrapper if available (Ant Design prefers wrapper clicks)
                     if wrapper:
                         try:
-                            wrapper.click()
-                            clicked = True
+                            from selenium.webdriver.common.action_chains import ActionChains
+                            ActionChains(self.driver).move_to_element(wrapper).click().perform()
                         except:
-                            self.driver.execute_script("arguments[0].click();", wrapper)
-                            clicked = True
+                            wrapper.click()
+                    elif checkbox_input:
+                        try:
+                            from selenium.webdriver.common.action_chains import ActionChains
+                            ActionChains(self.driver).move_to_element(checkbox_input).click().perform()
+                        except:
+                            checkbox_input.click()
                     else:
-                        clicked = False
+                        element.click()
                     
-                    # Strategy 2: If no wrapper, click input directly
-                    if not clicked and clickable_element:
-                        if clickable_element.tag_name.lower() == 'input':
-                            # Use JavaScript to uncheck and trigger events
-                            self.driver.execute_script("""
-                                var elem = arguments[0];
-                                if (elem.type === 'checkbox') {
-                                    elem.checked = false;
-                                    elem.indeterminate = false;
-                                    elem.dispatchEvent(new Event('change', {bubbles: true, cancelable: true}));
-                                    elem.dispatchEvent(new Event('click', {bubbles: true, cancelable: true}));
-                                    elem.dispatchEvent(new Event('input', {bubbles: true, cancelable: true}));
-                                }
-                            """, clickable_element)
-                            clicked = True
-                        else:
-                            clickable_element.click()
-                            clicked = True
+                    # Wait for state to update
+                    time.sleep(retry_delay * 0.5)
                     
-                    # Verify uncheck
-                    time.sleep(retry_delay * 0.8)
-                    fresh_info = self.identifier.identify_checkbox_type(element)
-                    if not fresh_info['checked'] and not fresh_info['indeterminate']:
-                        print(f"            [VERIFIED] ✓ Checkbox unchecked successfully!")
+                    # Verify the checkbox is now unchecked
+                    if checkbox_input:
+                        is_unchecked = not checkbox_input.is_selected()
+                    else:
+                        try:
+                            fresh_input = element.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+                            is_unchecked = not fresh_input.is_selected()
+                        except:
+                            is_unchecked = self.driver.execute_script(
+                                "var e = arguments[0]; var i = e.querySelector('input[type=\"checkbox\"]') || e; return i ? (!i.checked && !i.indeterminate) : false;",
+                                element
+                            )
+                    
+                    if is_unchecked:
                         return True
+                    
+                    # If still checked, try JavaScript uncheck as fallback
+                    if attempt == retry_count - 1:
+                        try:
+                            uncheck_script = """
+                            var e = arguments[0];
+                            var w = e.closest ? e.closest('.ant-checkbox-wrapper') : null;
+                            var i = e.querySelector ? e.querySelector('input[type="checkbox"]') : null;
+                            if (!i && w) i = w.querySelector('input[type="checkbox"]');
+                            if (i && !i.disabled) {
+                                i.checked = false;
+                                i.indeterminate = false;
+                                if (w && w !== i) w.click();
+                                else if (i) i.click();
+                                return !i.checked && !i.indeterminate;
+                            }
+                            return false;
+                            """
+                            result = self.driver.execute_script(uncheck_script, element)
+                            if result:
+                                time.sleep(retry_delay * 0.5)
+                                return True
+                        except:
+                            pass
                     
                     if attempt < retry_count - 1:
                         time.sleep(retry_delay)
-                    
+                        
                 except Exception as e:
                     if attempt < retry_count - 1:
                         time.sleep(retry_delay)
                     else:
-                        print(f"            [ERROR] Exception during attempt {attempt + 1}: {str(e)[:50]}")
+                        print(f"            [DEBUG] Uncheck attempt {attempt + 1} failed: {str(e)[:50]}")
             
-            print(f"            [FAILED] Could not uncheck checkbox after {retry_count} attempts")
             return False
             
         except Exception as e:
-            print(f"            [ERROR] Fatal error: {str(e)[:50]}")
             return False
     
     def _handle_check_all(self, element: WebElement, checkbox_info: Dict, retry_count: int, retry_delay: float) -> bool:
@@ -842,7 +973,7 @@ class CheckboxHandler(BasePage):
     
     def _quick_identify_checkbox(self, element: WebElement) -> Dict[str, any]:
         """
-        Quick checkbox identification for summary (faster, skips expensive operations)
+        Quick checkbox identification for summary (optimized - uses fast_mode)
         
         Args:
             element: WebElement representing the checkbox
@@ -850,73 +981,13 @@ class CheckboxHandler(BasePage):
         Returns:
             Dictionary with basic checkbox properties
         """
-        checkbox_info = {
-            'type': 'basic',
-            'checked': False,
-            'disabled': False,
-            'indeterminate': False,
-            'label_text': None,
-            'data_attr_id': None,
-            'group_name': None,
-            'group_id': None,
-            'total_in_group': None,
-            'checked_in_group': None,
-            'has_check_all': False,
-            'identifier': None
-        }
-        
-        try:
-            from selenium.webdriver.common.by import By
-            
-            # Quick check - find checkbox input
-            try:
-                if element.tag_name.lower() == 'input' and element.get_attribute('type') == 'checkbox':
-                    checkbox_input = element
-                else:
-                    checkbox_input = element.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
-                
-                if checkbox_input:
-                    checkbox_info['checked'] = checkbox_input.is_selected()
-                    checkbox_info['disabled'] = not checkbox_input.is_enabled() or checkbox_input.get_attribute('disabled') is not None
-                    checkbox_info['group_name'] = checkbox_input.get_attribute('name')
-                    checkbox_info['value'] = checkbox_input.get_attribute('value')
-                    
-                    # Check for indeterminate via JavaScript
-                    try:
-                        is_indeterminate = checkbox_input.get_property('indeterminate')
-                        if is_indeterminate:
-                            checkbox_info['indeterminate'] = True
-                    except:
-                        pass
-            except:
-                pass
-            
-            # Quick label extraction
-            try:
-                class_attr = element.get_attribute('class') or ''
-                if 'ant-checkbox-checked' in class_attr:
-                    checkbox_info['checked'] = True
-                if 'ant-checkbox-disabled' in class_attr:
-                    checkbox_info['disabled'] = True
-                if 'ant-checkbox-indeterminate' in class_attr:
-                    checkbox_info['indeterminate'] = True
-                
-                # Get text quickly
-                text = element.text.strip()
-                if text:
-                    checkbox_info['label_text'] = text[:50]  # Limit length
-            except:
-                pass
-            
-            # Get data-attr-id quickly
-            try:
-                checkbox_info['data_attr_id'] = element.get_attribute('data-attr-id') or element.get_attribute('data-atr-id')
-            except:
-                pass
-            
-        except:
-            pass
-        
+        checkbox_info = self.identifier.identify_checkbox_type(element, fast_mode=True)
+        # Set identifier efficiently
+        checkbox_info['identifier'] = (
+            checkbox_info.get('data_attr_id') or 
+            checkbox_info.get('label_text') or 
+            None
+        )
         return checkbox_info
     
     def _get_clickable_checkbox_element(self, element: WebElement) -> WebElement:
