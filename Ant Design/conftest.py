@@ -13,6 +13,7 @@ import steps.menu_steps  # noqa: F401
 import steps.pagination_steps  # noqa: F401
 import steps.upload_steps  # noqa: F401
 import steps.table_steps  # noqa: F401
+import steps.checkbox_steps  # noqa: F401
 
 import pytest
 
@@ -33,6 +34,7 @@ from framework.components.menu_handler import MenuHandler
 from framework.components.pagination_handler import PaginationHandler
 from framework.components.upload_handler import UploadHandler
 from framework.components.table_handler import TableHandler
+from framework.components.checkbox_handler import CheckboxHandler
 from framework.context.element_context import ElementContext
 import inspect
 import os
@@ -210,6 +212,7 @@ def context(driver, request):
     pagination_handler = PaginationHandler(driver, context=element_context)
     upload_handler = UploadHandler(driver, context=element_context)
     table_handler = TableHandler(driver, context=element_context)
+    checkbox_handler = CheckboxHandler(driver, context=element_context)
     
     # Create PatternDiscovery instance for shared use
     from framework.utils.pattern_discovery import PatternDiscovery
@@ -227,6 +230,7 @@ def context(driver, request):
             self.pagination_handler = pagination_handler
             self.upload_handler = upload_handler
             self.table_handler = table_handler
+            self.checkbox_handler = checkbox_handler
             self.pattern_discovery = pattern_discovery
             self.logged_in = False
     
