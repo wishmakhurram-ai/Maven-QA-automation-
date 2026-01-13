@@ -16,12 +16,16 @@ from framework.components.pagination_identifier import PaginationIdentifier
 from framework.components.menu_handler import MenuHandler
 from framework.components.menu_locator import MenuLocator
 from framework.components.menu_identifier import MenuIdentifier
+from framework.components.datepicker_handler import DatePickerHandler
+from framework.components.datepicker_locator import DatePickerLocator
+from framework.components.datepicker_identifier import DatePickerIdentifier
 
 __all__ = [
     'ButtonHandler', 'ButtonLocator', 'ButtonIdentifier',
     'InputHandler', 'InputLocator', 'InputIdentifier',
     'DropdownHandler', 'DropdownLocator', 'DropdownIdentifier',
     'PaginationHandler', 'PaginationLocator', 'PaginationIdentifier',
-    'MenuHandler', 'MenuLocator', 'MenuIdentifier'
+    'MenuHandler', 'MenuLocator', 'MenuIdentifier',
+    'DatePickerHandler', 'DatePickerLocator', 'DatePickerIdentifier'
 ]
 

@@ -15,6 +15,7 @@ import steps.upload_steps  # noqa: F401
 import steps.table_steps  # noqa: F401
 import steps.checkbox_steps  # noqa: F401
 import steps.treeselect_steps  # noqa: F401
+import steps.datepicker_steps  # noqa: F401
 
 import pytest
 
@@ -37,6 +38,7 @@ from framework.components.upload_handler import UploadHandler
 from framework.components.table_handler import TableHandler
 from framework.components.checkbox_handler import CheckboxHandler
 from framework.components.treeselect_handler import TreeSelectHandler
+from framework.components.datepicker_handler import DatePickerHandler
 from framework.context.element_context import ElementContext
 import inspect
 import os
@@ -216,6 +218,7 @@ def context(driver, request):
     table_handler = TableHandler(driver, context=element_context)
     checkbox_handler = CheckboxHandler(driver, context=element_context)
     treeselect_handler = TreeSelectHandler(driver, context=element_context)
+    datepicker_handler = DatePickerHandler(driver, context=element_context)
     
     # Create PatternDiscovery instance for shared use
     from framework.utils.pattern_discovery import PatternDiscovery
@@ -226,6 +229,7 @@ def context(driver, request):
         def __init__(self):
             self.driver = driver
             self.element_context = element_context
+            self.context = element_context  # Alias for compatibility with step definitions
             self.input_handler = input_handler
             self.button_handler = button_handler
             self.dropdown_handler = dropdown_handler
@@ -235,6 +239,7 @@ def context(driver, request):
             self.table_handler = table_handler
             self.checkbox_handler = checkbox_handler
             self.treeselect_handler = treeselect_handler
+            self.datepicker_handler = datepicker_handler
             self.pattern_discovery = pattern_discovery
             self.logged_in = False
     
