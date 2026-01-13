@@ -30,7 +30,7 @@ Feature: MavenAI Admin Portal Login Automation
     And I enter "Main " in the "Street Address" field
     And I enter "Salmiya " in the "City" field
     And I enter "SA" in the "State" field
-    And I enter "202020" in the "Zip Code" field
+    And I enter "12345" in the "Zip Code" field
     And I enter "Canada" in the "Country" field
     And I create a new owner with email "owner@firm.com" and first name " Doe" and last name "bro"
     And I click the "Create" button on owner page

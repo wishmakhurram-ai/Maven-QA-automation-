@@ -225,7 +225,7 @@ def step_redirected_to_firms_page(context):
         current_url = context.driver.current_url.lower()
     
     assert 'firms' in current_url, f"Not redirected to Firms list page. Current URL: {current_url}"
-    print(f"   >> ✓ Redirected to Firms list page (URL: {current_url})")
+    print(f"   >> [OK] Redirected to Firms list page (URL: {current_url})")
 
 
 @then('I should be redirected to the Users list page')
