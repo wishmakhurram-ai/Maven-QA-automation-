@@ -12,7 +12,7 @@ import time
 
 # MavenAI Admin Portal Base URL - automatically derived from login URL
 # Default base URL (can be overridden via environment variable or context)
-MAVEN_APP_BASE_URL =  "https://dev-admin.maventech.ai"
+MAVEN_APP_BASE_URL =  "https://staging-admin.maventech.ai/"
 
 # Allow setting base URL from environment variable
 import os
@@ -76,7 +76,7 @@ def get_base_url(context):
         return base
     
     # Default fallback (only if browser not available)
-    default_url = "https://dev-admin.maventech.ai"
+    default_url = "https://staging-admin.maventech.ai/"
     MAVEN_APP_BASE_URL = default_url
     if hasattr(context, 'driver'):
         context.base_url = default_url
@@ -2883,7 +2883,7 @@ def step_click_add_firm_button(context):
         print(f"   >> Trying to click button: '{button_text}'...")
         context.button_clicked = context.button_handler.click_button(button_text, identifier_type='auto')
         if context.button_clicked:
-            print(f"   >> ✓ Successfully clicked button: '{button_text}'")
+            print(f"   >> [OK] Successfully clicked button: '{button_text}'")
             break
         time.sleep(0.5)
     
@@ -3062,7 +3062,7 @@ def step_fill_all_mandatory_fields(context):
     # Verify we're on the correct page (should be new firm page)
     current_url = context.driver.current_url
     if 'firm' in current_url.lower() or 'new' in current_url.lower():
-        print(f"   >> ✓ Still on form page: {current_url}")
+        print(f"   >> [OK] Still on form page: {current_url}")
     else:
         print(f"   >> ⚠ Warning: Unexpected page after filling fields: {current_url}")
     
@@ -3221,7 +3221,7 @@ def step_create_new_owner(context, email, name):
         print(f"   >> ⚠ Warning: Could not fill all owner fields")
         print(f"   >> Email filled: {owner_email_success}, Name filled: {owner_name_success}")
     else:
-        print(f"   >> ✓ Owner fields filled successfully: {name} ({email})")
+        print(f"   >> [OK] Owner fields filled successfully: {name} ({email})")
     
     # Owner fields should now be filled - no need for additional button clicks
     # The owner is created when fields are filled in the owner form
@@ -3407,7 +3407,7 @@ def step_create_new_owner_with_first_last_name(context, email, first_name, last_
         print(f"   >> ⚠ Warning: Could not fill all owner fields")
         print(f"   >> Email filled: {owner_email_success}, First Name filled: {owner_first_name_success}, Last Name filled: {owner_last_name_success}")
     else:
-        print(f"   >> ✓ Owner fields filled successfully: {full_name} ({email})")
+        print(f"   >> [OK] Owner fields filled successfully: {full_name} ({email})")
     
     # Owner fields should now be filled - no need for additional button clicks
     # The owner is created when fields are filled in the owner form
@@ -3853,7 +3853,7 @@ def step_firm_appears_in_list(context, firm_name):
     page_text = context.driver.page_source
     assert firm_name in page_text, f"Firm '{firm_name}' not found in Firms list"
     
-    print(f"   >> ✓ Firm '{firm_name}' found in Firms list")
+    print(f"   >> [OK] Firm '{firm_name}' found in Firms list")
 
 
 @then(parsers.parse('the firm status should be "{status}"'))
@@ -3882,7 +3882,7 @@ def step_firm_status_should_be(context, status):
             pass
     
     assert status_found, f"Firm status '{status}' not found on page"
-    print(f"   >> ✓ Firm status is '{status}'")
+    print(f"   >> [OK] Firm status is '{status}'")
 
 
 @then(parsers.parse('the newly created owner "{owner_info}" should be associated with the firm'))
@@ -3906,6 +3906,6 @@ def step_owner_associated_with_firm(context, owner_info):
     
     assert name_found or email_found, f"Owner '{owner_info}' not found associated with firm"
     
-    print(f"   >> ✓ Owner '{owner_info}' is associated with firm")
+    print(f"   >> [OK] Owner '{owner_info}' is associated with firm")
 
 
